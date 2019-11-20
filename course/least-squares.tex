@@ -407,49 +407,73 @@ As you have already noticed, the more we parameters we have, the more cumbersome
 Fortunately, we are not living in XVIII century anymore, we have computers!
 Next we will try to build a geometric intuition on least squares, and see how can least squares problems be efficiently implemented.
 
-\begin{verbatim}
-import numpy as np
-import matplotlib.pyplot as plt
 
-n = 1000      # size of the vector to produce
-m = n*57//100 # index of the element constrained to be = 2
-
-# the matrix will have the size (n-3) x (n-3),
-# but it is easier to fill the pattern with n x n first
-A = np.matrix(np.zeros((n, n)))
-for i in range(1,n-2): # fill the matrix with 2nd order finite differences
-    A[i, i-1] = -1.
-    A[i, i]   =  2.
-    A[i, i+1] = -1.
-
-A = A[1:-2,1:-2] # remove constrained variables from the system
-A[m-2,m-1] = 0
-A[m-1,m-2] = 0
-
-# put the constrained variables to the right hand side
-b = np.matrix(np.zeros((n-3, 1)))
-b[0,0]   = 1.
-b[m-2,0] = 2.
-b[m-1,0] = 2.
-b[-1,0]  = 1.
-
-# each row of the system tells that we want to have the 2nd derivative equal to some constant
-for i in range(n-3):
-    b[i,0] += 11./n**2
-
-# solve the system
-x = (np.linalg.inv(A)*b).transpose().tolist()[0]
-
-# re-introduce constrained variables
-x.insert(0, 1.)
-x.insert(m, 2.)
-x.append(1.)
-
-# plot the solution
-plt.plot(x, drawstyle='steps-mid')
-plt.show()
+\chapter{Introduction to systems of linear equations}
 
 
-\end{verbatim}
+$$
+\left\{
+\begin{array}{cccccccc}
+a_{11}x_1 & + &  a_{12}x_2  &+      & \cdots & + & a_{1n}x_n &= b_1\\
+a_{21}x_1 & + &  a_{22}x_2  &+      & \cdots & + & a_{2n}x_n &= b_2\\
+          &   &             &\vdots &        &   &           &     \\
+a_{n1}x_1 & + &  a_{n2}x_2  &+      & \cdots & + & a_{nn}x_n &= b_n\\
+\end{array}
+\right.
+$$
+
+\begin{align*}
+x_1 &= \frac{1}{a_{11}}(b_1 - a_{12}x_2 - a_{13}x_3 - \cdots - a_{1n}x_n)\\
+x_2 &= \frac{1}{a_{22}}(b_2 - a_{21}x_1 - a_{23}x_3 - \cdots - a_{2n}x_n)\\
+    & \qquad \vdots \\
+x_n &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots - a_{n,n-1}x_{n-1})
+\end{align*}
+
+$$\vec{x}^{(0)}=\left(x_1^{(0)}, x_2^{(0)}, \dots, x_n^{(0)}\right)$$
+
+$$\vec{x}^{(1)}=\left(x_1^{(1)}, x_2^{(1)}, \dots, x_n^{(1)}\right)$$
+
+\begin{align*}
+x_1^{(1)} &= \frac{1}{a_{11}}(b_1 - a_{12}x_2^{(0)} - a_{13}x_3^{(0)} - \cdots - a_{1n}x_n^{(0)})\\
+x_2^{(1)} &= \frac{1}{a_{22}}(b_2 - a_{21}x_1^{(0)} - a_{23}x_3^{(0)} - \cdots - a_{2n}x_n^{(0)})\\
+    & \qquad \vdots \\                                                                          
+x_n^{(1)} &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1^{(0)} - a_{n2}x_2^{(0)} - \cdots - a_{n,n-1}x_{n-1}^{(0)})
+\end{align*}
+
+$$\vec{x}^{(k)}=\left(x_1^{(k)}, x_2^{(k)}, \dots, x_n^{(k)}\right)$$
+
+$$
+x_i^{(k)} = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=1,j\neq i}^n a_{ij}x_j^{(k-1)} \right), \quad \text{for } i=1,2,\dots,n
+$$
+
+$$
+x_i^{(k)} = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=1}^{i-1} a_{ij}x_j^{(k)} -  \sum\limits_{j=i+1}^n a_{ij}x_j^{(k-1)} \right), \quad \text{for } i=1,2,\dots,n
+$$
+
+\begin{equation}
+\nonumber
+\resizebox{\hsize}{!}{
+$\left\{
+\begin{array}{cccccccccccccccccl}
+2x_1  & -x_2  &       &         &        &          &           &          &                   &            &          &         &        &          &          &          &                   &= x_0 \\
+-x_1  & +2x_2 & -x_3  &         &        &          &           &          &                   &            &          &         &        &          &          &          &                   &= 0 \\
+      & -x_2  & +2x_3 & -x_4    &        &          &           &          &                   &            &          &         &        &          &          &          &                   &= 0 \\
+      &       & -x_3  & +2x_4   & -x_5   &          &           &          &                   &            &          &         &        &          &          &          &                   &= 0 \\
+      &       &       &         & \ddots &          &           &          &                   &            &          &         &        &          &          &          &                   &    \\
+      &       &       &         &        &  -x_{15} &  +2x_{16} & -x_{17}  &                   &            &          &         &        &          &          &          &                   &= 0      \\
+      &       &       &         &        &          &  -x_{16}  & +2x_{17} &                   &            &          &         &        &          &          &          &                   &= x_{18} \\
+      &       &       &         &        &          &           &          &          +2x_{19} & -x_{20}    &          &         &        &          &          &          &                   &= x_{18} \\
+      &       &       &         &        &          &           &          &           -x_{19} & +2x_{20}   & -x_{21}  &         &        &          &          &          &                   &= 0 \\
+      &       &       &         &        &          &           &          &                   & -x_{20}    & +2x_{21} & -x_{22} &        &          &          &          &                   &= 0 \\
+      &       &       &         &        &          &           &          &                   &            &          &  \ddots &        &          &          &          &                   &    \\
+      &       &       &         &        &          &           &          &                   &            &          &         & -x_{26}& +2x_{27} & -x_{28}  &          &                   &= 0 \\
+      &       &       &         &        &          &           &          &                   &            &          &         &        & -x_{27}  & +2x_{28} & -x_{29}  &                   &= 0 \\
+      &       &       &         &        &          &           &          &                   &            &          &         &        &          & -x_{28}  & +2x_{29} & -x_{30}           &= 0 \\
+      &       &       &         &        &          &           &          &                   &            &          &         &        &          &          & -x_{29}  & +2x_{30}           &= x_{31} \\
+\end{array}
+\right.$
+}
+\end{equation}
+
 \end{document}
 
