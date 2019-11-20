@@ -48,7 +48,9 @@
 \toccontents
 
 \vspace{10mm}
-
+\begin{center}
+\includegraphics[width=.8\linewidth]{caricature.jpg}
+\end{center}
 
 \chapter{Is probability theory well-founded or do you believe in the theory of evolution?}
 
@@ -576,82 +578,90 @@ First of all, we need to remember what a matrix is; then we will revisit the def
 In this sections, matrices will be omnipresent, so let's remember what it is.
 Do not peek further down the text, pause for a few seconds, and try to formulate what the matrix is.
 
-\subsection{Different matrix interpretations}
+\subsection{Different interpretations of matrices}
 
 The answer is very simple. A matrix is just a locker in which stuff is stored.
 Each piece of stuff lies in its own cell, cells are grouped in rows and columns.
-In our particular case, we store real numbers; for a programmer the easiest way to imagine $A$ matrix as something like
+In our particular case, we store real numbers; for a programmer the easiest way to imagine $A$ matrix as something like:
 \begin{minted}{cpp}
 float A[m][n];
 \end{minted}
 
-Зачем же такие хранилища нужны? Что они описывают? Может быть, я вас расстрою, но сама по себе матрица не описывает ничего, она хранит. Например, в ней можно хранить коэффициенты всяких функций.
-Давайте на секунду забудем про матрицы, и представим, что у нас есть число $a$. Что оно означает?
-Да чёрт его знает... Например, это может быть коэффициент внутри функции, которая на вход берёт одно число, и на выход даёт другое число:
+Why would we need a storage like this? What does it describe?
+Maybe I will upset you, but the matrix by itself does not describe anything, it stores stuff.
+For example, you can store coefficients of a function in it.
+Let us put aside matrices for a second imagine that we have a number $a$. What does it mean?
+Who knows what it means\dots For example, it can be a coefficient inside a function that takes one number as an input and gives another number as an output:
 $$
 f(x) : \mathbb R \rightarrow \mathbb R
 $$
 
-Одну версию такой функции математик мог бы записать как 
+One possible instance of such a function a mathematicion could write down as:
 $$
 f(x) = ax
 $$
-Ну а в мире программистов она бы выглядела следующим образом:
+
+In the programmers' world it would look something like this:
 \begin{minted}[linenos=true]{cpp}
 float f(float x) {
     return a*x;
 }
 \end{minted}
 
-С другой стороны, а почему такая функция, а не совсем другая?
-Давайте возьмём другую!
+On the other hand, why this function and not another one? Let's take another one!
 $$
 f(x) = ax^2
 $$
-Раз уж я начал про программистов, я обязан записать её код :)
+A programmer would write it like this:
 \begin{minted}[linenos=true]{cpp}
 float f(float x) {
     return x*a*x;
 }
 \end{minted}
 
-Одна из этих функций линейная, а вторая квадратичная. Какая из них правильная? Да никакая, само по себе число $a$ не определяет этого, оно просто хранит какое-то значение! Какую вам надо функцию, такую и стройте.
+One of these functions is linear and the other is quadratic. Which one is correct? 
+Neither one. The number $a$ does not define it, it just stores a value! 
+Build the function you need.
 
-То же самое происходит и с матрицами, это хранилища, нужные на случай, когда одиночных чисел (скаляров) не хватает, своего рода расширение чисел.  Над матрицами, ровно как и над числами, определены операции сложения и умножения. С делением чуть сложнее, но в определённых случаях и оно может быть определено.
+The same thing happens to matrices, they give storage space when simple numbers (scalars) do not suffice, a matrix is a sort of an hyper-number.
+The addition and multiplication operations are defined over matrices, just as over numbers. The division is a bit more complicated, but in certain cases it can be defined too.
 
-Давайте представим, что у нас есть матрица $A$, например, размера 2x2:
+Let us suppose that we have a $2\times 2$ matrix $A$:
 $$
 A=\begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22}\end{bmatrix}
 $$
 
-Эта матрица сама по себе ничего не значит, например, она может быть интерпретирована как функция
+The matrix does not mean anything by itself, for example, it can be interpreted as a linear function:
 $$
 f(x) : \mathbb R^2 \rightarrow \mathbb R^2, \quad f(x) = Ax
 $$
 
+Here goes the programmer's view on the function:
 \begin{minted}[linenos=true]{cpp}
 vector<float> f(vector<float> x) {
     return vector<float>{a11*x[0] + a12*x[1],  a21*x[0] + a22*x[1]};
 }
 \end{minted}
 
-Эта функция преобразует двумерный вектор в двумерный вектор. Графически это удобно представлять как преобразование изображения: на вход даём изображение, а на выходе получаем его растянутую и/или повёрнутую (возможно даже зеркально отражённую!) версию.
-Верхний ряд иллюстрации~\ref{fig:matrices} приводит различные примеры такой интерпретации матриц.
+This function maps a two-dimensional vector to a two-dimensional vector.
+Graphically, it is convenient to imagine it as an image transformation: we give an input image, and the output is the stretched and/or rotated (maybe even mirrored!) version.
+The top row of Figure~\ref{fig:matrices} provides few different examples of this interpretation of matrices.
 
-
-А можно матрицу $A$ представлять себе как функцию, которая двумерный вектор преобразует в скаляр:
+On the other hand, nothing prevents to interpret the matrix $A$ as a function that maps a vector to a scalar:
 $$
 f(x) : \mathbb R^2 \rightarrow \mathbb R, \quad f(x) = x^\top A x = \sum\limits_i\sum\limits_j a_{ij}x_i x_j
 $$
 
-Обратите внимание, что с векторами возведение в степень не очень-то определено, поэтому я не могу написать $x^2$, как писал в случае с обычными числами. Очень рекомендую тем, кто не привык с лёгкостью жонглировать матричными умножениями, ещё раз вспомнить правило умножения матриц, и проверить, что выражение $x^\top A x$ вообще разрешено и действительно даёт скаляр на выходе.
-Для этого можно, например, явно поставить скобки $x^\top A x = (x^\top A) x$
-Напоминаю, что у нас $x$ - вектор размерности 2 (сохранённый в матрице размерности 2x1), выпишем явно все размерности:
+Note that the square is not very well defined for the vectors, so I cannot write $x^2$ as I wrote in the case of ordinary numbers. 
+For those who are not at ease with matrix multiplications, I highly recommend to revisit it right now and check that the expression $x^\top A x$ indeed produces a scalar value.
+To this end, we can explicitly put brackets $x^\top A x = (x^\top A) x$.
+Recall that in this particular example $x$ is a two-dimensional vector (stored in a $2\times 1$ matrix).
+Let us write all the matrix dimensions explicitly:
 $$
 \underbrace{\underbrace{\left(\underbrace{x^\top}_{1\times 2} \times \underbrace{A}_{2\times 2}\right)}_{1\times 2} \times \underbrace{x}_{2\times 1}}_{1 \times 1}
 $$
 
-Возвращаясь в тёплый и пушистый мир программистов, мы можем записать эту же квадратичную функцию как-то так:
+Returning to the cozy world of programmers, we can write the same quadratic function as follows:
 \begin{minted}[linenos=true]{cpp}
 float f(vector<float> x) {
     return x[0]*a11*x[0] + x[0]*a12*x[1] + x[1]*a21*x[0] + x[1]*a22*x[1];
@@ -661,48 +671,57 @@ float f(vector<float> x) {
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\linewidth]{matrices}
-	\caption{Семь примеров матриц $2\times 2$, как положительно определённых и симметричных, так и не очень. Верхний ряд: интерпретация матриц как функций $f(x):\mathbb R^2 \rightarrow \mathbb R^2$. Средний ряд: интерпретация матриц как функций $f(x):\mathbb R^2 \rightarrow \mathbb R$.}
+	\caption{Seven examples of $2\times 2$ matrices, some of them are positive definite and/or symmetric. 
+    \textbf{Top row:} the matrices are interpreted as linear functions $f(x):\mathbb R^2 \rightarrow \mathbb R^2$. \textbf{Middle row:} the matrices are interpreted as quadratic functions
+ $f(x):\mathbb R^2 \rightarrow \mathbb R$.}
 	\label{fig:matrices}
 \end{figure}
 
 
-\subsection{Что такое положительное число?}
-Теперь я задам очень глупый вопрос: что такое положительное число?
-У нас есть отличный инструмент, называется предикат больше $>$.
-Но не торопитесь отвечать, что число $a$ положительно тогда и только тогда, когда $a>0$, это было бы слишком просто. Давайте определим положительность следущим образом:
-\begin{definition}
-Число $a$ положительно тогда и только тогда, когда для всех ненулевых вещественных $x\in\mathbb R,\ x\neq 0$ выполняется условие $ax^2>0$.
-\end{definition}
-
-Выглядит довольно мудрёно, но зато отлично применяется к матрицам:
+\subsection{What is a positive number?}
+Allow me to ask a very stupid question: what is a positive number?
+We have a great tool called the predicate ``greater than'' $>$.
+Do not be in a hurry to answer that the number $a$ is positive if and only if $a>0$, it would be too easy. Let us define the positivity as follows:
 
 \begin{definition}
-Квадратная матрица $A$ называется положительно определённой, если для любых ненулевых $x$
-выполняется условие $x^\top A x > 0$, то есть, соответствующая квадратичная форма строго положительна везде, кроме начала координат.
+The real number $a$ is positive if and only if for all non-zero real $x\in\mathbb R,\ x\neq 0$ the condition $ax^2>0$ is satisfied.
 \end{definition}
 
-Для чего мне нужна положительность? Как я уже упоминал в начале статьи, моим основным инструментом
-будет поиск минимумов квадратичных функций. А ведь для того, чтобы минимум искать, было бы недурно, если бы он существовал! Например, у функции $f(x) = - x^2$ минимума очевидно не существует, посколькуо число -1 не является положительным, и $f(x)$ бесконечно убывает с ростом $x$: ветви параболы $f(x)$ смотрят вниз.
-Положительно определённые матрицы хороши тем, что соответствующие квадратичные формы образуют параболоид, имеющие (единственный) минимум. Иллюстрация~\ref{fig:matrices} показывает семь различных примеров матриц.
+Looks pretty awkward, but it applies perfectly to the matrices:
 
-Таким образом, я буду работать с положительно определёнными матрицами, которые являются обобщением положительных чисел. Более того, конкретно в моём случае матрицы будут ещё и симметричными!
-Любопытно, что довольно часто, когда люди говорят про положительную определённость, они подразумевают ещё и симметричность, что может быть косвенно объяснено следующим (необязательным для понимания последующего текста) наблюдением.
+\begin{definition}
+The square matrix $A$ is called positive definite if for any non-zero $x$
+the condition $x^\top A x > 0$ is met, i.e. the corresponding quadratic form is strictly positive everywhere except at the origin.
+\end{definition}
 
-\subsubsection{Лирическое отступление о симметричности матриц квадратичных форм}
+What do we need the positivity for?
+As we have already mentioned, our main tool will be the minimization of quadratic functions. 
+It would be nice to be sure that the minimum exists!
+For example, the function $f(x) = - x^2$ clearly has no minimum, because the number -1 is not positive, 
+both branches of the parabola $f(x)$ look down.
+Positive definite matrices guarantee that the corresponding quadratic forms form a paraboloid with a (unique) minimum.
+Refer to the Figure~\ref{fig:matrices} for an illustration.
 
-Давайте рассмотрим квадратичную форму $x^\top M x$ для произвольной матрицы $M$; затем
-к $M$ добавим и сразу же отнимем половину её транспонированной версии:
+Thus, we will work with a generalization of positive numbers, namely, positive definite matrices. 
+Moreover, in our particular case, the matrices will be symmetric!
+Note that quite often, when people talk about positive definiteness, they also imply symmetry.
+This can be partly explained by the following observation (optional for the understanding of the rest of the text):
+
+\subsubsection{A digression on quadratic forms and matrix symmetry}
+
+Let us consider a quadratic form $x^\top M x$ for an arbitrary matrix $M$. 
+Next we add and subtract a half ot its transpose:
 $$
 M = \underbrace{\frac{1}{2} (M+M^\top)}_{:=M_s} + \underbrace{\frac{1}{2} (M-M^\top)}_{:=M_a} = M_s + M_a
 $$
 
-Матрица $M_s$ симметрична: $M_s^\top = M_s$; матрица $M_a$ антисимметрична: $M_a^\top=-M_a$.
-Примечательным фактом является то, что для любой антисимметричной матрицы соответствующая квадратичная форма тождественно равна нулю. Это вытекает из следующего наблюдения:
+The matrix $M_s$ is symmetric: $M_s^\top = M_s$; the matrix $M_a$ is antisymmetric: $M_a^\top=-M_a$.
+A remarkable fact is that for any antisymmetric matrix the corresponding quadratic form is equal to zero everywhere. This follows from the following observation:
 $$
 q = x^\top M_a x  = (x^\top M_a^\top x)^\top = - (x^\top M_a x)^\top = -q
 $$
-То есть, квадратичная форма $x^\top M_a x$ одновременно равна $q$ и $-q$, что возможно только в том случае, когда $q\equiv 0$.
-Из этого факта вытекает то, что для произвольной матрицы $M$ соответствующая  квадратичная форма $x^\top M x$ может быть выражена и через симметричную матрицу $M_s$:
+It means that the quadratic form $x^\top M_a x$ equals $q$ and $-q$ at the same time, and the only way to have this condition is to have $q\equiv 0$.
+From this fact it follows that for an arbitrary matrix $M$ the corresponding quadratic form $x^\top M x$ can be expressed through the symmetric matrix $M_s$ as well:
 $$
 x^\top M x = x^\top (M_s + M_a) x = x^\top M_s x  + x^\top M_a x = x^\top M_s x.
 $$
