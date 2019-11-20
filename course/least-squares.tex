@@ -23,14 +23,16 @@
 
 
 \begin{document}
-\section{Is probability theory well-founded or do you believe in the theory of evolution?}
-
+This short section is not mandatory for the understanding of the main course; 
+the idea behind is to warm up before attacking code and formulae.
 I’ll start with the least squares methods through the maximum likelihood estimation;
 this requires some (at least superficial) knowledge of probability theory. 
+So, right from the beginning, I would like to digress a little.
 
+\section{Is probability theory well-founded or do you believe in the theory of evolution?}
 
 \begin{wrapfigure}{r}{.2\linewidth}
-\includegraphics[width=\linewidth]{stop-following-me}
+\includegraphics[width=\linewidth]{stop-following-me.png}
 \end{wrapfigure}
 I was once asked if I believed in evolutionary theory. 
 Take a short break, think about how you would answer.
@@ -44,7 +46,7 @@ it is only logical that pesticide-resistant insects would appear.
 However, it is much less obvious that this process can be slowed down by growing regular plants side by side with genetically modified plants. 
 Based on evolutionary theory, the corresponding modelling has made this prediction\cite{}, and it seems to have been validated\cite{}.
 
-\paragraph*{Wait, what is the conection?}
+\paragraph*{Wait, what is the connection?}
 
 As I mentioned earlier, the idea is to approach the least squares through the principle of maximum likelihood. 
 Let us illustrate by example. 
@@ -69,12 +71,32 @@ the frequency of a particular outcome during repeated well-defined random experi
 In addition to subjectivists and frequentists, there are also objectivists who argue that probabilities are real aspects of the universe, 
 and not a mere measurement of the observer's degree of confidence.
 
+In any case, all three scientific schools in practice use the same apparatus based on Kolmogorov's axioms.
+Let us provide an indirect argument, from a subjectivistic point of view, in favor of the probability theory based on Kolmogorov's axioms.
+We will list the axioms later, first assume that we have a bookmaker who takes bets on the next World Cup. 
+Let us have two events: $a=$ Urugway will be the champion, $b=$ Germany wins the cup.
+The bookmaker estimates the chances of the Uruguayan team to win at 40\%, and the chances of the German team at 30\%.
+Clearly, both Germany and Uruguay cannot win at the same time, so the chance of $a\wedge b$ is zero. 
+At the same time, the bookmaker thinks that the probability that either Uruguay or Germany (and not Argentina or Australia) will win is 80\%.
+Let's write it down in the following form:
 $$P(a) = .4  \qquad  P(a\wedge b) = 0 \qquad P(b) = .3 \qquad P(a\vee b) = .8$$
 	
+If the bookmaker asserts that his degree of confidence in the event $a$ is equal to 0.4, i.e., $P(a) = 0.4$, 
+then the player can choose whether he will bet on or against the statement $a$,
+placing amounts that are compatible with the degree of confidence of the bookmaker.
+It means that the player can make a bet on the event $a$, placing \$4 against \$6 of the bookmaker's money.
+Or the player can bet \$6 on the event $\neg a$ against \$4 of bookmaker's money.
+
+If the bookmaker's confidence level does not accurately reflect the state of the world, 
+we can expect that in the long run he will lose money to players whose beliefs are more accurate.
+However, it is very curious that in this particular example, the player has a winning strategy: he can make the bookmaker lose money for \textit{any} outcome.
+Let us illustrate it:
+
+\vspace{2mm}
 \begin{tabular}{cccccc}
-	\multicolumn{2}{c}{Bets of the Agent 2}  &  \multicolumn{4}{c}{Result for the Agent 1} \\
+	\multicolumn{2}{c}{Player's bets}  &  \multicolumn{4}{c}{Result for the bookmaker} \\
 	\hline
-	{\tiny Event} & {\tiny Bet amount} & {\tiny $a\wedge b$} & {\tiny $a\wedge \neg b$} &  {\tiny $\neg a\wedge b$} &  {\tiny $\neg a\wedge\neg b$} \\
+	{\tiny Bet event} & {\tiny Bet amount} & {\tiny $a\wedge b$} & {\tiny $a\wedge \neg b$} &  {\tiny $\neg a\wedge b$} &  {\tiny $\neg a\wedge\neg b$} \\
 	\hline
 	$a$             & 4-6 & -6 & -6 &  4 &  4 \\
 	$b$             & 3-7 & -7 &  3 & -7 &  3 \\
@@ -82,21 +104,32 @@ $$P(a) = .4  \qquad  P(a\wedge b) = 0 \qquad P(b) = .3 \qquad P(a\vee b) = .8$$
 	\hline
 	&     &-11 & -1 & -1 & -1
 \end{tabular}
-	
-\begin{itemize}
-	\item $0\leq P(a)\leq 1$
-	\item $P(true)=1$, $P(false) = 0$
-	\item $P(a\vee b) = P(a) + P(b) - P(a\wedge b)$
-\end{itemize}
+\vspace{2mm}
 
-In text form, they look like this:
-\begin{enumerate}
-\item All probabilities range from 0 to 1.
-\item Certainly true statements have probability of 1 and certainly false probability of 0.
-\item The third axiom is the very intuitive disjunction axiom.
+The player makes three bets, and independently of the outcome, he always wins. 
+Please note that in this case we do not even take into account whether Uruguay or Germany were favorits or outsiders, 
+the loss of the bookmaker is guaranteed! 
+This unfortunate (for the bookmaker) situation happened because he did not respect the third axiom of Kolmogorov, let us list all three of them:
+\begin{itemize}
+\item $0\leq P(a)\leq 1$: all probabilities range from 0 to 1.
+\item $P(true)=1$, $P(false) = 0$: true statements have probability of 1 and false probability of 0.
+\item $P(a\vee b) = P(a) + P(b) - P(a\wedge b)$: this one is also very intuitive.
 All cases where the statement $a$ is true, together with those where $b$ is true,
 cover all those cases where the statement $a\vee b$ is true; however the intersection $a\wedge b$ is counted twice in the sum, therefore it is necessary to subtract $P(a\wedge b)$.
-\end{enumerate}
+\end{itemize}
+
+Let us define the word ``event'' as ``a subset of the unit square''. 
+Define the word ``probability of event'' as ``area of the corresponding subset''. 
+Roughly speaking, we have a large dartboard, and we close our eyes and shoot at it. 
+The chances that the dart hits a given region of the dartboard are directly proportional to the area of the region. 
+A true event in this case is the entire square, and false events are those of zero measure, for example, any given point. 
+Figure~\ref{fig:kolmogorov} illustrates the axioms.
+\begin{figure}[htb!]
+\centering
+\includegraphics[width=.8\columnwidth]{axiomes.png}
+\caption{A graphical illustration for the Kolmogorov's axioms}
+\label{fig:kolmogorov}
+\end{figure}
 
 In 1931, de Finetti proved a very strong proposition:
 
@@ -114,6 +147,8 @@ however, if he does not respect the axioms, he is guaranteed to lose.
 Other arguments have been put forward in favour of the probability theory;
 but it is the practical success of probability-based reasoning systems that has proved to be very attractive.
 
+To conclude the digression, it seems reasonable to base our reasoning on the probability theory.
+Now let us proceed to maximum likelihood estimation, thus motivating the least squares.
 
 \section{Maximum likelihood through examples}
 \subsection{First example: coin toss}
@@ -132,8 +167,8 @@ Figure~\ref{fig:binomial}, left shows what a probability density graph looks lik
 
 \begin{figure}[htb!]
 \centering
-\includegraphics[width=.48\columnwidth]{binomial-05}
-\includegraphics[width=.48\columnwidth]{binomial-07}
+\includegraphics[width=.48\columnwidth]{binomial-05.png}
+\includegraphics[width=.48\columnwidth]{binomial-07.png}
 \caption{\textbf{Left:} probability density graph for the Bernoulli's scheme with $p=1/2$. \textbf{Right:} probability density graph for the Bernoulli's scheme with $p=7/10$.}
 \label{fig:binomial}
 \end{figure}
@@ -159,7 +194,7 @@ Figure~\ref{fig:likelihood} plots the likelihood function for the observation da
 
 \begin{figure}[htb!]
 \centering
-\includegraphics[width=.5\columnwidth]{likehood-07}
+\includegraphics[width=.5\columnwidth]{likehood-07.png}
 \caption{The plot of the likelihood function $\mathcal{L}(p)$ for the observation data with 7 tails out of 10 experiments.}
 \label{fig:likelihood}
 \end{figure}
@@ -260,7 +295,7 @@ $$
 If we draw these points on a chart (Figure~\ref{fig:URI}), the Ohm's law tells us that we are looking for the slope of the blue line that approximates the measurements.
 \begin{figure}[htb!]
 \centering
-\includegraphics[width=.5\columnwidth]{URI}
+\includegraphics[width=.5\columnwidth]{URI.png}
 \caption{Having $N$ meausrements $U_j$ for each reference current $I_j$, we are looking for the slope of the blue line that approximates the measurements through the Ohm's law.}
 \label{fig:URI}
 \end{figure}
