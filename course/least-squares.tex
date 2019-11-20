@@ -1,10 +1,10 @@
-\documentclass{article}
+\documentclass[notitlepage]{report}
 
 \usepackage[vmarginratio=1:1,a4paper,body={6.5in, 9.5in}]{geometry}
 
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[russian]{babel}
+\usepackage[english]{babel}
 
 \usepackage{wrapfig}
 
@@ -22,14 +22,37 @@
 \graphicspath{{./img/}}
 
 
+\makeatletter
+\newcommand*{\toccontents}{\@starttoc{toc}}
+\makeatother
+
+\setcounter{tocdepth}{0}% Allow only \chapter in ToC
+
+\title{{\Huge Least squares for programmers}\\
+{\large with illustrations}\\
+\vspace{20mm}}
+\author{Dmitry Sokolov and Nicolas Ray}
+\date{}
+
 \begin{document}
+
+\maketitle
+
+\vspace{10mm}
+
+\toccontents
+
+\vspace{10mm}
+
+
+\chapter{Is probability theory well-founded or do you believe in the theory of evolution?}
+
 This short section is not mandatory for the understanding of the main course; 
 the idea behind is to warm up before attacking code and formulae.
 I’ll start with the least squares methods through the maximum likelihood estimation;
 this requires some (at least superficial) knowledge of probability theory. 
 So, right from the beginning, I would like to digress a little.
 
-\section{Is probability theory well-founded or do you believe in the theory of evolution?}
 
 \begin{wrapfigure}{r}{.2\linewidth}
 \includegraphics[width=\linewidth]{stop-following-me.png}
@@ -74,7 +97,7 @@ and not a mere measurement of the observer's degree of confidence.
 In any case, all three scientific schools in practice use the same apparatus based on Kolmogorov's axioms.
 Let us provide an indirect argument, from a subjectivistic point of view, in favor of the probability theory based on Kolmogorov's axioms.
 We will list the axioms later, first assume that we have a bookmaker who takes bets on the next World Cup. 
-Let us have two events: $a=$ Urugway will be the champion, $b=$ Germany wins the cup.
+Let us have two events: $a=$ Uruguay will be the champion, $b=$ Germany wins the cup.
 The bookmaker estimates the chances of the Uruguayan team to win at 40\%, and the chances of the German team at 30\%.
 Clearly, both Germany and Uruguay cannot win at the same time, so the chance of $a\wedge b$ is zero. 
 At the same time, the bookmaker thinks that the probability that either Uruguay or Germany (and not Argentina or Australia) will win is 80\%.
@@ -150,8 +173,8 @@ but it is the practical success of probability-based reasoning systems that has 
 To conclude the digression, it seems reasonable to base our reasoning on the probability theory.
 Now let us proceed to maximum likelihood estimation, thus motivating the least squares.
 
-\section{Maximum likelihood through examples}
-\subsection{First example: coin toss}
+\chapter{Maximum likelihood through examples}
+\section{First example: coin toss}
 Let us consider a simple example of coin flipping, also known as the Bernoulli's scheme. 
 We conduct $n$ experiments, two events can happen in each one (``success'' or ``failure''): 
 one happens with probability $p$, the other one with probability $1-p$. 
@@ -223,7 +246,7 @@ $$\frac{d^2 \log \mathcal{L}}{dp^2}(0.7)  \approx -48 < 0$$
 Figure~\ref{fig:binomial} shows the probability density graph for the Bernoulli's scheme with $p=7/10$.
 
 
-\subsection{Second example: analog-to-digital converter (ADC)}
+\section{Second example: analog-to-digital converter (ADC)}
 
 Let us imagine that we have a constant physical quantity that we want to measure; for example, it can be a length to measure with a ruler or a voltage with a voltmeter.
 In the real world, any measurement gives \textit{an approximation} of this value, but not the value itself.
@@ -281,7 +304,7 @@ By the way, averaging multiple measurements of a constant value in order to incr
 For example, ADC averaging. Note that the hypothesis of Gaussian noise is not necessary in this case, it is enough to have an unbiased noise.
 
 
-\subsection{Third exampe, still 1D}
+\section{Third exampe, still 1D}
 
 Let us re-consider the previous example with a small modification.
 Let us say that we want to measure the resistance of a resistor.
@@ -322,7 +345,7 @@ This result is somewhat less obvious than the simple average of all measurements
 Note that if we take one hundred measurements with $\approx 1A$ reference current and one measurement with $\approx 1kA$ reference current,
 then the first hundred measurements would barely affect the result. Let's remember this fact, we will need it later.
 
-\subsection{Fourth example: back to the least squares}
+\section{Fourth example: back to the least squares}
 You have probably already noticed that in the last two examples, maximizing the logarithm of the likelihood is equivalent to minimizing the sum of squared estimation errors.
 Let us consider one more example.
 Say we want to calibrate a spring scale with a help of reference weights.
@@ -375,7 +398,7 @@ a &= \frac{N \sum\limits_{j=1}^N x_j y_j - \sum\limits_{j=1}^N x_j \sum\limits_{
 b &= \frac{1}{N}\left(  \sum\limits_{j=1}^N y_j - a  \sum\limits_{j=1}^N x_j \right)
 \end{align*}
 
-\subsection{Conclusion}
+\section*{Conclusion}
 The least squares method is a particular case of maximizing likelihood in cases where the probability density is Gaussian.
 If the density is not Gaussian, the least squares approach can produce an estimate different from the MLE (maximum likelihood estimation).
 By the way, Gauss conjectured that the type of noise is of no importance, and the only thing that matters is the independence of trials.
@@ -384,6 +407,49 @@ As you have already noticed, the more we parameters we have, the more cumbersome
 Fortunately, we are not living in XVIII century anymore, we have computers!
 Next we will try to build a geometric intuition on least squares, and see how can least squares problems be efficiently implemented.
 
+\begin{verbatim}
+import numpy as np
+import matplotlib.pyplot as plt
 
+n = 1000      # size of the vector to produce
+m = n*57//100 # index of the element constrained to be = 2
+
+# the matrix will have the size (n-3) x (n-3),
+# but it is easier to fill the pattern with n x n first
+A = np.matrix(np.zeros((n, n)))
+for i in range(1,n-2): # fill the matrix with 2nd order finite differences
+    A[i, i-1] = -1.
+    A[i, i]   =  2.
+    A[i, i+1] = -1.
+
+A = A[1:-2,1:-2] # remove constrained variables from the system
+A[m-2,m-1] = 0
+A[m-1,m-2] = 0
+
+# put the constrained variables to the right hand side
+b = np.matrix(np.zeros((n-3, 1)))
+b[0,0]   = 1.
+b[m-2,0] = 2.
+b[m-1,0] = 2.
+b[-1,0]  = 1.
+
+# each row of the system tells that we want to have the 2nd derivative equal to some constant
+for i in range(n-3):
+    b[i,0] += 11./n**2
+
+# solve the system
+x = (np.linalg.inv(A)*b).transpose().tolist()[0]
+
+# re-introduce constrained variables
+x.insert(0, 1.)
+x.insert(m, 2.)
+x.append(1.)
+
+# plot the solution
+plt.plot(x, drawstyle='steps-mid')
+plt.show()
+
+
+\end{verbatim}
 \end{document}
 
