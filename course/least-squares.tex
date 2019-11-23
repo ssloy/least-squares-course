@@ -26,6 +26,9 @@
 
 \usepackage[cache=false]{minted}
 
+\usepackage{color,colortbl}
+\newcommand\TODO[1]{\textcolor{red}{{\bf TODO :} \it #1}}
+
 
 \makeatletter
 \newcommand*{\toccontents}{\@starttoc{toc}}
@@ -606,16 +609,17 @@ $\left\{
 
 \chapter{Finite elements example: the Galerkin weighted residual method}
 
-Ground truth:
+In this section we will consider a simple boundary value problem and its relation to systems of linear equations.
+The boundary value problem is the problem of finding a solution to a given differential equation satisfying boundary conditions at the the boundary of a region.
+Let us start with a ground truth function defined as 
 $$
-\varphi(x) := \frac{1}{6} x^3 + \frac{1}{2} x^2 + \frac{1}{3} x
+\varphi(x) := \frac{1}{6} x^3 + \frac{1}{2} x^2 + \frac{1}{3} x.
 $$
-
-$$
-f(x) := x+1
-$$
-
-Boundary value problem:
+This function is unknown, and we list it here to compare our solution to the ground truth.
+Let us define a function $f(x) := x+1$.
+It is simply the second derivative of $\varphi(x)$, but remember that $\varphi(x)$ is not known!
+So, the problem is to find a function $\varphi(x)$ with prescribed second derivative and constrained at the limits of a region.
+One possible instance of the boundary value problem can be written as follows:
 $$
 \left\{
 \begin{split}
@@ -624,16 +628,18 @@ $$
 \end{split}
 \right.
 $$
+Here $f(x)$ is known, $\varphi(x)$ is unknown, but we have specified its values at the boundary.
 
-%Boundary condition:
-%\varphi\Big|_{x=0}=0, \quad \varphi\Big|_{x=0}=1
-
-Let us fix four nodes $x_i$:
+In general, finite elements method searches for an \textit{approximated} solution of the problem.
+Let us split the interval in $n$ parts, these subsegments are the \textit{elements}.
+For example, for $n=3$ we can define four equispaced nodes $x_i$:
 $$
 x_0 := 0, \quad x_1 := \frac{1}{3}, \quad x_2 := \frac{2}{3}, \quad x_3 := 1.
 $$
+Note that equal distance is chosen here for the simplicity of presentation, and is not a requirement for the method.
+Then a set of functions is to be defined over the elements; the approximated solution $\tilde{\varphi}$ is defined as a weighted sum of these functions.
 
-Let us choose a set of weighting functions:
+For example, let us choose a set of linear functions:
 $$
 w_i(x) := \left\{
 \begin{split}
@@ -644,6 +650,8 @@ w_i(x) := \left\{
 \right.
 $$
 
+\TODO{figure, hat functions}
+
 Then the approximate solution is a linear combination of the weighting functions:
 $$
 \tilde{\varphi}(x) := 0\cdot w_0(x) + b\cdot w_1(x) + c\cdot w_2(x) + 1\cdot w_3(x),
@@ -652,16 +660,22 @@ where the coefficients of $w_0(x)$ and $w_3(x)$ are the direct consequence of th
 note that $b$ and $c$ give the values of the approximation for the points $x=\frac{1}{3}$ and $x=\frac{2}{3}$, respectively.
 
 $$
-\int\limits_0^1 w_i \cdot \left(\frac{d^2\tilde{\varphi}}{dx^2} - f\right) dx = 0, \quad i = 0\dots 3
+\int\limits_0^1 w_i \cdot \left(\frac{d^2\tilde{\varphi}}{dx^2} - f\right) dx = 0, \quad i = 1\dots n-1 
 $$
 
+\TODO{figure, residual orthogonal to the solution space}
 Note that $w_i(x)$ is equal to zero outside the interval $[x_{i-1}, x_{i+1}]$, this allows us to rewrite the system:
 $$
-\int\limits_{x_{i-1}}^{x_{i+1}} w_i \cdot \frac{d^2\tilde{\varphi}}{dx^2}\,dx - \int\limits_{x_{i-1}}^{x_{i+1}} w_i\cdot f\,dx = 0, \quad i = 0\dots 3
+\int\limits_{x_{i-1}}^{x_{i+1}} w_i \cdot \frac{d^2\tilde{\varphi}}{dx^2}\,dx - \int\limits_{x_{i-1}}^{x_{i+1}} w_i\cdot f\,dx = 0, \quad i = 1\dots n-1
 $$
 
+Most often both integrals are evaluated numerically, or symbolic calculations are peformed over the left integral only.
+The left integral is a dot product between the basis functions and the differential operator defined on a combination of basis functions;
+it depends on the choice of the basis and can be precomputed.
+As our problem is very simple, we will find the solution symbolically.
+
 Attention! The next step will be done on a slippery ground.
-Our weighting functions are not differentiable everywhere, and a caution must be taken.
+Our weighting functions are not differentiable everywhere, and caution must be taken.
 Anyhow, let us integrate by parts the first integral:
 \begin{align*}
 \int\limits_{x_{i-1}}^{x_{i+1}} w_i \cdot \frac{d^2\tilde{\varphi}}{dx^2}\,dx &= 
@@ -675,7 +689,7 @@ Anyhow, let us integrate by parts the first integral:
 It allows us to rewrite the system of equations:
 \begin{equation}
 \label{eq:galerkin:system}
-\int\limits_{x_{i-1}}^{x_{i+1}} \frac{dw_i}{dx} \cdot \frac{d\tilde{\varphi}}{dx}\,dx + \int\limits_{x_{i-1}}^{x_{i+1}} w_i\cdot f\,dx = 0, \quad i = 0\dots 3
+\int\limits_{x_{i-1}}^{x_{i+1}} \frac{dw_i}{dx} \cdot \frac{d\tilde{\varphi}}{dx}\,dx + \int\limits_{x_{i-1}}^{x_{i+1}} w_i\cdot f\,dx = 0, \quad i = 1\dots n-1
 \end{equation}
 
 $$
