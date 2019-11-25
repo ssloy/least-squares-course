@@ -419,81 +419,7 @@ Next we will try to build a geometric intuition on least squares, and see how ca
 
 
 \chapter{Introduction to systems of linear equations}
-
-\begin{figure}[h!tb]
-\begin{minted}[linenos=true]{python}
-# initialize the data array
-x = [0.] * 32
-x[0] = x[31] = 1.
-x[18] = 2.
-
-# smooth the array values
-for iter in range(1000):
-    x[0] = x[1]
-    for i in range(1, len(x)-1):
-        x[i] = (x[i-1]+x[i+1])/2.
-    x[-1] = x[-2]
-\end{minted}
-\end{figure}
-
-
-\iffalse
-
-\begin{python}
-# initialize the data array
-x = [0.] * 32
-x[0] = x[31] = 1.
-x[18] = 2.
-
-c = 11./32**2
-
-# smooth the array values other than at indices 0,18,31
-for iter in range(1000):
-    for i in range(len(x)):
-        if i in [0,18,31]: continue
-        x[i] = (x[i-1]+x[i+1]+c)/2.
-
-\end{python}
-
-
-\begin{python}
-n = 1000      # size of the vector to produce
-m = n*57//100 # index of the element constrained to be = 2
-
-# the matrix will have the size (n-3) x (n-3),
-# but it is easier to fill the pattern with n x n first
-A = np.matrix(np.zeros((n, n)))
-for i in range(1,n-2): # fill the matrix with 2nd order finite differences
-    A[i, i-1] = -1.
-    A[i, i]   =  2.
-    A[i, i+1] = -1.
-
-A = A[1:-2,1:-2] # remove constrained variables from the system
-A[m-2,m-1] = 0
-A[m-1,m-2] = 0
-
-b = np.matrix(np.zeros((n-3, 1))) # initialize the right hand side with zeros
-
-# put the constrained variables to the right hand side
-b[0,0]   = 1.
-b[m-2,0] = 2.
-b[m-1,0] = 2.
-b[-1,0]  = 1.
-
-# each row of the system tells that we want to have the 2nd derivative equal to some constant
-for i in range(n-3):
-    b[i,0] += 11./n**2
-
-# solve the system
-x = (np.linalg.inv(A)*b).transpose().tolist()[0]
-
-# re-introduce constrained variables
-x.insert(0, 1.)
-x.insert(m, 2.)
-x.append(1.)
-\end{python}
-\fi
-
+\section{The Jacobi and Gauss-Seidel iterative methods}
 $$
 \left\{
 \begin{array}{cccccccc}
@@ -533,40 +459,60 @@ $$
 x_i^{(k)} = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=1}^{i-1} a_{ij}x_j^{(k)} -  \sum\limits_{j=i+1}^n a_{ij}x_j^{(k-1)} \right), \quad \text{for } i=1,2,\dots,n
 $$
 
+
+\section{Smooth an array}
+\label{sec:arraysmooth}
+The time has come to write some code. Let us examine the following program:
+\inputminted[frame=single,linenos=true]{python}{lst_linsys01.py}
+
+Top left image of the Figure~\ref{fig:linsys_smooth} shows the initialization of the array \mintinline{python}{x}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.32\linewidth]{linsys_smooth0.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth1.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth2.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth3.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth4.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth5.png}
+    \caption{Smoothing an array: first 128 iterations of the program from section~\ref{sec:arraysmooth}.}
+    \label{fig:linsys_smooth}
+\end{figure}
+
+
+
+
 \begin{equation}
 %\label{eq:1d:smooth}
 \nonumber
 \left\{
 \begin{array}{cccccccccccl}
--x_0  &2x_1  & -x_2  &       &         &        &                 &          &          &          &          &= 0 \\
-     &-x_1  & +2x_2 & -x_3  &         &        &                 &          &          &          &          &= 0 \\
-     &      & -x_2  & +2x_3 & -x_4    &        &                 &          &          &          &          &= 0 \\
-     &      &       &       &         & \ddots &                 &          &          &          &          &  \vdots \\
-     &      &       &       &         &        &        -x_{27}  & +2x_{28} & -x_{29}  &          &          &= 0 \\
-     &      &       &       &         &        &                 & -x_{28}  & +2x_{29} & -x_{30}  &          &= 0 \\
-     &      &       &       &         &        &                 &          & -x_{29}  & +2x_{30} &  -x_{31} &= 0 \\
+-x_0 & +2x_1 & -x_2  &       &      &        &         &          &          &          &         &= 0 \\
+     & -x_1  & +2x_2 & -x_3  &      &        &         &          &          &          &         &= 0 \\
+     &       & -x_2  & +2x_3 & -x_4 &        &         &          &          &          &         &= 0 \\
+     &       &       &       &      & \ddots &         &          &          &          &         &  \vdots \\
+     &       &       &       &      &        & -x_{27} & +2x_{28} & -x_{29}  &          &         &= 0 \\
+     &       &       &       &      &        &         & -x_{28}  & +2x_{29} & -x_{30}  &         &= 0 \\
+     &       &       &       &      &        &         &          & -x_{29}  & +2x_{30} & -x_{31} &= 0 \\
 \end{array}
 \right.
 \end{equation}
 
 
-\begin{figure}[h!tb]
-\begin{minted}[linenos=true]{python}
-# initialize the data array
-x = [0.] * 32
-x[0] = x[31] = 1.
-x[18] = 2.
+\section{Add some constraints}
+\inputminted[frame=single,linenos=true]{python}{lst_linsys02.py}
 
-# smooth the array values other than at indices 0,18,31
-for iter in range(1000):
-    for i in range(len(x)):
-        if i in [0,18,31]: continue
-        x[i] = (x[i-1]+x[i+1])/2.
-\end{minted}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.32\linewidth]{linsys_smooth_constrain0.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth_constrain1.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth_constrain2.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth_constrain3.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth_constrain4.png}
+    \includegraphics[width=.32\linewidth]{linsys_smooth_constrain5.png}
+    \caption{Smoothing an array.}
+    \label{fig:linsys_smooth_constrain}
 \end{figure}
-
-
-
 
 \begin{equation}
 \nonumber
@@ -590,6 +536,27 @@ $\left\{
 }
 \end{equation}
 
+\section{RHS}
+
+\inputminted[frame=single,linenos=true]{python}{lst_linsys03.py}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.32\linewidth]{linsys_curvature0.png}
+    \includegraphics[width=.32\linewidth]{linsys_curvature1.png}
+    \includegraphics[width=.32\linewidth]{linsys_curvature2.png}
+    \includegraphics[width=.32\linewidth]{linsys_curvature3.png}
+    \includegraphics[width=.32\linewidth]{linsys_curvature4.png}
+    \includegraphics[width=.32\linewidth]{linsys_curvature5.png}
+    \caption{Smoothing an array.}
+    \label{fig:linsys_smooth_constrain}
+\end{figure}
+
+
+
+\section{3D example}
+
+
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=.3\linewidth]{barycenter/1ring.png}
@@ -601,7 +568,7 @@ $\left\{
 	\centering
 	\includegraphics[width=.8\linewidth]{barycenter/ls-teaser2.jpg}
 	\includegraphics[width=.8\linewidth]{barycenter/ls-teaser.jpg}
-	\includegraphics[width=.8\linewidth]{barycenter/ls-teaser3.jpg}
+%	\includegraphics[width=.8\linewidth]{barycenter/ls-teaser3.jpg}
 	\caption{.}
 	\label{fig:????}
 \end{figure}
