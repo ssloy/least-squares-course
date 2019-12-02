@@ -195,7 +195,7 @@ P(k;n,p) = C_n^k p^k (1-p)^{n-k}
 $$
 
 Let us take an ordinary coin ($p=1/2$), flip it ten times ($n=10$), and count how many times we get the tails:
-$$P(k) = C_{10}^k \frac{1}{2^k}\left(1-\frac{1}{2}\right)^{n-k} = \frac{C_{10}^k}{2^n}$$
+$$P(k) = C_{10}^k \frac{1}{2^k}\left(1-\frac{1}{2}\right)^{10-k} = \frac{C_{10}^k}{2^{10}}$$
 Figure~\ref{fig:binomial}, left shows what a probability density graph looks like.
 
 \begin{figure}[htb!]
@@ -1195,7 +1195,67 @@ $\left\{
 \end{figure}
 
 
-\chapter{???From least squares to neural networks???}
+\chapter{From least squares to neural networks}
+\section{Logistic regression}
+Two possible classes encoded as $y \in \{0,1\}$ and assume
+$$
+p(y=1|x,w) = \frac{1}{1+e^{-w^\top x}},
+$$
+where $w$ is a $(m+1)$-parameter vector and the last element of $x$ is the constant 1.
+
+Follows that
+$$
+p(y=0|x,w) = 1-P(y=1|x,w) = \frac{1}{1+e^{w^\top x}}
+$$
+
+Given $n$ independently distributed data points $x_i$ with corresponding labels $y_i$, we can write the log-likelihood as
+$$
+\log \mathcal{L}(w) = \log \prod_{i=1}^n p_i(w)^{y_i}  (1-p_i(w))^{1-y_i} = \sum_{i=1}^n \left(y_i w^\top x_i - \log\left(1+e^{w^\top x}\right)\right),
+$$
+where $p_i(w):=p(y_i=1|x_i, w)$.
+
+To maximize $\log\mathcal L$, we set its derivatives to 0 and obtain
+$$
+\frac{\partial\log\mathcal L}{\partial w}(w) = \sum_{i=1}^n x_i(y_i-p_i(w)) = 0,
+$$
+so we have $m+1$ non-linear equations in $w$. 
+We can rewrite the system as
+\begin{equation}
+\frac{\partial\log\mathcal L}{\partial w}(w) = X^\top (y-p) = 0,
+\label{eq:logistic}
+\end{equation}
+where $X$ is the $n\times (m+1)$ matrix whose rows are $x_i$, $y:=\begin{bmatrix}y_1 & \dots & y_n\end{bmatrix}^\top$ and $p:=\begin{bmatrix}p_1(w) & \dots & p_n(w)\end{bmatrix}^\top$.
+
+We can solve the system~\eqref{eq:logistic} iteratively using Newton-Raphson steps:
+\begin{equation}
+w^{(k+1)} = w^{(k)} - \left(\frac{\partial^2 \log \mathcal L}{\partial w \partial w^\top}\left(w^{(k)}\right)\right)^{-1}\frac{\partial \log \mathcal L}{\partial w}\left(w^{(k)}\right)
+\label{eq:newton1}
+\end{equation}
+Let $V$ be $n\times n$ diagonal matrix with $V_{i,i} = p_i(w)(1-p_i(w))$, it is straightforward to verify that the Hessian matrix has the following expression:
+$$
+\frac{\partial^2 \log \mathcal L}{\partial w \partial w^\top}\left(w\right) = -X^\top V X.
+$$
+Then~\eqref{eq:newton1} becomes:
+\begin{equation}
+\label{eq:newton2}
+\begin{split}
+w^{(k+1)} &= w^{(k)} + \left(X^\top V^{(k)} X\right)^{-1} X^\top (y - p^{(k)}) \\
+          &= \left(X^\top V^{(k)} X\right)^{-1} X^\top V^{(k)} \left(X w^{(k)} + {V^{(k)}}^{-1} (y - p^{(k)})\right) \\
+          &= \left(X^\top V^{(k)} X\right)^{-1} X^\top V^{(k)} z^{(k)},
+\end{split}
+\end{equation}
+where $z^{(k)}:=Xw^{(k)} + {V^{(k)}}^{-1} (y - p^{(k)})$ and where $V^{(k)}$ and $p^{(k)}$ are $V$ and $p$, respectively, evaluated at $w^{(k)}$.
+
+Note that $w^{(k+1)}$ as given by~\eqref{eq:newton2} also satisfies
+$$
+w^{(k+1)} = \argmin\limits_w \left(z^{(k)}-Xw\right)^\top V^{(k)} \left(z^{(k)}-Xw\right),
+$$
+a weighted least-squares problem, and hense iterating~\eqref{eq:newton2} is often called iteratively reweighted least squares.
+It is easy to see that the Hessian matrix $X^\top V X$ is positive definite (it follows from the fact that $V>0$), and thus is a convex optimization problem.
+
+Note that convergence fails if the two classes are linearly separable. In that case we can handle this via a regularization.
+
+
 
 \end{document}
 

@@ -72,14 +72,14 @@ def animate(i):
 draw(0)
 plt.gca().axes.get_yaxis().set_visible(False)
 plt.gca().axes.get_xaxis().set_visible(False)
-
+plt.tight_layout()
 
 ani = animation.FuncAnimation(fig, animate, frames=np.arange(0, 100), interval=1, blit=False, save_count=100)
-ani.save('classifier.gif', dpi=80, writer='imagemagick')
+#ani.save('classifier.gif', dpi=80, writer='imagemagick')
 
-#from matplotlib.animation import FFMpegWriter
-#writer = FFMpegWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
-#ani.save("classifier.mp4", writer=writer)
+from matplotlib.animation import FFMpegWriter
+writer = FFMpegWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+ani.save("classifier.mp4", writer=writer)
 
 #plt.show()
 
