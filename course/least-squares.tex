@@ -576,6 +576,18 @@ $\left\{
 
 \chapter{Finite elements example: the Galerkin weighted residual method}
 
+\section{Approximation of vectors}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.3\linewidth]{vector_approximation.pdf}
+	\caption{.}
+	\label{fig:vector_approximation}
+\end{figure}
+
+
+\section{Approximation of functions}
+
 In this section we will consider a simple boundary value problem and its relation to systems of linear equations.
 The boundary value problem is the problem of finding a solution to a given differential equation satisfying boundary conditions at the the boundary of a region.
 Let us start with a ground truth function defined as 
@@ -606,7 +618,7 @@ $$
 Note that equal distance is chosen here for the simplicity of presentation, and is not a requirement for the method.
 Then a set of functions is to be defined over the elements; the approximated solution $\tilde{\varphi}$ is defined as a weighted sum of these functions.
 
-For example, let us choose a set of linear functions:
+For example, let us choose a set of piecewise linear functions (refer to Figure~\ref{fig:fem:blending} for an illustration):
 $$
 w_i(x) := \left\{
 \begin{split}
@@ -617,8 +629,14 @@ w_i(x) := \left\{
 \right.
 $$
 
-\TODO{figure, hat functions}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.3\linewidth]{blending_functions.pdf}
+	\caption{Hat function basis for FEM approximation.}
+	\label{fig:fem:blending}
+\end{figure}
 
+This choice is somewhat arbitrary, there are numerous possible bases.
 Then the approximate solution is a linear combination of the weighting functions:
 $$
 \tilde{\varphi}(x) := 0\cdot w_0(x) + b\cdot w_1(x) + c\cdot w_2(x) + 1\cdot w_3(x),
@@ -1009,7 +1027,7 @@ $$
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.7\linewidth]{error}
+	\includegraphics[width=.7\linewidth]{error.pdf}
 	\caption{Имея заданные векторы $\vec i$, $\vec j$ и $\vec b$, мы стараемся минимизировать длину вектора ошибки $\vec e$. Очевидно, что его длина минимизируется, если он перпендикулярен плоскости, натянутой на векторы $\vec i$ и $\vec j$.}
 	\label{fig:error}
 \end{figure}
