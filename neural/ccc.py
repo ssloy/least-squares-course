@@ -51,6 +51,7 @@ def draw(i):
     X0, X1 = np.meshgrid(x0, x1)
     plt.contourf(X0, X1, Y, 100, vmin=0., vmax=1., cmap=plt.cm.RdYlGn)
 #    plt.colorbar()
+    plt.contour(X0, X1, Y,levels=[.49995, .50005], colors='k', linestyles='--')
 
     for sample, label in zip(samples,labels):
         c = 'g'
