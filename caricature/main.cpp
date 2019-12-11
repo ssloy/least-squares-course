@@ -20,25 +20,12 @@ int main(int argc, char** argv) {
         nlBegin(NL_SYSTEM);
         nlBegin(NL_MATRIX);
 
-        for (int i=0; i<m.nhalfedges(); i++) { // fix the boundary vertices
-            if (m.opp(i)!=-1) continue;
-            int v = m.from(i);
-            nlRowScaling(10.);
+        for (int v=0; v<m.nverts(); v++) { // attachment to the original geometry
+            double scaling = (m.is_boundary_vert(v) ? 10. : 0.03);
+            nlRowScaling(scaling); // the boundary is fixed, the interior has a light attachment
             nlBegin(NL_ROW);
-            nlCoefficient(v,  1);
+            nlCoefficient(v, 1);
             nlRightHandSide(m.point(v)[d]);
-            nlEnd(NL_ROW);
-        }
-        for (int i=0; i<m.nhalfedges(); i++) { // light attachment to the original geometry
-            if (m.opp(i)==-1) continue;
-            int v1 = m.from(i);
-            int v2 = m.to(i);
-
-            nlRowScaling(.2);
-            nlBegin(NL_ROW);
-            nlCoefficient(v1,  1);
-            nlCoefficient(v2, -1);
-            nlRightHandSide(m.point(v1)[d] - m.point(v2)[d]);
             nlEnd(NL_ROW);
         }
 
@@ -54,7 +41,6 @@ int main(int argc, char** argv) {
             }
             nlRightHandSide(2.5*curvature[d]);
             nlEnd(NL_ROW);
-
         }
 
         nlEnd(NL_MATRIX);

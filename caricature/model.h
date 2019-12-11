@@ -23,6 +23,8 @@ public:
     void get_bbox(Vec3f &min, Vec3f &max);
     void print_obj();
 
+    bool is_boundary_vert(int v);
+
     int from(int hid);
     int to(int hid);
     int opp(int hid);

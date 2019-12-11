@@ -45,6 +45,13 @@ Model::Model(const char *filename) : verts(), faces(), v2h(), opposites() {
     compute_opposites();
 }
 
+bool Model::is_boundary_vert(int v) {
+    for (int hid : incident_halfedges(v)) {
+        if (opp(hid)<0) return true;
+    }
+    return false;
+}
+
 int Model::from(int hid) {
     return vert(hid/3, hid%3);
 }
