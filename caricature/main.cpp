@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
         nlBegin(NL_MATRIX);
 
         for (int v=0; v<m.nverts(); v++) { // attachment to the original geometry
-            double scaling = (m.is_boundary_vert(v) ? 10. : 0.03);
+            double scaling = (m.is_boundary_vert(v) ? 10. : 0.29);
             nlRowScaling(scaling); // the boundary is fixed, the interior has a light attachment
             nlBegin(NL_ROW);
             nlCoefficient(v, 1);
@@ -29,17 +29,16 @@ int main(int argc, char** argv) {
             nlEnd(NL_ROW);
         }
 
-        for (int v=0; v<m.nverts(); v++) { // amplify the curvature
+        for (int h=0; h<m.nhalfedges(); h++) { // amplify
+            int v1 = m.from(h);
+            int v2 = m.to(h);
+
             nlRowScaling(1.);
             nlBegin(NL_ROW);
-            int nneigh = m.incident_halfedges(v).size();
-            nlCoefficient(v,  nneigh);
-            Vec3f curvature = m.point(v)*nneigh;
-            for (int hid : m.incident_halfedges(v)) {
-                nlCoefficient(m.to(hid),  -1);
-                curvature = curvature - m.point(m.to(hid));
-            }
-            nlRightHandSide(2.5*curvature[d]);
+            nlCoefficient(v1,  1);
+            nlCoefficient(v2, -1);
+
+            nlRightHandSide(2.5*(m.point(v1)[d] - m.point(v2)[d]));
             nlEnd(NL_ROW);
         }
 

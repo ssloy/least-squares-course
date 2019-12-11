@@ -3,17 +3,16 @@ import matplotlib.pyplot as plt
 
 def amplify(x):
     n = len(x)
-    A = np.matrix(np.zeros((n+(n-2),n)))
-    b = np.matrix(np.zeros((n+(n-2),1)))
+    A = np.matrix(np.zeros((n+(n-1),n)))
+    b = np.matrix(np.zeros((n+(n-1),1)))
     for i in range(0,n):
-        scale = 10. if i==0 or i==n-1 else .1
+        scale = 10. if i==0 or i==n-1 else .3
         A[i, i] =   1.*scale
         b[i, 0] = x[i]*scale
-    for i in range(1,n-1):
-        A[n+i-1, i] = 2.
-        A[n+i-1, i-1] = -1.
-        A[n+i-1, i+1] = -1.
-        b[n+i-1, 0] = 1.7*(2.*x[i] - x[i-1] - x[i+1])
+    for i in range(0,n-1):
+        A[n+i, i] = 1.
+        A[n+i, i+1] = -1.
+        b[n+i, 0] = 1.7*(x[i] - x[i+1])
     return np.linalg.inv(A.T*A)*A.T*b
 
 x = [100,100,97,93,91,87,84,83,85,87,88,89,90,90,90,88,87,86,84,82,80,
