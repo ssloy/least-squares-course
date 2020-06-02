@@ -894,46 +894,52 @@ x^\top M x = x^\top (M_s + M_a) x = x^\top M_s x  + x^\top M_a x = x^\top M_s x.
 $$
 
 
-\section{Ищем минимум квадратичной функции}
+\section{Minimizing a quadratic function}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=.3\linewidth]{minpb1d}
-	\caption{В одномерном мире решение $x^*$ уравнения $ax - b = 0$ также является решением проблемы $\argmin\limits_x(ax^2-2bx)$. }
+	\caption{In 1d, the solution $x^*$ of the equation $ax - b = 0$ solves the minimization problem $\argmin\limits_x(ax^2-2bx)$ as well. }
 	\label{fig:min1d}
 \end{figure}
 
-Вернёмся ненадолго в одномерный мир; я хочу найти минимум функции $f(x) = ax^2 - 2bx$. Число $a$ положительно, поэтому минимум существует; чтобы его найти, приравняем нулю соответствующую производную: $\frac{d}{dx}f(x) = 0$. Продифференцировать одномерную квадратичную функцию труда не составляет: $\frac{d}{dx}f(x) = 2ax - 2b = 0$; поэтому наша проблема сводится к решению уравнения $ax-b=0$, откуда
-путём страшных усилий получам решение $x^* = b/a$. Рисунок~\ref{fig:min1d} иллюстрирует эквивалентность двух проблем: решение $x^*$ уравнения $ax-b=0$ совпадает с решением уравнения $\argmin\limits_x(ax^2 - 2bx)$.
+Let us return to the one-dimensional world for a while; I want to find the minimum of the function $f(x) = ax^2 - 2bx$. 
+The number $a$ is positive, therefore the minimum exists; to find it, we equate with the corresponding derivative with zero: $\frac{d}{dx}f(x) = 0$. 
+It is easy to differentiate a one-dimensional quadratic function: $\frac{d}{dx}f(x) = 2ax - 2b = 0$; so our problem boils down to the equation $ax-b=0$.
+With some effort we can find the solution $x^* = b/a$. Figure~\ref{fig:min1d} illustrates the equivalence of two problems:
+the solution $x^*$ of the equation $ax-b=0$ coincides with the minimizer $\argmin\limits_x(ax^2 - 2bx)$.
 
-Я клоню к тому, что нашей глобальной целью является минимизация квадратичных функций, мы же про наименьшие квадраты говорим. Но при этом что мы действительно умеем делать хорошо, так это решать линейные уравнения (и системы линейных уравнений). И очень здорово, что одно эквивалентно другому!
-Единственное, что нам осталось, так это убедиться, что эта эквивалентность в одномерном мире распространяется и на случай $n$ переменных. Чтобы это проверить, для начала докажем три теоремы.
+My point is that our main goal is to minimize quadratic functions (we are talking about least squares here!).
+The only thing that the humanity knows to do well is to solve linear equations, and it is great that one is equivalent to the other!
+The last thing is to check whether this equivalence holds for the case of $n>1$ variables.
+To do so, we will first prove three theorems.
 
-\subsection{Три теоремы, или дифференцируем матричные выражения}
-Первая теорема гласит о том, что матрицы $1\times 1$ инварианты относительно транспонирования:
+\subsection{Three theorems, or how to differentiate matrix expressions}
+The first theorem states that $1\times 1$ matrices are invariant w.r.t the transposition:
 \begin{theorem}
 $x\in \mathbb R \Rightarrow x^\top = x$
 \end{theorem}
-Доказательство настолько сложное, что для краткости я вынужден его опустить, но попробуйте найти его самостоятельно.
+The proof is left as an exercise.
 
-Вторая теорема позволяет дифференцировать линейные функции. В случае вещественной функции одной переменной мы знаем, что $\frac{d}{dx}(bx) = b$, но что происходит в случае вещественной функции $n$ переменных?
+The second theorem allows us to differentiate linear functions. In the case of a real function of one variable we know that
+$\frac{d}{dx}(bx) = b$, but what happens in the case of a real function of $n$ variables?
 \begin{theorem}
 $\nabla b^\top x = \nabla x^\top b = b$
 \end{theorem}
-То есть, никаких сюрпризов, просто матричная запись того же самого школьного результата. Доказательство крайне прямолинейное, достаточно просто записать определение градиента:
+No surprises here, the same result in a matrix notation. The proof is straightforward, it suffices to write down the definition of the gradient:
 $$\nabla(b^\top x) = \begin{bmatrix}\frac{\partial (b^\top x)}{\partial x_1} \\ \vdots \\ \frac{\partial (b^\top x)}{\partial x_n} \end{bmatrix} = \begin{bmatrix}\frac{\partial (b_1 x_1 + \dots + b_n x_n)}{\partial x_1} \\ \vdots \\ \frac{\partial (b_1 x_1 + \dots + b_n x_n)}{\partial x_n} \end{bmatrix}
 = \begin{bmatrix}b_1 \\ \vdots \\ b_n \end{bmatrix} = b$$
-Применив первую теорему $b^\top x = x^\top b$, мы завершаем доказательство.
+Now applying the first theorem: $b^\top x = x^\top b$, and this concludes the proof.
 
-Теперь переходим к квадратичным формам. Мы знаем, что в случае вещественной функции одной переменной $\frac{d}{dx}(ax^2) = 2ax$, а что будет в случае квадратичной формы?
+Now let us switch to quadratic forms.
+We know that in the case of a real function of one variable we have $\frac{d}{dx}(ax^2) = 2ax$, but what happens with the quadratic forms?
 \begin{theorem}
 $\nabla (x^\top A x) = (A+A^\top)x$
 \end{theorem}
-Кстати, обратите внимание, что если матрица $A$ симметрична, то теорема гласит, что $\nabla (x^\top A x) = 2Ax$.
-
-Это доказательство тоже прямолинейно, просто запишем квадратичную форму как двойную сумму:
+Note that if $A$ is symmetric, then $\nabla (x^\top A x) = 2Ax$.
+The proof is straightforward, let us express the quadratic form as a double sum:
 $$x^\top A x = \sum\limits_i\sum\limits_j a_{ij} x_i x_j$$
-А затем посмотрим, чему равна частная производная этой двойной суммы по переменной $x_i$:
+Now let us differentiate this double sum w.r.t the variable $x_i$:
 \begin{align*}
 \frac{\partial (x^\top A x)}{\partial x_i} 
 &= \frac{\partial}{\partial x_i}  \left(\sum\limits_{k_1}\sum\limits_{k_2} a_{k_1 k_2} x_{k_1} x_{k_2}\right) = \\
@@ -945,25 +951,28 @@ $$x^\top A x = \sum\limits_i\sum\limits_j a_{ij} x_i x_j$$
 & = \sum\limits_{k_2} a_{ik_2}x_{k_2} + \sum\limits_{k_1} a_{k_1 i} x_{k_1} = \\
 & = \sum\limits_{j} (a_{ij} + a_{ji}) x_j \\
 \end{align*}
-Я разбил двойную сумму на четыре случая, которые выделены фигурными скобками. Каждый из этих четырёх случаев дифференцируется тривиально. Осталось сделать последнее действие, собрать частные производные в вектор градиента:
+I split the double sum into four cases, shown by the curly brackets.
+Each of these four cases is trivial to differentiate. 
+Now let us collect the partial derivatives  into a gradient vector:
 $$\nabla(x^\top A x) = \begin{bmatrix}\frac{\partial (x^\top Ax)}{\partial x_1} \\ \vdots \\ \frac{\partial (x^\top A x)}{\partial x_n} \end{bmatrix}  = \begin{bmatrix}\sum\limits_{j} (a_{1j} + a_{j1}) x_j \\ \vdots \\ \sum\limits_{j} (a_{nj} + a_{jn}) x_j \end{bmatrix}  = (A+A^\top)x
 $$
 
-\subsection{Минимум квадратичной функции и решение линейной системы}
-Давайте не забывать направление движения. Мы видели, что при положительном числе $a$ в случае вещественных функций одной перменной решить уравнение $ax=b$ или минимизировать квадратичную функцию $\argmin\limits_x(ax^2 - 2bx)$ --- это одно и то же.
+\subsection{Minimum of a quadratic function and the linear system}
+Recall that for a positive real number $a$ solving the equation
+$ax=b$ is equivalent to the quadratic function $\argmin\limits_x(ax^2 - 2bx)$ minimization.
 
-Мы хотим показать соответствующую связь в случае симметричной положительно определённой матрицы $A$.
-Итак, мы хотим найти минимум квадратичной функции 
+We want to show the corresponding connection in the case of a symmetric positive definite matrix $A$.
+So, we want to find the minimum quadratic function
 $$\argmin\limits_{x\in\mathbb R^n} (x^\top A x - 2b^\top x).$$
-Ровно как и в школе, приравняем нулю производную:
+As before, let us equate the derivative to zero:
 $$\nabla (x^\top A x - 2b^\top x) = \begin{bmatrix}0 \\ \vdots \\ 0 \end{bmatrix}.$$
-Оператор Гамильтона линеен, поэтому мы можем переписать наше уравнение в следующем виде:
-$$\nabla (x^\top A x) - 2\nabla(b^\top x) = \begin{bmatrix}0 \\ \vdots \\ 0 \end{bmatrix}$$
-Теперь применим вторую и третью теоремы о дифференцировании:
-$$(A+A^\top)x - 2b = \begin{bmatrix}0 \\ \vdots \\ 0 \end{bmatrix}$$
-Вспомним, что $A$ симметрична, и поделим уравнение на два, получаем нужную нам систему линейных уравнений:
-$$Ax = b$$
-Ура-ура, перейдя от одной переменной к многим, мы не потеряли ровным счётом ничего, и можем эффективно минимизировать квадратичные функции!
+The Hamilton operator is linear, so we can rewrite our equation as follows:
+$$\nabla (x^\top A x) - 2\nabla(b^\top x) = \begin{bmatrix}0 \\ \vdots \\ 0 \end{bmatrix}.$$
+Now let us apply the second and third differentiation theorems:
+$$(A+A^\top)x - 2b = \begin{bmatrix}0 \\ \vdots \\ 0 \end{bmatrix}.$$
+Recall that $A$ is symmetric, let us divide the equation by 2, and we obtain the final linear system:
+$$Ax = b.$$
+Hurray, passing from one variable to many, we have not lost a thing, and can effectively minimize quadratic functions!
 
 %$$\argmin (x^\top A x - 2b^\top x) = A^{-1}b$$
 
