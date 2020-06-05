@@ -13,6 +13,8 @@ def amplify(x):
         A[n+i, i] = 1.
         A[n+i, i+1] = -1.
         b[n+i, 0] = 1.7*(x[i] - x[i+1])
+    print(A.T*A)
+    print(A.T*b)
     return np.linalg.inv(A.T*A)*A.T*b
 
 x = [100,100,97,93,91,87,84,83,85,87,88,89,90,90,90,88,87,86,84,82,80,
