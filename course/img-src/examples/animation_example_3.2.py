@@ -32,11 +32,9 @@ def animate(iteration):
     if (0==iteration):
         return lines
 
-#    for z in range(0, 10):
-    x = [ x[0] ] + [ (x[i-1]+x[i+1])/2. for i in range(1, len(x)-1) ] + [ x[-1] ]
-#        for i in range(1, len(x)-1):
-#            x[i] = (x[i-1]+x[i+1])/2.
-#        x[-1] = x[-2]
+
+    for i in range(1, len(x)-1):
+        x[i] = ( x[i-1] + x[i+1] )/2.
 
     print(iteration)
 

@@ -1,10 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+plt.rcParams["font.family"] = "serif"
+plt.rcParams["mathtext.fontset"] = "dejavuserif"
+#plt.rcParams['text.usetex'] = True
+plt.rc('font', size=20)
+fig, ax = plt.subplots(1, figsize=(6.40,6.40),dpi=100)
+
 #rhs:radcan(radcan(integrate(n*(x-(i-1)/n)*(x+1),x,(i-1)/n,i/n)) + radcan(integrate(n*((i+1)/n-x)*(x+1),x,i/n,(i+1)/n)));
 
 # initialize the data array
-n = 31
+n = 3
 phi = [0.]*(n+1)
 phi[0] = 0
 phi[n] = 1
