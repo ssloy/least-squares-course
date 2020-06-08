@@ -519,6 +519,19 @@ $$
 
 
 
+\section{Smoothing a 3D surface}
+\label{sec:3dsmooth}
+\inputminted[frame=single,linenos=true]{cpp}{listings/example_3.3.cpp}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.2\linewidth]{example_3.3_0.jpg}
+    \includegraphics[width=.2\linewidth]{example_3.3_1.jpg}
+    \includegraphics[width=.2\linewidth]{example_3.3_2.jpg}
+    \caption{Smoothing a 3D surface (\S\ref{sec:3dsmooth}). \textbf{Left:} the input surface; \textbf{middle:} 10 iterations; \textbf{right:} 1000 iterations.}
+    \label{fig:linsys_smooth_constrain}
+\end{figure}
+
+
 \section{Prescribe the right hand side}
 \label{sec:rhs}
 
@@ -544,15 +557,15 @@ $$
 
 
 
-\inputminted[frame=single,linenos=true]{python}{listings/example_3.3.py}
+\inputminted[frame=single,linenos=true]{python}{listings/example_3.4.py}
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.32\linewidth]{example_3.3_0.png}
-    \includegraphics[width=.32\linewidth]{example_3.3_1.png}
-    \includegraphics[width=.32\linewidth]{example_3.3_2.png}
-    \includegraphics[width=.32\linewidth]{example_3.3_3.png}
-    \includegraphics[width=.32\linewidth]{example_3.3_4.png}
-    \includegraphics[width=.32\linewidth]{example_3.3_5.png}
+    \includegraphics[width=.32\linewidth]{example_3.4_0.png}
+    \includegraphics[width=.32\linewidth]{example_3.4_1.png}
+    \includegraphics[width=.32\linewidth]{example_3.4_2.png}
+    \includegraphics[width=.32\linewidth]{example_3.4_3.png}
+    \includegraphics[width=.32\linewidth]{example_3.4_4.png}
+    \includegraphics[width=.32\linewidth]{example_3.4_5.png}
     \caption{Reconstructing a cubic function (\S\ref{sec:rhs}); the ground truth is shown in green.}
     \label{fig:linsys_smooth_constrain}
 \end{figure}
