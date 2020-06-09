@@ -57,6 +57,10 @@
 \includegraphics[width=.8\linewidth]{caricature.jpg}
 \end{center}
 
+\setcounter{chapter}{-1}
+
+\chapter{Preface}
+
 \chapter{Is probability theory well-founded or do you believe in the theory of evolution?}
 
 This short section is not mandatory for the understanding of the main course; 
@@ -358,6 +362,7 @@ Note that if we take one hundred measurements with $\approx 1A$ reference curren
 then the first hundred measurements would barely affect the result. Let's remember this fact, we will need it later.
 
 \section{Fourth example: back to the least squares}
+\label{sec:springscale}
 You have probably already noticed that in the last two examples, maximizing the logarithm of the likelihood is equivalent to minimizing the sum of squared estimation errors.
 Let us consider one more example.
 Say we want to calibrate a spring scale with a help of reference weights.
@@ -678,7 +683,7 @@ $$
 Most often both integrals are evaluated numerically, or symbolic calculations are peformed over the left integral only.
 The left integral is a dot product between the basis functions and the differential operator defined on a combination of basis functions;
 it depends on the choice of the basis and can be precomputed.
-As our problem is very simple, we will find the solution symbolically.
+As our problem is very simple, we will find the solution analytically.
 
 Attention! The next step will be done on a slippery ground.
 Our weighting functions are not differentiable everywhere, and caution must be taken.
@@ -1005,9 +1010,11 @@ Hurray, passing from one variable to many, we have not lost a thing, and can eff
 
 %$$\argmin (x^\top A x - 2b^\top x) = A^{-1}b$$
 
-\section{Переходим к наименьшим квадратам}
-Наконец мы можем перейти к основному содержанию этой лекции. Представьте, что у нас есть две точки на плоскости $(x_1, y_1)$ и $(x_2, y_2)$, и мы хотим найти уравнение прямой, проходящей через эти две точки.
-Уравнение прямой можно записать в виде $y = \alpha x + \beta$, то есть, наша задача это найти коэффициенты $\alpha$ и $\beta$. Это упражнение для седьмого-восьмого класса школы, запишем систему уравнений:
+\section{Back to the least squares}
+Finally we can move on to the main content of this course. Imagine that we have two points on a plane
+$(x_1, y_1)$ and $(x_2, y_2)$, and we want to find an equation for the line passing through these two points.
+The equation of the line can be written as $y = \alpha x + \beta$, that is, our task is to find the coefficients $\alpha$ and $\beta$.
+This is a secondary school exercise, let us write down the system of equations:
 $$
 \left\{
 \begin{split}
@@ -1017,16 +1024,15 @@ $$
 \right.
 $$
 
-У нас два уравнения с двумя неизвестными ($\alpha$ и $\beta$), остальное известно.
-В общем случае решение существует и единственно. Для удобства перепишем ту же самую систему в матричном виде:
+We have two equations with two unknowns ($\alpha$ and $\beta$), the rest is known.
+In general, there exists a unique solution. For convenience, let's rewrite the same system in a matrix form:
 $$
 \underbrace{\begin{bmatrix}x_1  & 1 \\ x_2 & 1 \end{bmatrix}}_{:=A} 
 \underbrace{\begin{bmatrix} \alpha \\ \beta \end{bmatrix}}_{:=x} = \underbrace{\begin{bmatrix} y_1 \\ y_2 \end{bmatrix}}_{:=b}
 $$
+We obtain the equation $Ax = b$, which is trivially soved as $x^* = A^{-1}b$.
 
-Получим уравнение типа $Ax = b$, которое тривиально решается $x^* = A^{-1}b$.
-
-А теперь представим, что у нас есть \textbf{три} точки, через которые нужно провести прямую:
+And now let us imagine that we have \textbf{three} points through which we need to draw a straight line:
 $$
 \left\{
 \begin{split}
@@ -1037,43 +1043,50 @@ $$
 \right.
 $$
 
-В матричном виде эта система запишется следующим образом:
+In a matrix form, this system can be expressed as follows:
 $$
 \underbrace{\begin{bmatrix}x_1  & 1 \\ x_2 & 1 \\x_3 & 1 \end{bmatrix} }_{:= A\,(3\times 2)}
 \underbrace{\begin{bmatrix} \alpha \\ \beta \end{bmatrix}}_{:=x\,(2\times 1)} = \underbrace{\begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix}}_{:=b\, (3\times 1)}
 $$
-Теперь у нас матрица $A$ прямоугольная, и у неё просто не существует обратной! Это совершенно нормально, так как у нас всего две переменных и три уравнения, и в общем случае эта система не имеет решения.
-Это соверешенно нормальная ситуация в реальном мире, когда точки - это данные зашумлённых измерений, и нам нужно найти параметры $\alpha$ и $\beta$, которые наилучшим образом \textit{приближают} данные измерений.
-Мы этот пример уже рассматривали в первой лекции, когда калибровали безмен. Но тогда у нас решение было чисто алгебраическим и очень громоздким. Давайте попробуем более интуитивный способ.
 
-Нашу систему можно записать в следующем виде:
+The matrix $A$ is rectangular, and thus it is not invertible!
+Sounds legit, we have only two variables and three equations, and in general this system has no solution.
+This is a perfectly normal situation in the real world where the data comes from noisy measurements,
+and we need to find the parameters $\alpha$ and $\beta$ that fit the measurements the best.
+We have already encountered this situation in \S\ref{sec:springscale}, where we calibrated a spring scale.
+However, back then the solution we have obtained was purely algebraic and very cumbersome. Let's try a more intuitive way.
+
+Our system can be written down as follows:
 $$
 \alpha \underbrace{\begin{bmatrix}x_1  \\ x_2 \\x_3  \end{bmatrix} }_{:=\vec{i}}
 +\beta \underbrace{\begin{bmatrix}1 \\ 1 \\1 \end{bmatrix} }_{:=\vec{j}} = 
 \begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}
 $$
-Или, более кратко, 
+Or, in more shortly,
 $$
 \alpha \vec{i} + \beta\vec{j} = \vec{b}.
 $$
-Векторы $\vec i$, $\vec j$ и $\vec b$ известны, нужно найти скаляры $\alpha$ и $\beta$.
-Очевидно, что линейная комбинация $\alpha \vec{i} + \beta\vec{j}$ порождает плоскость, и если вектор $\vec b$ в этой плоскости не лежит, то точного решения не существует; однако же мы ищем приближённое решение.
+The vectors $\vec i$, $\vec j$ and $\vec b$ are known, we are looking for (unknown) scalars $\alpha$ and $\beta$.
+Obviously, the linear combination $\alpha \vec{i} + \beta\vec{j}$ generates a plane, and if the vector $\vec b$
+does not lie in this plane, there is no exact solution; however, we are looking for an \textit{approximate} solution.
 
-Давайте определим ошибку решения как $\vec{e}(\alpha, \beta) :=  \alpha \vec{i} + \beta\vec{j} - \vec b$.
-Нашей зачей является найти такие значения параметров $\alpha$ и $\beta$, которые минимизируют длину вектора $\vec{e}(\alpha, \beta)$. Иначе говоря, проблема записывается как $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|$.
-Иллюстрация дана на рисунке~\ref{fig:error}.
+Let's denote the solution error as $\vec{e}(\alpha, \beta) :=  \alpha \vec{i} + \beta\vec{j} - \vec b$.
+Our goal is to find the values of parameters $\alpha$ and $\beta$ that minimize the norm of the vector $\vec{e}(\alpha, \beta)$. 
+In other words, the problem can be formulated as $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|$.
+Refer to Fig.~\ref{fig:error} for an illustration.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=.7\linewidth]{error.pdf}
-	\caption{Имея заданные векторы $\vec i$, $\vec j$ и $\vec b$, мы стараемся минимизировать длину вектора ошибки $\vec e$. Очевидно, что его длина минимизируется, если он перпендикулярен плоскости, натянутой на векторы $\vec i$ и $\vec j$.}
+	\caption{Given the vectors $\vec i$, $\vec j$ and $\vec b$, we want to minimize the norm of the error vector $\vec e$. 
+    Obviously the norm is minimized when the vector is orthogonal to the plane generated by $\vec i$ and $\vec j$.}
 	\label{fig:error}
 \end{figure}
 
-Но постойте, где же наименьшие квадраты? Сейчас будут. Функция извлечения корня $\sqrt{\cdot}$ монотонна, поэтому $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|$ = $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|^2$!
+But wait, where are the least squares? Just a second. The square root function $\sqrt{\cdot}$ is monotonous, so $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|$ = $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|^2$!
 
-Вполне очевидно, что длина вектора ошибки минимизируется, если он перпендикулярен плоскости, натянутой на векторы $\vec i$ и $\vec j$, что можно записать, приравняв нулю соответствующие скалярные произведения:
-
+It is quite obvious that the norm of the error vector is minimized when it is orthogonal to the plane generated by the vectors $\vec i$ and $\vec j$.
+We can express it by equating corresponding dot products to zero:
 $$
 \left\{
 \begin{split}\vec{i}^\top \vec{e}(\alpha, \beta) &= 0\\
@@ -1082,14 +1095,14 @@ $$
 \right.
 $$
 
-В матричном виде эту же самую систему можно записать как
+We can write down the same system in a matrix form:
 $$
 \begin{bmatrix}x_1 & x_2 & x_3 \\ 1 & 1 & 1 \end{bmatrix}
 \left(\alpha \begin{bmatrix}x_1  \\ x_2 \\x_3  \end{bmatrix}
 +\beta \begin{bmatrix}1 \\ 1 \\1 \end{bmatrix} - 
 \begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}\right) = \begin{bmatrix}0\\0\end{bmatrix}
 $$
-или же
+or
 $$
 \begin{bmatrix}x_1 & x_2 & x_3 \\ 1 & 1 & 1 \end{bmatrix}
 \left(
@@ -1098,148 +1111,100 @@ $$
 \begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix}
 \right) = \begin{bmatrix}0\\0\end{bmatrix}
 $$
-Но мы на этом не остановимся, так как запись можно ещё больше сократить:
+But we won't stop there, because the expression can be further shortened:
 $$
 A^\top (Ax - b)= \begin{bmatrix}0\\0\end{bmatrix}
 $$
-И самая последняя трансформация:
+And the very last transformation:
 $$
 A^\top Ax = A^\top b.
 $$
-Давайте посчитаем размерности. Матрица $A$ имеет размер $3\times 2$, поэтому $A^\top A$ имеет размер $2\times 2$. Матрица $b$ имеет размер $3\times 1$, но вектор $A^\top b$ имеет размер $2\times 1$.
-То есть, в общем случае матрица $A^\top A$ обратима! Более того, $A^\top A$ имеет ещё пару приятных свойств.
+Let us do a sanity check. Matrix $A$ is $3\times 2$, thus  $A^\top A$ is $2\times 2$. Matrix $b$ is $3\times 1$, so the matrix $A^\top b$ is $2\times 1$.
+Therefore, in a general case the matrix $A^\top A$ can be invertible! Moreover, $A^\top A$ has a couple more nice properties.
 
 \begin{theorem}
-$A^\top A$ симметрична.
+$A^\top A$ is symmetric.
 \end{theorem}
-Это совсем нетрудно показать:
+It is very easy to show:
 $$
 (A^\top A)^\top = A^\top (A^\top)^\top = A^\top A.
 $$
 
 \begin{theorem}
-	$A^\top A$ положительно полуопределена: $\forall x\in \mathbb R^n\quad x^\top A^\top A x \geq 0.$
+	$A^\top A$ positive semidefinite: $\forall x\in \mathbb R^n\quad x^\top A^\top A x \geq 0.$
 \end{theorem}
-Это следует из того факта, что $x^\top A^\top A x = (A x)^\top A x > 0$.
-
-Кроме того, $A^\top A$ положительно определена в том случае, если $A$ имеет линейно независимые столбцы (ранг $A$ равен количеству переменных в системе).
+It follows from the fact that $x^\top A^\top A x = (A x)^\top A x > 0$.
+Moreover, $A^\top A$ is positive definite in the case where $A$ has linearly independent columns (rank $A$ is equal to the number of the variables in the system).
 
 \vspace{5mm}
 
-Итого, для системы с двумя неизвестными мы доказали, что минимизация 
-квадратичной функции $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|^2$ эквивалентна решению системы линейных уравнений $A^\top A x = A^\top b$. Разумеется, всё это рассуждение применимо и к любому другому количеству переменных, но давайте ещё раз компактно запишем всё вместе простым алгебраическим подсчётом.
-Мы начнём с проблемы наименьших квадратов, придём к минимизации квадратичной функции знакомого нам вида,
-и из этого сделаем вывод об эквивалентности решению системы линейных уравнений. Итак, поехали:
+So, for a system with two unknowns, we have proven that to minimize the quadratic function $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|^2$
+is equivalent to solve the linear system $A^\top A x = A^\top b$.
+Of course, all this reasoning applies to any other number of variables, but let us write it all down again a compact algebraic way.
+Let us start with a least squares problem:
 \begin{align*}
 \argmin \| Ax - b \|^2 &= \argmin (Ax-b)^\top (Ax-b) =\\
-& = \argmin(x^\top A^\top - b^\top)(Ax-b) = \\
-& = \argmin(x^\top A^\top A x - b^\top Ax - x^\top A^\top b + \underbrace{b^\top b}_{\rm const})=\\
-& = \argmin(x^\top A^\top A x - 2b^\top Ax) = \\
-& = \argmin(x^\top \underbrace{(A^\top A)}_{:=A'} x - 2\underbrace{(A^\top b)}_{:=b'}\phantom{}^\top x)
+& = \argmin\left(x^\top A^\top - b^\top\right)(Ax-b) = \\
+& = \argmin\left(x^\top A^\top A x - b^\top Ax - x^\top A^\top b + \underbrace{b^\top b}_{\rm const}\right)=\\
+& = \argmin\left(x^\top A^\top A x - 2b^\top Ax\right) = \\
+& = \argmin\left(x^\top \underbrace{\left(A^\top A\right)}_{:=A'} x - 2\underbrace{\left(A^\top b\right)}_{:=b'}\phantom{}^\top x\right)
 \end{align*}
-Таким образом, проблема наименьших квадратов $\argmin \| Ax - b \|^2$  эквивалентна минимизации квадратичной функции $\argmin (x^\top A' x - 2b'^\top x)$ с (в общем случае) симметричной положительно определённой матрицей $A'$, что, в свою очередь, эквивалентно решению системы линейных уравнений $A'x = b'$. Уфф. Теория закончилась.
+Having started with a least squares problem, we have come to the quadratic function minimization problem we know already.
+Thus, the least squares problem $\argmin \| Ax - b \|^2$  is equivalent to minimizing the quadratic function $\argmin \left(x^\top A' x - 2b'^\top x\right)$ 
+with (in general) a symmetric positive definite matrix $A'$, which in turn is equivalent to solving a system of linear equations $A'x = b'$. Phew. The theory is over.
 
 
 %\chapter{Finite elements example: the Ritz method}
 
 
-\chapter{Conjugate gradient for geometry processing}
+\chapter{Least squares through examples}
 
-\begin{equation}
-\nonumber
-\resizebox{\hsize}{!}{
-$\left\{
-\begin{array}{cccccccccccccccccl}
-2x_1  & -x_2  &       &         &        &          &           &          &                   &            &          &         &        &          &          &          &                   &= x_0 \\
--x_1  & +2x_2 & -x_3  &         &        &          &           &          &                   &            &          &         &        &          &          &          &                   &= 0 \\
-      & -x_2  & +2x_3 & -x_4    &        &          &           &          &                   &            &          &         &        &          &          &          &                   &= 0 \\
-      &       &       &         & \ddots &          &           &          &                   &            &          &         &        &          &          &          &                   &  \vdots \\
-      &       &       &         &        &  -x_{15} &  +2x_{16} & -x_{17}  &                   &            &          &         &        &          &          &          &                   &= 0      \\
-      &       &       &         &        &          &  -x_{16}  & +2x_{17} &                   &            &          &         &        &          &          &          &                   &= x_{18} \\
-      &       &       &         &        &          &           &          &          +2x_{19} & -x_{20}    &          &         &        &          &          &          &                   &= x_{18} \\
-      &       &       &         &        &          &           &          &           -x_{19} & +2x_{20}   & -x_{21}  &         &        &          &          &          &                   &= 0 \\
-      &       &       &         &        &          &           &          &                   &            &          &  \ddots &        &          &          &          &                   &  \vdots \\
-      &       &       &         &        &          &           &          &                   &            &          &         &        & -x_{27}  & +2x_{28} & -x_{29}  &                   &= 0 \\
-      &       &       &         &        &          &           &          &                   &            &          &         &        &          & -x_{28}  & +2x_{29} & -x_{30}           &= 0 \\
-      &       &       &         &        &          &           &          &                   &            &          &         &        &          &          & -x_{29}  & +2x_{30}          &= x_{31} \\
-\end{array}
-\right.$
-}
-\end{equation}
+\section{Linear-quadratic regulator}
+
+$$
+v_{k+1} = x_k + u_k
+$$
+
+$x_0=0.5$, $x_n=2.3$, $n=30$
+
+$$
+\min J(\vec{x},\vec{u}) \quad s.t.~  x_{i+1} = x_i + u_i ~~ \forall i \in 0..n-1
+$$
 
 
+$$
+J(\vec{u}) := \sum\limits_{i=1}^n (x_i-x_n)^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-x_n+x_0\right)^2
+$$
 
-\begin{equation}
-\nonumber
-\resizebox{\hsize}{!}{
-$\left\{
-\begin{array}{|c|ccccccc|c|ccccccc|c|c}
--x_0 & +x_1  &      &      &         &        &            &         &         &         &            &        &            &         &         &         &         &= 0 \\
-     &  -x_1 & +x_2 &      &         &        &            &         &         &         &            &        &            &         &         &         &         &= 0 \\
-     &       & -x_2 & +x_3 &         &        &            &         &         &         &            &        &            &         &         &         &         &= 0 \\
-     &       &      & -x_3 & +x_4    &        &            &         &         &         &            &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         & \ddots &            &         &         &         &            &        &            &         &         &         &         &  \vdots  \\
-     &       &      &      &         &        &    -x_{16} & +x_{17} &         &         &            &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         &        &            & -x_{17} & +x_{18} &         &            &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         &        &            &         & -x_{18} & +x_{19} &            &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         &        &            &         &         & -x_{19} & +x_{20}    &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         &        &            &         &         &         &            & \ddots &            &         &         &         &         &  \vdots  \\
-     &       &      &      &         &        &            &         &         &         &            &        &    -x_{27} & +x_{28} &         &         &         &= 0 \\
-     &       &      &      &         &        &            &         &         &         &            &        &            & -x_{28} & +x_{29} &         &         &= 0 \\
-     &       &      &      &         &        &            &         &         &         &            &        &            &         & -x_{29} & +x_{30} &         &= 0 \\
-     &       &      &      &         &        &            &         &         &         &            &        &            &         &         & -x_{30} & +x_{31} &= 0 \\
-\end{array}
-\right.$
-}
-\end{equation}
 
-\begin{equation}
-\nonumber
-\resizebox{\hsize}{!}{
-$\left\{
-\begin{array}{ccccccccccccccl}
-       +x_1  &      &      &         &        &            &         &                   &            &        &            &         &         &                   &= +x_0 \\
-        -x_1 & +x_2 &      &         &        &            &         &                   &            &        &            &         &         &                   &= 0 \\
-             & -x_2 & +x_3 &         &        &            &         &                   &            &        &            &         &         &                   &= 0 \\
-             &      & -x_3 & +x_4    &        &            &         &                   &            &        &            &         &         &                   &= 0 \\
-             &      &      &         & \ddots &            &         &                   &            &        &            &         &         &                   &  \vdots  \\
-             &      &      &         &        &    -x_{16} & +x_{17} &                   &            &        &            &         &         &                   &= 0 \\
-             &      &      &         &        &            & -x_{17} &                   &            &        &            &         &         &                   &= -x_{18} \\
-             &      &      &         &        &            &         &           +x_{19} &            &        &            &         &         &                   &= +x_{18} \\
-             &      &      &         &        &            &         &           -x_{19} & +x_{20}    &        &            &         &         &                   &= 0 \\
-             &      &      &         &        &            &         &                   &            & \ddots &            &         &         &                   &  \vdots  \\
-             &      &      &         &        &            &         &                   &            &        &    -x_{27} & +x_{28} &         &                   &= 0 \\
-             &      &      &         &        &            &         &                   &            &        &            & -x_{28} & +x_{29} &                   &= 0 \\
-             &      &      &         &        &            &         &                   &            &        &            &         & -x_{29} & +x_{30}           &= 0 \\
-             &      &      &         &        &            &         &                   &            &        &            &         &         & -x_{30}           &= -x_{31} \\
-\end{array}
-\right.$
-}
-\end{equation}
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
 
-\begin{equation}
-\nonumber
-\resizebox{\hsize}{!}{
-$\left\{
-\begin{array}{cccccccccccccccccl}
--x_0 & +x_1  &      &      &         &        &            &         &         &         &            &        &            &         &         &         &         &= 0 \\
-     &  -x_1 & +x_2 &      &         &        &            &         &         &         &            &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         & \ddots &            &         &         &         &            &        &            &         &         &         &         &  \vdots   \\
-     &       &      &      &         &        &    -x_{16} & +x_{17} &         &         &            &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         &        &            & -x_{17} & +x_{18} &         &            &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         &        &            &         & -x_{18} & +x_{19} &            &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         &        &            &         &         & -x_{19} & +x_{20}    &        &            &         &         &         &         &= 0 \\
-     &       &      &      &         &        &            &         &         &         &            & \ddots &            &         &         &         &         &  \vdots  \\
-     &       &      &      &         &        &            &         &         &         &            &        &            &         & -x_{29} & +x_{30} &         &= 0 \\
-     &       &      &      &         &        &            &         &         &         &            &        &            &         &         & -x_{30} & +x_{31} &= 0 \\
-100\cdot x_{0}     &       &      &      &         &        &            &         &         &         &            &        &            &         &         &         &  &= 100\cdot 1 \\
-     &       &      &      &         &        &            &         & 100\cdot x_{18} &         &            &        &            &         &         &         &         &= 100\cdot 2 \\
-     &       &      &      &         &        &            &         &         &         &            &        &            &         &         &         & 100\cdot x_{31} &= 100\cdot 1 \\
-\end{array}
-\right.$
-}
-\end{equation}
+$$
+J(\vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2
+$$
 
+
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
+
+$$
+J(\vec{u}) := \sum\limits_{i=1}^n (x_i-x_n)^2 + \sum\limits_{i=0}^{n-1} u_i^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-x_n+x_0\right)^2 +\sum\limits_{i=0}^{n-1} u_i^2
+$$
+
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.32\linewidth]{example_6.1_a.png}
+    \includegraphics[width=.32\linewidth]{example_6.1_b.png}
+    \includegraphics[width=.32\linewidth]{example_6.1_c.png}
+    \caption{1D optimal control problem. \textbf{Left:} lowest settling time goal; \textbf{middle:} lowest control signal goal; \textbf{right:} a trade-off between the control signal amplitude and the settling time.}
+    \label{fig:lqr}
+\end{figure}
+
+$$
+u_k = -F v_k,
+$$
+where $F$ is the gain.
 
 
 \begin{figure}[ht]
@@ -1261,6 +1226,13 @@ $\left\{
 	\caption{Least squares conformal mapping. \textbf{Left:} input mesh; \textbf{middle:} unfolded mesh textured by an artist; \textbf{right:} final textured surface. Two pinned vertices are shown in red.}
 	\label{fig:????}
 \end{figure}
+
+
+
+\chapter{Under the hood of the conjugate gradient method}
+
+
+
 
 
 \chapter{From least squares to neural networks}
