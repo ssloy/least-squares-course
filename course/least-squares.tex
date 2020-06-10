@@ -1172,13 +1172,13 @@ with (in general) a symmetric positive definite matrix $A'$, which in turn is eq
 \section{Linear-quadratic regulator}
 
 $$
-v_{k+1} = x_k + u_k
+v_{k+1} = v_k + u_k
 $$
 
-$x_0=0.5$, $x_n=2.3$, $n=30$
+$v_0=0.5$, $v_n=2.3$, $n=30$
 
 $$
-\min J(\vec{x},\vec{u}) \quad s.t.~  x_{i+1} = x_i + u_i ~~ \forall i \in 0..n-1
+\min J(\vec{v},\vec{u}) \quad s.t.~  v_{i+1} = v_i + u_i ~~ \forall i \in 0..n-1
 $$
 
 
@@ -1197,7 +1197,7 @@ $$
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
 
 $$
-J(\vec{u}) := \sum\limits_{i=1}^n (x_i-x_n)^2 + \sum\limits_{i=0}^{n-1} u_i^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-x_n+x_0\right)^2 +\sum\limits_{i=0}^{n-1} u_i^2
+J(\vec{u}) := \sum\limits_{i=1}^n (x_i-x_n)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-x_n+x_0\right)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2
 $$
 
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}

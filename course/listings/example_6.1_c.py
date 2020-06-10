@@ -9,7 +9,7 @@ for i in range(0,n): # x_i = 2.3
         A[i, j] = 1
     b[i, 0] = 2.3 - 0.5
 for i in range(0,n): # u_i = 0
-    A[n+i, i] = 1
+    A[n+i, i] = 1*2.
 
 u = np.linalg.inv(A.T*A)*A.T*b
 v = [.5 + np.sum(u[:i]) for i in range(0,n+1)]
