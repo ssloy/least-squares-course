@@ -1,7 +1,7 @@
 #include "model.h"
 
 int main(void) {
-    Model m("../input.obj");
+    Model m("../input.obj"); // parse the input mesh
 
     // smooth the surface through Gauss-Seidel iterations
     for (int it=0; it<1000; it++) {
@@ -11,7 +11,7 @@ int main(void) {
         }
     }
 
-    std::cout << m;
+    std::cout << m; // drop the result
     return 0;
 }
 

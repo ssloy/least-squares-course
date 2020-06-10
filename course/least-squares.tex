@@ -2,6 +2,8 @@
 
 \documentclass[notitlepage]{report}
 
+\usepackage{fancyhdr}
+
 \usepackage[vmarginratio=1:1,a4paper,body={6.5in, 9.5in}]{geometry}
 
 \usepackage[T2A]{fontenc}
@@ -46,6 +48,11 @@
 
 \begin{document}
 
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
+\fancyhead[R]{\textcolor{red}{optional for reading}}
+\fancyhead[L]{\chaptername\ \thechapter\ --\ \leftmark}
+
 \maketitle
 
 \vspace{10mm}
@@ -71,7 +78,7 @@ We show how this simple method can solve a large number of problems that would b
 This course provides a simple, understandable yet powerful tool that most coders can use,
 in the contrast with other algorithms sharing this paradigm (numerical simulation and deep learning) which are more complex to master.
 
-\chapter{Is probability theory well-founded or do you believe in the theory of evolution?}
+\chapter{Do you believe in the probability theory?}
 
 This short section is not mandatory for the understanding of the main course; 
 the idea behind is to warm up before attacking code and formulae.
@@ -276,11 +283,11 @@ Figure~\ref{fig:binomial} shows the probability density graph for the Bernoulli'
 
 Let us imagine that we have a constant physical quantity that we want to measure; for example, it can be a length to measure with a ruler or a voltage with a voltmeter.
 In the real world, any measurement gives \textit{an approximation} of this value, but not the value itself.
-The methods I am describing here were developed by Gauss at the end of the 18th century, when he measured the orbits of celestial bodies
+The methods I am describing here were developed by Gauß at the end of the 18th century, when he measured the orbits of celestial bodies
 \footnote{Note that Legendre has published an equivalent method in 1805, 
-whereas Gauss' first publication is dated by 1809. Gauss has always claimed that he had been using the method since 1795,
+whereas Gauß' first publication is dated by 1809. Gauß has always claimed that he had been using the method since 1795,
 and this is a very famous priority dispute~\cite{https://projecteuclid.org/download/pdf_1/euclid.aos/1176345451} in the history of statistics.
-There are, however, numerous evidence to support the thesis that Gauss possessed the method before Legendre, but he was late in his communication.}.
+There are, however, numerous evidence to support the thesis that Gauß possessed the method before Legendre, but he was late in his communication.}.
 ~\cite{Theoria Motus Corporum Coelestium}
 
 For example, if we measure the battery voltage $N$ times, we get $N$ different measurements. Which of them should we take? All of them! 
@@ -428,7 +435,7 @@ b &= \frac{1}{N}\left(  \sum\limits_{j=1}^N y_j - a  \sum\limits_{j=1}^N x_j \ri
 \section*{Conclusion}
 The least squares method is a particular case of maximizing likelihood in cases where the probability density is Gaussian.
 If the density is not Gaussian, the least squares approach can produce an estimate different from the MLE (maximum likelihood estimation).
-By the way, Gauss conjectured that the type of noise is of no importance, and the only thing that matters is the independence of trials.
+By the way, Gauß conjectured that the type of noise is of no importance, and the only thing that matters is the independence of trials.
 
 As you have already noticed, the more we parameters we have, the more cumbersome the analytical solutions are.
 Fortunately, we are not living in XVIII century anymore, we have computers!
@@ -436,13 +443,17 @@ Next we will try to build a geometric intuition on least squares, and see how ca
 
 
 \chapter{Introduction to systems of linear equations}
+\fancyhead[R]{\textcolor{green}{core text}}
 
 \section{Smooth an array}
 \label{sec:arraysmooth}
 The time has come to write some code. Let us examine the following program:
 \inputminted[frame=single,linenos=true]{python}{listings/example_3.1.py}
-
-Top left image of the Figure~\ref{fig:linsys_smooth} shows the initialization of the array \mintinline{python}{x}.
+We start from a 16 elements array, and we iterate over and over a simple procedure: we replace each element with a barycenter of its neighbours;
+the first and the last element are fixed. What should we get at the end? Does it converge or would it oscillate infinitely?
+Intuitively, each peak in the signal is cut out, and therefore the array will be smoothed over time.
+Top left image of the Figure~\ref{fig:linsys_smooth} shows the initialization of the array \mintinline{python}{x},
+other images show the evolution of the data.
 
 \begin{figure}[ht]
     \centering
@@ -456,10 +467,11 @@ Top left image of the Figure~\ref{fig:linsys_smooth} shows the initialization of
     \label{fig:linsys_smooth}
 \end{figure}
 
+Is there a way to predict the result without guessing or executing the program? The answer is yes; but first let us recall how to solve systems of linear equations.
 
-
-\section{The Jacobi and Gauss-Seidel iterative methods}
+\section{The Jacobi and Gauß-Seidel iterative methods}
 \label{sec:gauss-seidel}
+Let us suppose that we have an ordinary system of linear equations:
 $$
 \left\{
 \begin{array}{cccccccc}
@@ -470,7 +482,7 @@ a_{n1}x_1 & + &  a_{n2}x_2  &+      & \cdots & + & a_{nn}x_n &= b_n\\
 \end{array}
 \right.
 $$
-
+It can be rewritten by leaving  $x_i$ only on the left side of the equations:
 \begin{align*}
 x_1 &= \frac{1}{a_{11}}(b_1 - a_{12}x_2 - a_{13}x_3 - \cdots - a_{1n}x_n)\\
 x_2 &= \frac{1}{a_{22}}(b_2 - a_{21}x_1 - a_{23}x_3 - \cdots - a_{2n}x_n)\\
@@ -478,23 +490,27 @@ x_2 &= \frac{1}{a_{22}}(b_2 - a_{21}x_1 - a_{23}x_3 - \cdots - a_{2n}x_n)\\
 x_n &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots - a_{n,n-1}x_{n-1})
 \end{align*}
 
-$$\vec{x}^{(0)}=\left(x_1^{(0)}, x_2^{(0)}, \dots, x_n^{(0)}\right)$$
-
-$$\vec{x}^{(1)}=\left(x_1^{(1)}, x_2^{(1)}, \dots, x_n^{(1)}\right)$$
-
+Suppose that we have an arbitrary vector $\vec{x}^{(0)}=\left(x_1^{(0)}, x_2^{(0)}, \dots, x_n^{(0)}\right)$, approximating the solution (an initial guess, for example, a zero vector).
+Then, if we plug it into the right side of the equations, we can compute an updated approximated solution $\vec{x}^{(1)}=\left(x_1^{(1)}, x_2^{(1)}, \dots, x_n^{(1)}\right)$.
+In other words, $\vec{x}^{(1)}$ is derived from $\vec{x}^{(0)}$ as follows:
 \begin{align*}
 x_1^{(1)} &= \frac{1}{a_{11}}(b_1 - a_{12}x_2^{(0)} - a_{13}x_3^{(0)} - \cdots - a_{1n}x_n^{(0)})\\
 x_2^{(1)} &= \frac{1}{a_{22}}(b_2 - a_{21}x_1^{(0)} - a_{23}x_3^{(0)} - \cdots - a_{2n}x_n^{(0)})\\
-    & \qquad \vdots \\                                                                          
+    & \qquad \vdots \\
 x_n^{(1)} &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1^{(0)} - a_{n2}x_2^{(0)} - \cdots - a_{n,n-1}x_{n-1}^{(0)})
 \end{align*}
 
-$$\vec{x}^{(k)}=\left(x_1^{(k)}, x_2^{(k)}, \dots, x_n^{(k)}\right)$$
-
+Repeating the process $k$ times, the solution can be approximated by the vector $\vec{x}^{(k)}=\left(x_1^{(k)}, x_2^{(k)}, \dots, x_n^{(k)}\right)$.
+Let us write down the recursive formula just in case:
 $$
 x_i^{(k)} = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=1,j\neq i}^n a_{ij}x_j^{(k-1)} \right), \quad \text{for } i=1,2,\dots,n
 $$
 
+Under some assumptions about the system (for example, it is quite obvious that diagonal elements must not be zero), this procedure converges to the true solution.
+This iteration is known as the Jacobi method.
+Of course, there are other much more powerful numeric methods, for example, the conjugate gradient method, but the Jacobi method is the simplest one.
+
+What is the connection with the code from \S\ref{sec:arraysmooth}? It turns out that the program solves the following system with the Jacobi method:
 \begin{equation}
 \label{eq:1d:smooth}
 \left\{
@@ -509,16 +525,21 @@ x_{15} &= 1 \\
 \end{array}
 \right.
 \end{equation}
+Do not take my word for it, grab a pencil and verify it!
+So, if we consider the array as a sampled function, the linear system prescribes a constant derivative and fixes the extremities, therefore the result can only be a straight line.
 
-
-
-
+There is a very interesting modification of the Jacobi method, named after Johann Carl Friedrich Gauß and Philipp Ludwig von Seidel.
+This modification is even easier to implement than the Jacobi method, and it often requires fewer iterations to produce the same degree of accuracy.
+With the Jacobi method, the values of obtained in the $k$-th approximation remain unchanged until the entire
+$k$-th approximation has been calculated. With the Gauß-Seidel method, on the other hand, we use the new values of each as soon as they are known.
+The recursive formula can be written as follows:
 $$
 x_i^{(k)} = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=1}^{i-1} a_{ij}x_j^{(k)} -  \sum\limits_{j=i+1}^n a_{ij}x_j^{(k-1)} \right), \quad \text{for } i=1,2,\dots,n
 $$
 
+It allows to perform all the computations in place. The following program solves the same equation~\eqref{eq:1d:smooth} by the Gauß-Seidel method:
 \inputminted[frame=single,linenos=true]{python}{listings/example_3.2.py}
-
+Figure~\ref{fig:arraysmooth_gs} shows the behaviour of this program.
 
 \begin{figure}[ht]
     \centering
@@ -528,32 +549,20 @@ $$
     \includegraphics[width=.32\linewidth]{example_3.2_3.png}
     \includegraphics[width=.32\linewidth]{example_3.2_4.png}
     \includegraphics[width=.32\linewidth]{example_3.2_5.png}
-    \caption{Linear function via Gauss-Seidel iteration (\S\ref{sec:gauss-seidel}).}
-    \label{fig:linsys_smooth_constrain}
+    \caption{Linear function via Gauß-Seidel iteration (\S\ref{sec:gauss-seidel}).}
+    \label{fig:arraysmooth_gs}
 \end{figure}
-
-
 
 \section{Smoothing a 3D surface}
 \label{sec:3dsmooth}
+There is no much fun in studying small 1D arrays, let us play with a triangulated surface! The following listing is a direct equivalent of the previous one:
 \inputminted[frame=single,linenos=true]{cpp}{listings/example_3.3.cpp}
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=.2\linewidth]{example_3.3_0.jpg}
-    \includegraphics[width=.2\linewidth]{example_3.3_1.jpg}
-    \includegraphics[width=.2\linewidth]{example_3.3_2.jpg}
-    \caption{Smoothing a 3D surface (\S\ref{sec:3dsmooth}). \textbf{Left:} the input surface; \textbf{middle:} 10 iterations; \textbf{right:} 1000 iterations.}
-    \label{fig:linsys_smooth_constrain}
-\end{figure}
+All boundary vertices are fixed, and all the interiour vertices are iteratively placed in the barycenter of their immediate neighbors.
+Can you predict the result?
 
-
-\section{Prescribe the right hand side}
-\label{sec:rhs}
-
-
+First of all, let us see that the system \eqref{eq:1d:smooth} can be rewritten as follows:
 \begin{equation}
-%\label{eq:1d:smooth}
-\nonumber
+\label{eq:1d:smooth-laplacian}
 \left\{
 \begin{array}{cccccccccccl}
  x_0 &       &       &       &      &        &         &          &          &          &         &= 0 \\
@@ -568,11 +577,33 @@ $$
 \end{array}
 \right.
 \end{equation}
+You can see the pattern for the second-order finite difference.
+Computing a constant derivative function is equivalent to computing a function with zero second derivative, it is only logic that the result is a straight line.
+
+It is all the same for our 3D surface, the above code solves the Laplace's equation $\Delta f = 0$ with Dirichlet boundary conditions.
+Again, do not trust me, grab a pencil and write down the corresponding matrix for a mesh with one interior vertex.
+So, the result must be the minimal surface respecting the boundary conditions.
+In other words, make a loop from a rigid wire, soak it in a liqud soap, the soap film on this loop is the solution.
+Figure~\ref{fig:minsurface} provides an illutration.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.2\linewidth]{example_3.3_0.jpg}
+    \includegraphics[width=.2\linewidth]{example_3.3_1.jpg}
+    \includegraphics[width=.2\linewidth]{example_3.3_2.jpg}
+    \caption{Smoothing a 3D surface (\S\ref{sec:3dsmooth}). \textbf{Left:} the input surface; \textbf{middle:} 10 iterations; \textbf{right:} 1000 iterations.}
+    \label{fig:minsurface}
+\end{figure}
 
 
 
+\section{Prescribe the right hand side}
+\label{sec:rhs}
 
+Let us return to the equation~\eqref{eq:1d:smooth-laplacian}, but this time the right hand side would not be zero:
 \inputminted[frame=single,linenos=true]{python}{listings/example_3.4.py}
+What is the result of this program? Well, it is easy to answer. We are looking for a function whose second derivative is a linear function,
+therefore the solution must be a cubic polynomial. Figure~\ref{fig:linsys-cubic} shows the evolution of the array, the ground truth polynomial is shown in green.
+
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.32\linewidth]{example_3.4_0.png}
@@ -582,9 +613,10 @@ $$
     \includegraphics[width=.32\linewidth]{example_3.4_4.png}
     \includegraphics[width=.32\linewidth]{example_3.4_5.png}
     \caption{Reconstructing a cubic function (\S\ref{sec:rhs}); the ground truth is shown in green.}
-    \label{fig:linsys_smooth_constrain}
+    \label{fig:linsys-cubic}
 \end{figure}
 
+Congratulations, you have just solved a Poisson's equation!
 
 %\section{3D example}
 %\begin{figure}[ht]
@@ -605,6 +637,16 @@ $$
 
 
 \chapter{Finite elements example: the Galerkin weighted residual method}
+\fancyhead[R]{\textcolor{red}{optional for reading}}
+
+In the previous section we saw that mere 3 lines of code can be sufficient to solve a linear system, and this linear system corresponds to a differential equation.
+While it is extremely cool, what are the practical consequences for a programmer?  How do we build these systems? Where do we use them?
+Well, there is a huge community of people who start with a continuous problem, then the problem is carefully discretized and eventually reduced to a linear system.
+In this chapter I show a tiny bit of the bottomless pit called finite element methods.
+Namely, I show a mathematician's approach to the program we saw in \S\ref{sec:rhs}.
+
+Note that this chapter is marked as \textcolor{red}{optional}.
+It is here to make connections to adjacent domains; feel free to skip it, the core text about least squares continues in the next chapter.
 
 \section{Approximation of vectors}
 
@@ -779,6 +821,7 @@ $b=\frac{14}{81}$, $c=\frac{40}{81}$
 
 
 \chapter{Minimization of quadratic functions and linear systems}
+\fancyhead[R]{\textcolor{green}{core text}}
 
 Recall that the main goal is to study least squares, therefore our main tool will be the minimization of quadratic functions;
 however, before we start using this power tool, we need to find where its on/off button is located.
@@ -1175,7 +1218,7 @@ $$
 v_{k+1} = v_k + u_k
 $$
 
-$v_0=0.5$, $v_n=2.3$, $n=30$
+$v_0=0.5$~m/s, $v_n=2.3$~m/s, $n=30$~s
 
 $$
 \min J(\vec{v},\vec{u}) \quad s.t.~  v_{i+1} = v_i + u_i ~~ \forall i \in 0..n-1
@@ -1183,21 +1226,21 @@ $$
 
 
 $$
-J(\vec{u}) := \sum\limits_{i=1}^n (x_i-x_n)^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-x_n+x_0\right)^2
+J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2
 $$
 
 
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
 
 $$
-J(\vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2
+J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2
 $$
 
 
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
 
 $$
-J(\vec{u}) := \sum\limits_{i=1}^n (x_i-x_n)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-x_n+x_0\right)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2
+J(\vec{v},\vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2
 $$
 
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
@@ -1220,11 +1263,25 @@ where $F$ is the gain.
 \begin{figure}[ht]
 	\centering
     \includegraphics[width=.8\linewidth]{caricature.jpg}
-	\includegraphics[width=.8\linewidth]{cubify.jpg}
+	\includegraphics[width=.8\linewidth]{cubify-flagging.jpg}
 	\caption{.}
 	\label{fig:????}
 \end{figure}
 
+
+\begin{figure}[ht]
+	\centering
+    \includegraphics[width=.24\linewidth]{pie_baseball.png}~
+    \raisebox{0.65\height}{\includegraphics[width=.08\linewidth]{pie_football.png}}~
+    \includegraphics[width=.24\linewidth]{pie_overlay.png}~
+    \includegraphics[width=.24\linewidth]{pie_poisson.png}
+    \\
+    \begin{flushleft}
+    {\hspace{.18\linewidth}\textbf{(a)\hspace{.15\linewidth}(b)\hspace{.14\linewidth}(c)\hspace{.22\linewidth}(d)}}
+    \end{flushleft}
+	\caption{Poisson image editing. We want to replace the baseball from the image \textbf{(a)} with the football \textbf{(b)}. A direct overlay leads to a unsatisfactory result \textbf{(c)}, whereas the Poisson image editing produces an image with much less visible seams \textbf{(d)}.}
+	\label{fig:????}
+\end{figure}
 
 \begin{figure}[ht]
 	\centering
@@ -1240,6 +1297,7 @@ where $F$ is the gain.
 
 
 \chapter{Under the hood of the conjugate gradient method}
+\fancyhead[R]{\textcolor{red}{optional for reading}}
 
 
 
