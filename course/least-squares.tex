@@ -4,6 +4,8 @@
 
 \usepackage{fancyhdr}
 
+\usepackage{framed}
+
 \usepackage[vmarginratio=1:1,a4paper,body={6.5in, 9.5in}]{geometry}
 
 \usepackage[T2A]{fontenc}
@@ -822,6 +824,7 @@ $b=\frac{14}{81}$, $c=\frac{40}{81}$
 
 \chapter{Minimization of quadratic functions and linear systems}
 \fancyhead[R]{\textcolor{green}{core text}}
+\label{sec:mineqlin}
 
 Recall that the main goal is to study least squares, therefore our main tool will be the minimization of quadratic functions;
 however, before we start using this power tool, we need to find where its on/off button is located.
@@ -1376,6 +1379,96 @@ engineers try different combinations of competing goals until they obtain a sati
 \fancyhead[R]{\textcolor{red}{optional for reading}}
 
 
+The resolution of linear systems is the keystone of a large number of numerical optimization algorithms encountered in many application contexts.
+For example, such linear systems play a central role in least-squares-type optimization problems, in
+finite-element-based numerical simulation methods as well as in non-linear function optimization algorithms that solve a series of linear problems.
+
+Given an invertible $n \times n$ matrix $A$ and an $n$-vector $b$, we would like to solve the matrix equation $Ax = b$.
+One way to do so is to invert $A$ and multiply both sides by $A^{-1}$.
+While this approach is theoretically valid, there are several problems with it in practice. Computing the inverse of a large
+\footnote{It is quite common to manipulate $10^6\times 10^6$ sparse matrices in image and geometry processing.
+Recall the Poisson image editing: we want to compute an image, each pixel is a variable of the system. For a rather small $1000\times 1000$ pixels grayscale image we have $10^6$ variables!}
+matrix is expensive and susceptible to numerical error due to the finite precision of floating-point numbers.
+Moreover, matrices which occur in real problems tend to be sparse and one would hope to take advantage of such structure to reduce
+work, but matrix inversion destroys sparsity.
+
+In this chapter we describe the conjugate gradient method, an algorithm for solving linear systems.
+It is widely used because it is very efficient and relatively simple to implement.
+It is rather difficult to have a good intuition of its functioning, which we propose to study here.
+The conjugate gradient method can very well be used as a black box, but it is more intellectually satisfying to understand how it works.
+Moreover, from a practical point of view, this allows to use it in a more efficient way, taking into account the conditioning of the matrix,
+by adjusting the number of iterations according to the type of problem, or by programming it in a way to perform all the computations in place
+(i.e., without explicitly storing large matrices in memory).
+
+Our approach is to take the point of view of someone looking to reinvent the algorithm.
+We will first specify which problem is solved by the method, then we will present two methods of resolution (gradient descent and conjugation), 
+which can be combined to obtain the conjugate gradient.
+We will also illustrate the behaviour of these algorithms under the most common conditions, i.e. with sparse matrices.
+
+
+
+\section{Problem statement}
+
+The conjugate gradient method solves the following problem:
+
+\begin{framed}
+Given  a symmetric positive definite $n\times n$ matrix $A$ and a vector $b \in {\mathbb R}^n$, find the vector $x \in {\mathbb R}^n$ such that $Ax - b =0$.
+\end{framed}
+
+From a geometric point of view, it is quite understandable that to solve a linear system corresponds to calculating the intersection of
+the hyperplanes corresponding to each equation (see figure~\ref{fig:pbd2d}).
+It is less obvious to understand the conditions on the matrix $A$, and we have dedicated the entire chapter~\ref{sec:mineqlin} to this subject.
+In short,
+\begin{framed}
+%$\nabla (x^\top A x - 2b) = (A+A^\top)x - 2b$; therefore 
+Our problem is equivalent to the minimization of the quadratic form $x^\top Ax-2b^\top x$. Since $A$ is symmetric positive definite, then the solution exists and is unique.
+\end{framed}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\linewidth]{cg/problem2d.png}
+  \caption{Geometric interpretations of the resolution of $Ax-b=0$.
+  The dot product of $x$ with each row of $A$ is fixed by $b$.
+  Each of these constraints imposes that $x$ is located on a hyperplane (a straight line in 2D, a plane in 3D).
+  We can define $x$ as the intersection of these hyperplanes: green and red lines in our 2D example (left) and the three 3D planes (right).
+  In the middle, $v=Ax-b$ is shown as a vector field: the solution is the point where the vector field vanishes.
+  This field can be seen as  the gradient of a function to be minimized\dots under certain conditions.}
+  \label{fig:pbd2d}
+\end{figure}
+
+
+\section{Three ways to solve the problem}
+\label{chap5:sec:linalg:formulations_pb}
+
+Since we want to perform an unconstrained minimization of a convex function, it is only natural to use an iterative descent method.
+In this chapter we study three different methods that share the common structure:
+\begin{framed}
+\begin{itemize}
+\item Make an initial guess $x^{(0)} \leftarrow \vec{0} $;
+\item Iterate until convergence:
+\begin{itemize}
+   \item compute the next step direction $d^{(k)}$;
+   \item choose the step size $\alpha^{(k)}$;
+   \item update the solution vector $x^{(k+1)} \leftarrow  x^{(k)}+\alpha^{(k)} d^{(k)}$;
+\end{itemize}
+\end{itemize}
+\end{framed}
+
+These three algorithms differ only in the calculation of the step direction. The idea is to start with a very simple method and gradually build the way up to the conjugate gradient method.
+So, we start with the famous \textbf{gradient descent (\S\ref{chap5:sec:linalg:descente_gradient})}.
+We can minimize the quadratic form $x^\top Ax-2bx$ like any other convex function, however, having a quadratic function allows to calculate an optimal descent step.
+
+Then we present a \textbf{conjugation method (\S\ref{chap5:sec:linalg:algo_conjugaison})}.
+This method works not in the original space, but in the space transformed by some linear operator $M$, and directly projects the solution on an orthogonal basis.
+The vectors whose images by $M$ form an orthogonal base are said to be conjugate (with respect to the scalar product defined by $A$).
+This is why this method is called conjugation. \textit{Warning: this method has only a pedagogical interest, it should not be used in practice!}
+
+Finally, we combine two above methods to obtain the \textbf{conjugate gradient method (\S\ref{chap5:sec:linalg:algoGC})}.
+The conjugate gradient is a gradient descent in which the directions of descent are modified so that they are conjugated with respect to each other.
+
+
+
+
 
 
 
@@ -1452,8 +1545,8 @@ Note that convergence fails if the two classes are linearly separable. In that c
 \begin{listing}[p]
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
 \caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2$.}
-\end{listing}
 \label{listing:lqr2}
+\end{listing}
 
 \begin{listing}[p]
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
