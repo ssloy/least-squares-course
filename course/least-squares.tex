@@ -42,7 +42,7 @@
 
 \title{{\Huge Least squares for programmers}\\
 {\large with illustrations}\\
-\vspace{20mm}}
+\vspace{10mm}}
 \author{Dmitry Sokolov and Nicolas Ray}
 \date{}
 
@@ -1213,39 +1213,45 @@ with (in general) a symmetric positive definite matrix $A'$, which in turn is eq
 \chapter{Least squares through examples}
 
 \section{Linear-quadratic regulator}
-
+\label{sec:lqr}
+Let us start this chapter with a tiny example from the optimal control theory.
+Optimal control deals with the problem of finding a control law for a given system such that a certain optimality criterion is achieved.
+This phrase is too unspecific, let us illustrate it.
+Imagine that we have a car that advances with some speed, say $0.5$m/s. The goal is to accelerate and reach, say, $2.3$m/s.
+We can not control the speed directly, but we can act on the acceleration via the gas pedal.
+We can model the system with a very simple equation:
 $$
-v_{k+1} = v_k + u_k
+v_{k+1} = v_k + u_k,
 $$
-
-$v_0=0.5$~m/s, $v_n=2.3$~m/s, $n=30$~s
-
+where the signals are sampled every 1 second, $v_k$ is the car speed and $u_k$ is the acceleration of the car.
+Let us say that we have half a minute to reach the given speed, i.e, $v_0=0.5$m/s, $v_n=2.3$m/s, $n=30$s.
+So, we need to find $\{u_i\}_{i=0}^{n-1}$ that optimizses some quality criterion $J(\vec{v}, \vec{u})$:
 $$
 \min J(\vec{v},\vec{u}) \quad s.t.~  v_{i+1} = v_i + u_i ~~ \forall i \in 0..n-1
 $$
-
-
+The case where the system dynamics are described by a set of differential equations and the cost is described by a quadratic functional is called a linear quadratic problem.
+Let us test few different quality criteria. What happens if we ask for the car to reach the final speed as quickly as possible?
+It can be written as follows:
 $$
 J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2
 $$
 
-
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
-
+To minimize this criterion, we can solve the following system in the least squares sense:
 $$
-J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2
-$$
-
-
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
-
-$$
-J(\vec{v},\vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2
+\left \{ \begin{array}{ccccl}
+u_0 &       &       &           & = v_n - v_0 \\
+u_0 & + u_1 &       &           & = v_n - v_0 \\
+    &       &       & \vdots    &             \\
+u_0 & + u_1 & \dots & + u_{n-1} & = v_n - v_0 \\
+\end{array} \right.
 $$
 
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
+Listing~\ref{listing:lqr1} (refer to the appendices) solves the system.
+%\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
+The resulting arrays $\{u_i\}_{i=0}^{n-1}$ and $\{v_i\}_{i=0}^{n}$ are shown in the leftmost image of Figure~\ref{fig:lqr}.
+It can be seen that in this case the system reaches the final state in one timestep; clearly it is physicall impossible for a car to produce such an acceleration.
 
-\begin{figure}[ht]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=.32\linewidth]{example_6.1_a.png}
     \includegraphics[width=.32\linewidth]{example_6.1_b.png}
@@ -1254,19 +1260,59 @@ $$
     \label{fig:lqr}
 \end{figure}
 
+Okay, no problem, let us try to penalize large accelerations:
 $$
-u_k = -F v_k,
+J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2
 $$
-where $F$ is the gain.
+Minimization of this criterion is equivalent to solving the following system in the least squares sense:
+$$
+\left \{ \begin{array}{rl}
+u_0     & = 0\\
+u_1     & = 0\\
+\dots   &    \\
+u_{n-1} & = 0\\
+\end{array} \right.
+$$
+Listing~\ref{listing:lqr2} solves this system, and the resulting arrays are shown in the middle image of Figure~\ref{fig:lqr}.
+This criterion indeed produces low acceleration, however the transient time becomes unacceptable.
+
+%\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
+
+Minimization of the transient time and low acceleration are competing goals, but we can find a trade-off by mixing both goals:
+$$
+J(\vec{v},\vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2
+$$
+This criterion asks to reach the goal as quickly as possible, while penalizing large accelerations. It can be minimized by solving the following system:
+$$
+\left \{ \begin{array}{ccccl}
+u_0 &       &       &           & = v_n - v_0 \\
+u_0 & + u_1 &       &           & = v_n - v_0 \\
+    &       &       & \vdots    &             \\
+u_0 & + u_1 & \dots & + u_{n-1} & = v_n - v_0 \\
+2u_0 &        &       &           & = 0 \\
+     &  2u_1  &       &           & = 0 \\
+     &        &       & \vdots    &     \\
+     &        &       &  2u_{n-1} & = 0 \\
+\end{array} \right.
+$$
+Note the coefficient 2 in the equations $2 u_i = 0$ and recall that we solve the system in the least squares sense.
+By changing this coefficient, we can attach more importance to one of the competing goals.
+Listing~\ref{listing:lqr3} solves this system, and the resulting arrays are shown in the right image of Figure~\ref{fig:lqr}.
+
+%\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
+
+Note that the signal $u(t)$ is equal to the signal $v(t)$ up to a multiplication by a constant gain:
+$$
+u(t) = -F v(t),
+$$
+This gain is necessary to build a closed-loop regulator, it can be computed from $J$.
+In practice, just like we did in this section,
+engineers try different combinations of competing goals until they obtain a satisfactory transient time while not exceeding regulation capabilites.
+
 
 \section{Caricature}
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_a.py}
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_b.py}
-\begin{listing}[ht]
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.2_c.cpp}
-\caption{Example from external file}
-\label{listing:3}
-\end{listing}
 
 
 \begin{figure}[ht]
@@ -1393,6 +1439,33 @@ It is easy to see that the Hessian matrix $X^\top V X$ is positive definite (it 
 
 Note that convergence fails if the two classes are linearly separable. In that case we can handle this via a regularization.
 
+
+\appendix
+\chapter{Program listings}
+
+\begin{listing}[p]
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
+\caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2$.}
+\label{listing:lqr1}
+\end{listing}
+
+\begin{listing}[p]
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
+\caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2$.}
+\end{listing}
+\label{listing:lqr2}
+
+\begin{listing}[p]
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
+\caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v},\vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2$.}
+\label{listing:lqr3}
+\end{listing}
+
+\begin{listing}[p]
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.2_c.cpp}
+\caption{Least squares conformal mapping.}
+\label{listing:lscm}
+\end{listing}
 
 
 \end{document}
