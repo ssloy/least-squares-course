@@ -1,8 +1,30 @@
 % rubber: setlist arguments --shell-escape
 
-\documentclass[notitlepage]{report}
+\documentclass[notitlepage,oneside]{book}
 
 \usepackage{fancyhdr}
+
+\usepackage[dvipsnames]{xcolor}
+\definecolor{darkcyan}{rgb}{0.0, 0.55, 0.55}
+\definecolor{britishracinggreen}{rgb}{0.0, 0.26, 0.15}
+\definecolor{ao(english)}{rgb}{0.0, 0.5, 0.0}
+\usepackage{tocloft}
+
+\newcommand{\defineauthorcolor}[2]{%
+  \colorlet{author#1}{#2}% Create an author colour
+  \expandafter\def\csname authoredby#1\endcsname{% Create author colour settings
+    \renewcommand{\cftchapfont}{\bfseries\color{author#1}}% Chapter colour
+    \renewcommand{\cftsecfont}{\color{author#1}}% Section colour
+    \renewcommand{\cftsubsecfont}{\color{author#1}}}% Subsection colour
+}
+\makeatletter
+\newcommand{\authoredby}[1]{\addtocontents{toc}{\protect\@nameuse{authoredby#1}}}%
+\makeatother
+\defineauthorcolor{A}{blue}% Author A will be coloured red
+\defineauthorcolor{B}{ao(english)}% Author B will be coloured blue
+
+
+
 
 \usepackage{framed}
 
@@ -26,13 +48,20 @@
 \newtheorem{definition}{Definition}
 
 \usepackage{hyperref}
+\hypersetup{
+linkbordercolor=lightgray
+%linkcolor=black
+%hidelinks
+%    colorlinks=true,% make the links colored
+}
+
 \usepackage{graphicx}
 \graphicspath{{./img/}}
 
 
 \usepackage[cache=false]{minted}
 
-\usepackage{color,colortbl}
+\usepackage{colortbl}
 \newcommand\TODO[1]{\textcolor{red}{{\bf TODO :} \it #1}}
 
 
@@ -50,9 +79,10 @@
 
 \begin{document}
 
+\authoredby{B}
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
-\fancyhead[R]{\textcolor{red}{optional for reading}}
+\fancyhead[R]{\textcolor{green}{core text}}
 \fancyhead[L]{\chaptername\ \thechapter\ --\ \leftmark}
 
 \maketitle
@@ -66,10 +96,10 @@
 \includegraphics[width=.8\linewidth]{caricature.jpg}
 \end{center}
 
-%\setcounter{chapter}{-1}
-\addcontentsline{toc}{chapter}{Preface}
+\setcounter{chapter}{-1}
+\chapter{The reading guide}
+%\addcontentsline{toc}{chapter}{Preface}
 
-\chapter*{Preface}
 
 This course is intended for students/engineers/researchers who know how to program in the traditional way:
 by breaking down complex tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes\dots).
@@ -80,7 +110,9 @@ We show how this simple method can solve a large number of problems that would b
 This course provides a simple, understandable yet powerful tool that most coders can use,
 in the contrast with other algorithms sharing this paradigm (numerical simulation and deep learning) which are more complex to master.
 
+\authoredby{A}
 \chapter{Do you believe in the probability theory?}
+\fancyhead[R]{\textcolor{red}{optional for reading}}
 
 This short section is not mandatory for the understanding of the main course; 
 the idea behind is to warm up before attacking code and formulae.
@@ -444,6 +476,7 @@ Fortunately, we are not living in XVIII century anymore, we have computers!
 Next we will try to build a geometric intuition on least squares, and see how can least squares problems be efficiently implemented.
 
 
+\authoredby{B}
 \chapter{Introduction to systems of linear equations}
 \fancyhead[R]{\textcolor{green}{core text}}
 
@@ -638,6 +671,7 @@ Congratulations, you have just solved a Poisson's equation!
 %\end{figure}
 
 
+\authoredby{A}
 \chapter{Finite elements example: the Galerkin weighted residual method}
 \fancyhead[R]{\textcolor{red}{optional for reading}}
 
@@ -822,6 +856,7 @@ $b=\frac{14}{81}$, $c=\frac{40}{81}$
 
 
 
+\authoredby{B}
 \chapter{Minimization of quadratic functions and linear systems}
 \fancyhead[R]{\textcolor{green}{core text}}
 \label{sec:mineqlin}
@@ -1308,7 +1343,7 @@ Note that the signal $u(t)$ is equal to the signal $v(t)$ up to a multiplication
 $$
 u(t) = -F v(t),
 $$
-This gain is necessary to build a closed-loop regulator, it can be computed from $J$.
+This gain is necessary to know in order to build a closed-loop regulator, and it can be computed from $J$.
 In practice, just like we did in this section,
 engineers try different combinations of competing goals until they obtain a satisfactory transient time while not exceeding regulation capabilites.
 
@@ -1375,6 +1410,7 @@ engineers try different combinations of competing goals until they obtain a sati
 
 
 
+\authoredby{A}
 \chapter{Under the hood of the conjugate gradient method}
 \fancyhead[R]{\textcolor{red}{optional for reading}}
 
@@ -1382,15 +1418,6 @@ engineers try different combinations of competing goals until they obtain a sati
 The resolution of linear systems is the keystone of a large number of numerical optimization algorithms encountered in many application contexts.
 For example, such linear systems play a central role in least-squares-type optimization problems, in
 finite-element-based numerical simulation methods as well as in non-linear function optimization algorithms that solve a series of linear problems.
-
-Given an invertible $n \times n$ matrix $A$ and an $n$-vector $b$, we would like to solve the matrix equation $Ax = b$.
-One way to do so is to invert $A$ and multiply both sides by $A^{-1}$.
-While this approach is theoretically valid, there are several problems with it in practice. Computing the inverse of a large
-\footnote{It is quite common to manipulate $10^6\times 10^6$ sparse matrices in image and geometry processing.
-Recall the Poisson image editing: we want to compute an image, each pixel is a variable of the system. For a rather small $1000\times 1000$ pixels grayscale image we have $10^6$ variables!}
-matrix is expensive and susceptible to numerical error due to the finite precision of floating-point numbers.
-Moreover, matrices which occur in real problems tend to be sparse and one would hope to take advantage of such structure to reduce
-work, but matrix inversion destroys sparsity.
 
 In this chapter we describe the conjugate gradient method, an algorithm for solving linear systems.
 It is widely used because it is very efficient and relatively simple to implement.
@@ -1421,10 +1448,10 @@ It is less obvious to understand the conditions on the matrix $A$, and we have d
 In short,
 \begin{framed}
 %$\nabla (x^\top A x - 2b) = (A+A^\top)x - 2b$; therefore 
-Our problem is equivalent to the minimization of the quadratic form $x^\top Ax-2b^\top x$. Since $A$ is symmetric positive definite, then the solution exists and is unique.
+Our problem is equivalent to the minimization of the quadratic form $f(x):=x^\top Ax-2b^\top x$. Since $A$ is symmetric positive definite, the solution exists and is unique.
 \end{framed}
 
-\begin{figure}
+\begin{figure}[htb]
   \centering
   \includegraphics[width=.8\linewidth]{cg/problem2d.png}
   \caption{Geometric interpretations of the resolution of $Ax-b=0$.
@@ -1435,6 +1462,19 @@ Our problem is equivalent to the minimization of the quadratic form $x^\top Ax-2
   This field can be seen as  the gradient of a function to be minimized\dots under certain conditions.}
   \label{fig:pbd2d}
 \end{figure}
+
+
+Why reformulating the problem?
+Given an invertible $n \times n$ matrix $A$ and an $n$-vector $b$, we would like to solve the matrix equation $Ax = b$.
+One way to do so is to invert $A$ and multiply both sides by $A^{-1}$.
+While this approach is theoretically valid, there are several problems with it in practice. Computing the inverse of a large
+\footnote{It is quite common to manipulate $10^6\times 10^6$ sparse matrices in image and geometry processing.
+Recall the Poisson image editing: we want to compute an image, each pixel is a variable of the system. For a rather small $1000\times 1000$ pixels grayscale image we have $10^6$ variables!}
+matrix is expensive and susceptible to numerical error due to the finite precision of floating-point numbers.
+Moreover, matrices which occur in real problems tend to be sparse and one would hope to take advantage of such structure to reduce
+work, but matrix inversion destroys sparsity.
+As we will see shortly, iterative methods are the technique of the choice for solving such systems.
+
 
 
 \section{Three ways to solve the problem}
@@ -1459,12 +1499,627 @@ So, we start with the famous \textbf{gradient descent (\S\ref{chap5:sec:linalg:d
 We can minimize the quadratic form $x^\top Ax-2bx$ like any other convex function, however, having a quadratic function allows to calculate an optimal descent step.
 
 Then we present a \textbf{conjugation method (\S\ref{chap5:sec:linalg:algo_conjugaison})}.
-This method works not in the original space, but in the space transformed by some linear operator $M$, and directly projects the solution on an orthogonal basis.
+This method works not in the original space, but in the space transformed by some linear map $M$, and directly projects the solution on an orthogonal basis.
 The vectors whose images by $M$ form an orthogonal base are said to be conjugate (with respect to the scalar product defined by $A$).
 This is why this method is called conjugation. \textit{Warning: this method has only a pedagogical interest, it should not be used in practice!}
 
 Finally, we combine two above methods to obtain the \textbf{conjugate gradient method (\S\ref{chap5:sec:linalg:algoGC})}.
 The conjugate gradient is a gradient descent in which the directions of descent are modified so that they are conjugated with respect to each other.
+
+\newpage
+
+\section{The 1st way: the gradient descent}
+\label{chap5:sec:linalg:descente_gradient}
+
+The gradient of a function gives the direction of fastest increase.
+The gradient descent consists of, starting from an initial position $x^{(0)}$,
+to move in the direction opposite to the gradient so as to minimize the function as quickly as possible.
+Thus, we build a sequence of approximations $x^{(k)}$ that converges to the solution $x^*$.
+In the case of a quadratic form, the gradient is easy to compute: $\nabla f(x^{(k)}) = 2Ax^{(k)} - 2b$.
+Then the iterative descent method can be instantiaed as follows:
+
+\begin{framed}
+\begin{itemize}
+\setlength\parsep{0pt}
+\setlength\itemsep{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\topsep}{0pt}
+\setlength{\partopsep}{0pt}
+\item Make an initial guess $x^{(0)} \leftarrow \vec{0} $;
+\item Iterate until convergence:
+\begin{eqnarray*}
+  r^{(k)} &\leftarrow& b -Ax^{(k)}\\
+  \alpha^{(k)} &\leftarrow& \frac{r^{(k)\top}r^{(k)}}{r^{(k)\top}Ar^{(k)}}\\
+  x^{(k+1)} &\leftarrow& x^{(k)}+\alpha^{(k)} r^{(k)}
+\end{eqnarray*}
+\end{itemize}
+\end{framed}
+
+
+\subsection{Choosing the step size $\alpha^{(k)}$}
+Since we are moving in the opposite direction to the gradient, we are sure to decrease $f$ if we make a sufficiently small step.
+That is being said, in our case, we minimize a quadratic form, which, restricted to the search line, remains a quadratic function (a parabola).
+It is therefore possible to find directly the optimal step that minimizes $f(x^{(k+1)})$ along the direction $r^{(k)}$.
+This can be done by canceling the derivative $\frac{df\left(x^{(k+1)}\right)}{d\alpha^{(k)}}$ with $x^{(k+1)}=x^{(k)}+\alpha^{(k)} r^{(k)}$.
+
+We are looking for $\alpha^{(k)}$ such that $x^{(k)}+\alpha^{(k)} r^{(k)}$ minimizes $f$ along the straight line
+generated by the point $x^{(k)}$ and the vector $r^{(k)}$.
+To do this, we will cancel the derivative of $f$ along this line:
+we want the dot product between the gradient and the search direction to vanish in $x^{(k+1)}$.
+
+Here, the search direction $d^{(k)}$ is equal to the residual $r^{(k)}$, however we keep different notations to preserve the semantics,
+which will be useful later on to combine the different approaches.
+The step size can be derived from the zero dot product condition as follows:
+\begin{eqnarray*}
+  d^{(k)\top}r^{(k+1)} &= &0 \\
+  d^{(k)\top}\left(b-Ax^{(k+1)}\right) &= &0 \\
+  d^{(k)\top}\left(b-A(x^{(k)}+\alpha^{(k)} r^{(k)})\right) &= &0 \\
+  \alpha^{(k)}   &=& \frac{d^{(k)\top}\left(Ax^{(k)}-b\right)}{d^{(k)\top}Ar^{(k)}}\\
+  \alpha^{(k)} &=& \frac{d^{(k)\top}r^{(k)}}{d^{(k)\top}Ar^{(k)}} 
+\end{eqnarray*}
+
+\subsection{Convergence: stopping criterion}
+There is no miracle solution. We can stop when the norm of the gradient becomes too small,
+or the when the difference $f\left(x^{(k)}\right)-f\left(x^{(k+1)}\right)$ (eventually normalized) is getting too small.
+
+The figures~\ref{fig:gradient2dconverge1} and \ref{fig:gradient3dconverge1} show $2D$ and $3D$ examples of the gradient descent behaviour.
+When all eigenvalues of $A$ are equal, the algorithm converges in one iteration, but when they are very different, the speed of convergence drastically decreases.
+The maximum ratio between the eigenvalues is called the matrix conditioning, and reflects well the difficulty of the problem.
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=1\linewidth]{cg/gradient2Dconverge.png}
+  \caption{
+Optimal step gradient descent with a diagonal matrix $A$, where $a_{00}$ takes values from 1 (left) to 5 (right), $a_{11}=1$ and $a_{10}=a_{01}=0$.
+The blue segments connect the $x^{(k)}$ to the $x^{(k+1)}$, and the ellipses show the iso-values of $f(x)=x^\top Ax-2b^\top x$.
+}
+  \label{fig:gradient2dconverge1}
+
+  \includegraphics[width=1\linewidth]{cg/gradient3Dconverge1.png}
+  \caption{
+  A 3D example of gradient descent with a diagonal matrix $A$. We observe an extremely fast convergence when $A$ is close to the identity (left), 
+  and a particularly slow convergence when its diagonal elements are $0.5,1$ and $2$ (right). }
+  \label{fig:gradient3dconverge1}
+
+  \includegraphics[width = \linewidth]{cg/defpositiveness.png}
+  \caption{
+Few 2D linear maps transforming an image.
+From left to right: the identity matrix does not change the image, more generally, a diagonal matrix stretches the image along the coordinate axes.
+Even more generally, all symmetric positive definite define a stretch along orthogonal directions.
+Antisymmetric matrix flips axes (negative coefficient stretching),
+and a rotation matrix  ``stretches'' with a complex coefficient.}
+  \label{fig:eigenSPD}
+
+\end{figure}
+
+\vspace{10mm}
+
+To sum up, \textit{the gradient descent is a very simple method, and has a very fast convergence rate during first iterations.
+After few iterations, its behaviour becomes very sensitive to the matrix conditioning.}
+
+
+\section{The 2nd way: the (naïve) conjuguation method}
+\label{chap5:sec:linalg:algo_conjugaison}
+
+Let us put aside the minimization for a moment, and cosider a projection method that solves $Ax=b$ directly.
+The idea is to build an orthogonal basis and project the solution onto this basis in $n$ iterations.
+Before doing so, let us build few handy tools first.
+
+\subsection{A very useful linear map $M=\sqrt{A}$}
+In this method a central role is played by the map $M$ that we can loosely describe as $M:=\sqrt{A}$.
+The idea is to make orthogonal projections in the space transformed by the map $M$.
+
+\begin{framed}
+We define $M$ as a symmetric matrix having the same eigenvectors as $A$ but whose eigenvalues are the square roots of those of $A$.
+This matrix is symmetric positive definite with real entries.
+\end{framed}
+The (slightly abusive) notation $M := \sqrt{A}$ comes from the fact that $M^\top M=MM=A$ as you can see:
+
+\begin{itemize}
+\item either via a \textit{geometrical intuiton}: as we will see shortly, $A$ has a full set of real-valued eigenvectors forming an orthonormal basis $\{v_i\}_{i=1}^{n}$.
+We can decompose any vector $x$ in this basis, therefore $Ax = \sum_{i=1}^{n} (x^\top v_i) \lambda_i v_i$.
+This means that the linear map defined by $A$ is simply a stretching of space in the directions of each eigenvector, with a factor given by the associated eigenvalue (Figure~\ref{fig:eigenSPD}).
+
+Than the linear map $M$ can be seen as two consequtive stretchings of space along the same vectors, but with corresponding factors $\sqrt{\lambda_i}$.
+This is equivalent to stretching by $\lambda_i$ (Figure~\ref{fig:stretchM}).
+
+\item either \textit{analytically:} since $A$ is symmetric positive definite, it has a full set of real-valued eigenvectors forming an orthonormal basis.
+Let $v_i$ and $v_j$ be two eigenvectors associated with distinct eigenvalues $\lambda_i \neq \lambda_j$: $Av_i=\lambda_iv_i$ and $Av_j=\lambda_jv_j$.
+The symmetry of $A$ implies that:
+\begin{align*}
+  v_i^\top A v_j & =  v_j^\top A v_i \\
+  v_i^\top \lambda_j v_j & =  v_j^\top \lambda_i v_i \\
+  (\lambda_j -\lambda_i) \left(v_i^\top v_j\right)& =  0.
+\end{align*}
+Thus, if $v_1$ and $v_2$ correspond to two distinct eigenvalues, they are orthogonal.
+Even if there is an infinity of eigenvectors (due to multiple eigenvalues), it can be shown that $A$ has a full orthonormal basis of eigenvectors.
+
+Then let us examine the action of $M$:
+$$
+M^\top Mx =MMx = \sum_{i=1}^{n}\sum_{j=1}^{n}\sqrt{\lambda_i}\left(\sqrt{\lambda_j} x^\top v_j\right) v_i = \sum_{i=1}^{n} \lambda_i v_i \left(x^\top v_i\right) = Ax.
+$$
+Moreover, as $A$ is positive definite, it means that $x^\top Ax>0, \forall x \neq 0$.
+In particular, for an eigenvector $v$ with associated eigenvalue $\lambda$ (i.e., $Av=\lambda v$), 
+we have $v^\top \lambda v > 0$. This implies that $\lambda>0$ (and, by the same token, that $\lambda \in \mathbb{R}$). 
+Therefore, all eigenvalues of $A$ are real and positive, and the square roots are well-defined.
+\end{itemize}
+
+\begin{figure}[p]
+\centering
+  \includegraphics[width=1\linewidth]{cg/MMA.png}
+  \caption{
+The linear map $A$ can be seen as a repeated action of $M$.
+The eigenvectors (orange and white arrows) of $A$ and $M$ are the same: only the eigenvalues are different (squared).}
+  \label{fig:stretchM}
+
+  \includegraphics[width=.8\linewidth]{cg/Aorth.png}
+  \caption{Let $u$ and $v$ be two arbitrary vectors and $x^*$ the solution of $Ax-b=0$.
+  We can easily calculate dot products $Mu\cdot Mv$ and $Mu\cdot Mx^*$.
+  This makes it possible to project $v$ and $x^*$ onto $u$ in a way that would be orthogonal in $M$.}
+  \label{fig:Aorth}
+
+  \includegraphics[width=.7\linewidth]{cg/proj2D.png}
+  \caption{The conjuguation method in 2D. We start from two arbitrary linearly independent vectors $r^{(0)}$ and $r^{(1)}$, and then we define $d^{(0)} \leftarrow r^{(0)}$
+    and $d^{(1)} \leftarrow M^{-1}\left(Mr^{(1)}-proj\left(Mr^{(1)}/Md^{(0)}\right)\right)$. 
+    Note that $d^{(0)}$ and $d^{(1)}$ form an $A$-orthogonal basis.
+    Then the solution $x^*$ can be decomposed in this basis as
+    $x^*\leftarrow \Sigma_k M^{-1}proj\left(Mx^*/Md^{(k)}\right)$.}
+  \label{fig:proj2D}
+
+\end{figure}
+
+
+\subsection{$A$-orthogonality}
+
+Note that although we define $M$, we never compute it explicitly.
+The interest of defining $M$ is that one can easily compute dot products in the space transformed by $M$.
+Indeed, if we want to calculate the dot product between the images of two vectors $u$ and $v$ under the map $M$,
+we need to evaluate $(Mu)^\top Mv = u^\top Mv = u^\top Av$.
+Note that it can be done without having $M$ computed! As a side note, $A$ defines the metric tensor of the linear map associated with $M$:
+it is a bilinear map that allows to measure the dot product (thus lengths and angles) in the space transformed by $M$.
+
+
+So, we can very efficiently compute $(Mu)^\top Mv = u^\top Av$, the dot product of $Mu$ and $Mv$, images of any two vectors $u$ and $v$.
+It is therefore very easy to know whether $Mu$ and $Mv$ are orthogonal ($u^\top Av = $0).
+Moreover, it is also simple to compute the norm of a transformed vector: $\|Mu\|=\sqrt{u^\top Au}$.
+\textbf{Note that even if we do not know the true soluton $x^* := A^{-1}b$, we can efficiently compute $(Mu)^\top Mx^* = u^\top b$ for any vector $u$,}
+and this is the key property for recovering the solution itself.
+
+
+\begin{framed}
+In practice, we will use the above properties to build an $A$-orthogonal basis: for any two vectors $u$ and $v$ from this basis, $Mu \perp Mv$.
+This basis will help us greatly, since we know to project easily the (unknown) solution $x^*$ onto the basis (Figure~\ref{fig:Aorth}).
+\end{framed}
+
+\subsection{Back to the naïve conjuguation method}
+Recall that we have put aside for a moment the minimization of $x^\top A x - 2b^\top x$,
+and the goal is to build a direct way to solve for $Ax=b$.
+
+We want to build an orthogonal basis and project the solution onto this basis, what can be done in $n$ iterations.
+To do so, we start from an arbitrary set of linearly independent vectors $\left\{r^{(k)}\right\}_{k=0}^{n-1}$
+and use a variant of the Gram-Schmidt process to build a set of $A$-orthogonal vectors $\left\{d^{(k)}\right\}_{k=0}^{n-1}$.
+It can be thought as the ordinary Gram-Schmidt normalization of the set $\left\{Mr^{(k)}\right\}_{k=0}^{n-1}$ that builds an orthogonal set $\left\{Md^{(k)}\right\}_{k=0}^{n-1}$.
+Recall that we never actually compute $M$; we find it easier to reason in terms of an orthogonal basis rather than manipulate $A$-orthogonality,
+even if we do actually build an $A$-orthogonal basis $\left\{d^{(k)}\right\}_{k=0}^{n-1}$.
+Finally, we compute an orthogonal projection of $Mx^*$ onto $\left\{Md^{(k)}\right\}_{k=0}^{n-1}$ and, by the linearity of $M$, we deduce the contribution of every $d^{(k)}$ to $x^*$.
+
+So, we need to \textbf{(1)} construct the basis and \textbf{(2)} project the solution onto it:
+\begin{enumerate}
+\item \textbf{Basis construction.}
+Let us take any set of $n$ linearly independent vectors $\left\{r^{(k)}\right\}_{k=0}^{n-1}$, for example: 
+$$r^{(k)}_i=\left\{
+  \begin{array}{ll}
+    1 & \mbox{si } i=k\\
+    0 & \mbox{si } i\neq k \\
+  \end{array}
+  \right.$$
+
+Since $M$ is (strictly) positive definite, $\left\{Mr^{(k)}\right\}_{k=0}^{n-1}$ are also linearly independent.
+
+Gram-Schmidt process builds the set incrementally, and only needs to know how to evaluate dot products.
+Geometrically, this method proceeds as follows: first we define $d^{(0)}:=r^{(0)}$ (and thus $Md^{(0)}=Mr^{(0)}$).
+and then to compute $Md^{(k)}$, first it projects orthogonally $Mr^{(k)}$ onto the subspace $\Span\left\{Md^{(0)}\dots Md^{(k-1)}\right\}$.
+The vector $Md^{(k)}$ is then defined to be the difference between $Mr^{(k)}$ and this projection, guaranteed to be orthogonal to all of the vectors in the above subspace.
+
+Refer to Figure~\ref{fig:Aorth} for an illustration;
+recall that the projection of a vector $v$ onto the system axis represented by the vector $u$
+is the vector $u$ scaled by the factor $v \cos(\angle(u,v))$.
+We can find it by computing two dot products:  $proj(v,u) := \frac{u^\top v}{u^\top u}u$.
+Here, we use this equation with $v = Mr^{(k+1)}$ and $u=Md^{(i)}$
+in order to project the new direction onto the preceding ones and thus decompose 
+$Mr^{(k+1)}$ into $Md^{(0)}\dots Md^{(k)}$.
+
+\begin{align*}
+  Md^{(k+1)} =&Mr^{(k+1)} - \sum_{i=0}^k \frac{\left(Mr^{(k+1)}\right)^\top Md^{(i)}}{\left(Md^{(i)}\right)^\top Md^{(i)}} Md^{(i)}\\ 
+  =& Mr^{(k+1)} - \sum_{i=0}^k \frac{r^{(k+1)\top}Ad^{(i)}}{d^{(i)\top}Ad^{(i)}} Md^{(i)}
+\end{align*}
+
+This relation is interesting, however our real uknowns are $d^{(k)}$ and not $Md^{(k)}$. So, we multiply both parts of the equation by $M^{-1}$ (ref. to Figure~\ref{fig:Aorth}):
+\begin{equation}
+  \label{eq:naive_gram_update}
+  d^{(k+1)} \leftarrow r^{(k+1)} - \sum_{i=0}^k \frac{r^{(k+1)\top}Ad^{(i)}}{d^{(i)\top}Ad^{(i)}} d^{(i)}.
+\end{equation}
+This is the formula that will be used in the algorithm because it
+no longer contains the matrix $M$ we don't know, but only $A$ and the previous vectors $d^{(0)}\dots d^{(k)}$.
+
+\item {\bf Projection of $Mx^*$ onto this basis.}
+As before, two dot products allow us to find projection on each of the vectors:
+\begin{align*}
+  Mx^* =& \sum_{k=0}^{n-1} \frac{(Mx^*)^\top Md^{(k)}}{(Md^{(k)})^\top Md^{(k)}} Md^{(k)}\\
+    =& \sum_{k=0}^{n-1} \frac{x^*Ad^{(k)}}{d^{(k)\top}Ad^{(k)}} Md^{(k)} \\
+  =& \sum_{k=0}^{n-1} \frac{b^\top d^{(k)}}{d^{(k)\top}Ad^{(k)}} Md^{(k)}. 
+\end{align*}
+
+Again, we can't do this calculation since we don't know $M$, but we can find $x^*$ directly by multiplying the formula on either side by $M^{-1}$:
+$$
+x^* \leftarrow \sum_{k=0}^{n-1} \frac{b^\top d^{(k)}}{d^{(k)\top}Ad^{(k)}} d^{(k)}.
+$$
+\end{enumerate}
+
+Note that we do need to calculate the full set $\left\{d^{(k)}\right\}_{k=0}^{n-1}$ prior projecting $Mx^*$ onto the $Md^{(k)}$.
+To make the conjugation algorithm closer to the conjugate gradient algorithm, we regroup the two loops into the single one;
+then the algorithm can be written as follows:
+\begin{framed}
+\begin{itemize}
+\item $d^{(0)}\leftarrow r^{(0)}$
+\item $x^{(0)} \leftarrow \vec{0} + \frac{b^\top d^{(0)}}{d^{(0)\top}Ad^{(0)}} d^{(0)}$
+\item for $k \in 1\dots n-2$:
+\begin{itemize}
+    \item $d^{(k+1)} \leftarrow r^{(k+1)} - \sum_{i=0}^k \frac{r^{(k+1)\top}Ad^{(i)}}{d^{(i)\top}Ad^{(i)}} d^{(i)}$
+    \item $x^{(k+1)} \leftarrow x^{(k)} + \frac{b^\top d^{(k)}}{d^{(k)\top}Ad^{(k)}} d^{(k)}$
+\end{itemize}
+\end{itemize}
+\end{framed}
+
+
+To sum up, we can solve $Ax=b$ by building an orthogonal base in $M$ and projecting the image of the solution on it just by computing dot products in $M$.
+Figure~\ref{fig:proj2D} provides an illustration.
+
+This algorithm has a $O(n^3)$ complexity because of the necessity to reiterate Gram-Schmidt every time when we choose a new direction, which is regrettable.
+This algorithm should not be implemented because it is very inefficient.
+It forms, however a perfect basement for the conjugate gradient method.
+
+\newpage
+\section{The 3rd and final algorithm: the conjugate gradient}
+\label{chap5:sec:linalg:algoGC}
+
+The conjugate gradient differs from the previous algorithm in the way it constructs the $r^{(k)}$.
+Instead of taking an arbitrary basis, we define it to be the residual at each iteration $r^{(k)} = b-Ax^{(k)}$.
+Recall that the gradient of the corresponding quadratic form is collinear with the residual, hence the name:
+$$\nabla\left\{x^\top A x + 2b^\top x\right\}\left(x^{(k)}\right) = -2 r^{(k)}.$$
+In this way, we combine the gradient descent and the naïve conjugation to obtain the conjugate gradient method.
+This choice of $r^{(k)}$ offers two advantages: it cancels most of the terms in the equation~\eqref{eq:naive_gram_update} and allows the algorithm to converge numerically long before reaching the $n$-th iteration.
+So, while the conjuguate gradient algorithm can be seen as a direct solving method (if $n$ iterations are performed),
+the most important contributions are made in the beginning, therefore it can also be seen as an iterative method.
+
+We can rewrite the naïve conjuguation algorithm as follows:
+
+\begin{center}
+\begin{tabular}{|c|l|l|}
+  \hline
+line &  Direct adaptation & Optimized adaptation  \\
+  \hline
+1&  $x^{(0)}\leftarrow 0$ &$x^{(0)}\leftarrow 0$ \\
+2&  $r^{(0)}\leftarrow b - Ax^{(0)}$ & $r^{(0)}\leftarrow b - Ax^{(0)}$ \\
+3&  $d^{(0)}\leftarrow r^{(0)}$ & $d^{(0)}\leftarrow r^{(0)}$\\
+4&  For $k\in 0\dots n-1$: & For $k\in 0\dots n-1$:  \\
+5&  \quad $\alpha^{(k)} \leftarrow   \frac{b^\top d^{(k)}}{d^{(k)\top}Ad^{(k)}} $                   & \quad $\alpha^{(k)} \leftarrow   \frac{r^{(k)\top} r^{(k)}}{d^{(k)\top}Ad^{(k)}} $\\
+6&  \quad $x^{(k+1)} \leftarrow x^{(k)}+\alpha^{(k)} d^{(k)} $                                      & \quad $x^{(k+1)} \leftarrow x^{(k)}+\alpha^{(k)} d^{(k)} $\\
+7&  \quad $r^{(k+1)} \leftarrow b-Ax^{(k+1)}$                                                       & \quad $r^{(k+1)} \leftarrow r^{(k)}-\alpha^{(k)} Ad^{(k)} $\\
+8&  \quad $\beta^{(k+1)}_i \leftarrow \frac{r^{(k+1)\top}Ad^{(i)}}{d^{(i)\top}Ad^{(i)}}, \forall i\leq k$ & \quad $\beta^{(k+1)} \leftarrow - \frac{r^{(k+1)\top} r^{(k+1)}}{r^{(k)\top} r^{(k)}}$ \\
+9&  \quad $d^{(k+1)} \leftarrow r^{(k+1)} - \sum_{i=0}^{k}\beta^{(k+1)}_id^{(k)}$                   & \quad $d^{(k+1)} \leftarrow r^{(k+1)} - \beta^{(k+1)}d^{(k)}$\\
+  \hline
+\end{tabular}
+\end{center}
+
+Note the drastic change in complexity: the performance-killing sum in the last line disappears in the optimization!
+While the left column is quite straightforward to obtain, the optimized version requires a little bit more analysis.
+The most striking property allowing us to perform this optimization is the orthogonality of the residuals:
+$$
+\boxed{{r^{(k)}}^\top r^{(i)}=0 \quad \forall k<i}
+$$
+It is easy to prove: recall that once we take a step in a search direction, we need never step in that direction again, i.e.
+$\left(Mx^{(k)} - Mx^*\right) \perp \Span\left\{Md^{(0)}, \dots Md^{(k-1)}\right\}$, it means that the error $x^{(k)} - x^*$ is $A$-orthogonal to the subspace $D^{(k-1)}:=\Span\left\{d^{(0)}, \dots d^{(k-1)}\right\}$.
+Since the residual $r^{(k)} = A\left(x^*-x^{(k)}\right)$, then $r^{(k)}$ is orthogonal to $D^{(k-1)}$.
+Let us note that $D^{(k-1)} = \Span\left\{r^{(0)}, \dots r^{(k-1)}\right\}$, it can be easily demonstrated by induction using the fact that $d^{(j)}$ is
+a linear combination of $r^{(j)}$ and $d^{(i)}$ with $i<j$.
+We can conclude then that the set of residuals $\left\{r^{(k)}\right\}_{k=0}^{n-1}$ form an orthogonal basis,
+and it is conjugated to the basis $\left\{d^{(k)}\right\}_{k=0}^{n-1}$, who, in its turn, becomes orthogonal under the action of $M$, refer to Figure~\ref{fig:conjuge} for an illustration.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=1\linewidth]{cg/conjuge.png}
+  \caption{The vectors $\left\{r^{(k)}\right\}_{k=0}^{n-1}$ (in red) are mutually orthogonal, as well as
+  the vectors $\left\{Md^{(k)}\right\}_{k=0}^{n-1}$ (in blue) are mutually orthogonal in the space deformed by $M$.}
+  \label{fig:conjuge}
+\end{figure}
+
+
+Armed with this key property, let us review all the transformations leading to the optimized version of the algorithm:
+\begin{itemize}
+\item \textbf{Line 5: step size $\alpha^{(k)}$.} The optimal step size can be computed both via the conjuguation and the gradient descent:
+$$\boxed{\alpha^{(k)}=\frac{r^{(k)\top}r^{(k)}}{d^{(k)\top}Ar^{(k)}} =\frac{b^\top d^{(k)}}{d^{(k)\top}Ad^{(k)}}}$$
+
+We compute the step $\alpha^{(k)}$ so that the gradient at the new point is orthogonal to the search direction.
+For the gradient descent we look for $d^{(k)}\perp r^{(k+1)}$, and for the conjugation method we look for $Md^{(k)}\perp Mr^{(k+1)}$.
+Since placing $x^{(k+1)}$ at the minimum of $\|Ax-b\|^2$ is equivalent to placing $Mx^{(k+1)}$ at the minimum of $\|Ax-b\|^2$ transformed by $M$, 
+we obtain the same $\alpha^{(k)}$ in both cases.
+
+It is easy to see that $d^{(k)\top}Ar^{(k)} = d^{(k)\top}Ad^{(k)}$:
+to construct $Md^{(k)}$ with Gram-Schmidt, a vector of $MD^{(k-1)}$ was subtracted from $Mr^{(k)}$, leaving the same the dot product with $Md^{(k)}$.
+We have therefore the equailty of the denominators.
+Knowing that $x^{(k)}\in D^{(k-1)}$, we also determine the equality of the numerators: 
+$ b^\top d^{(k)} =(b-Ax^{(k)})^\top d^{(k)} = r^{(k)\top}d^{(k)}=r^{(k)\top}r^{(k)}$.
+The last equality comes from the fact that the residuals are mutually orthogonal.
+More presicely, to find $d^{(k)}$ with aid of the Gram-Schmidt process, we have subtracted a vector lying in $D^{(k-1)}$ from $r^{(k)}$;
+keeping in mind that $r^{(k)}\perp D^{(k-1)}$, it therefore does not modify the dot product $r^{(k)\top} r^{(k)}$, leaving it equal to $d^{(k)\top} r^{(k)}$.
+
+\item \textbf{Line 7: recursive definition of $r^{(k)}$.} \fbox{$r^{(k+1)}= r^{(k)}+\alpha^{(k)} A d^{(k)}$}
+
+By definition $r^{(k+1)} = b-Ax^{(k+1)}$. We know that $x^{(k+1)} = x^{(k)}+\alpha^{(k)} d^{(k)}$, thus $r^{(k+1)} = b-A(x_i+\alpha^{(k)} d^{(k)}) = r^{(k)} + \alpha^{(k)} A d^{(k)}$.
+
+\item \textbf{Lines 8 and 9: massive cancellation of betas.}
+The first two simplifications are simple and only slightly affect performance.
+The last simplification is fundamental because it changes each iteration in $O(n)$ instead of $O(n^2)$ (with sparse matrices):
+it uses the orthogonality of the residuals to simplify the writing of $\beta^{(k+1)}_j$.
+
+By definition of betas, we have:
+\begin{align*}
+  \beta^{(k+1)}_i&:= \frac{r^{(k+1)\top}Ad^{(i)}  }{d^{(i)\top}Ad^{(i)}} \\
+&= \frac{r^{(k+1)\top}(r^{(i)}- r^{(i+1)})  }{\alpha^{(i)} d^{(i)\top}Ad^{(i)}} \\
+  &= \frac{r^{(k+1)\top}r^{(i)}- r^{(k+1)\top}r^{(i+1)}}{\alpha^{(i)} d^{(i)\top}Ad^{(i)}},
+\end{align*}
+where the first transformation is made thanks to the recursive definition of the residuals $r^{(i+1)}= r^{(i)}+\alpha^{(i)} A d^{(i)}$.
+The, by the orthogonality of the residuals, we have:
+
+\begin{align*}
+\beta^{(k+1)}_i &= \left \{ \begin{array}{r l} \frac{- r^{(k+1)\top}r^{(k+1)}}{\alpha^{(k)} d^{(k)\top}Ad^{(k)}}, & i=k\\ 0, & i<k \end{array} \right. \\
+                &= \left \{ \begin{array}{r l} \frac{- r^{(k+1)\top}r^{(k+1)}}{r^{(k)\top}r^{(k)}}, & i=k\\ 0, & i<k \end{array} \right. 
+\end{align*}
+The last transformation was obtained by plugging the optimized definition of $\alpha^{(k)}$ into the right-hand side of the equation.
+
+To sum up, by orthogonality of the residuals, $\beta^{(k+1)}_i=0$ if $k\neq i$, which makes it possible to simplify the notations by omitting the $i$:
+we use $\beta^{(k+1)}$ instead of $\beta_k^{(k+1)}$ because all the other $\beta_i^{(k+1)}$ are null.
+
+\end{itemize}
+
+
+\newpage
+\section{Performance}
+
+En l'absence d'erreurs d'arrondi, le gradient conjugué converge en $n$ itérations, et chaque itération
+ne requiert qu'une multiplication d'une matrice par un vecteur et
+cinq multiplications d'un vecteur par un autre. En pratique, le
+gradient conjugué est utilisé sur des grandes matrices creuses comme
+un solveur itératif qui est moins sensible au conditionnement de la
+matrice que la descente de gradient.
+
+Il est intéressant d'observer le comportement du gradient conjugué sur
+ce type de matrices. Nous allons voir deux cas simples: un Laplacien
+1D et un Laplacien 2D discrétisé sur une grille régulière. Bien que
+simples, ces choix montrent l'impact d'un facteur prédominant pour le
+comportement des solveurs: la disposition des zéros dans la matrice,
+qui correspond aux voisinages géométriques dans l'espace discrétisé.
+	
+Les matrices creuses définissent des graphes qui relient les indices~$i$ et~$j$
+des coefficients $a_{ij}$ non nuls. En modélisation par éléments finis (FEM)
+et en {\it geometry processing}, ces graphes sont très proches de la structure
+du maillage sur lequel on travaille: en effet, les équations aux
+dérivées partielles vont par définition lier des éléments
+géométriquement proches. Les deux Laplaciens sont des exemples 1D et
+2D qui permettent de voir comment se comportent les algorithmes que nous
+venons de présenter avec ce type de données.
+	
+		
+\subsection{Laplacien 1D.}
+	
+Nous représentons une fonction~$f$ par le vecteur~$x$ tel que $f(i) =
+x_i$. Ce que l'on appelle Laplacien 1D ici est un système linéaire qui
+donne en chaque point de la fonction sa dérivée seconde, estimée par
+différences finies. Le problème est de trouver une fonction (un
+vecteur $x$) dont cette dérivée seconde est nulle, et qui respecte des
+contraintes au bord, comme illustré dans la figure
+\ref{fig:laplace1d}.
+	
+Ce problème est très intéressant car il est relativement simple à
+analyser. De plus, on peut visualiser le comportement des différents
+algorithmes sur une seule image (figure \ref{fig:laplace1dresults}):
+il suffit d'afficher les $x_i^{(k)}$ en fonction de la position
+géométrique $i$ et de l'itération $k$. De plus, ce problème est
+extrêmement complexe à résoudre car le conditionnement du système est
+très mauvais: pour $n=5$ il est de $13.6= 1.9 / 0.14$ et pour $n=20$,
+il vaut $200 = 2/.01$. Géométriquement, cela correspond à vouloir
+résoudre un problème dont les iso-valeurs de $x^\top Ax-2b^\top x$
+sont des ellipses dont les axes ont des rapports de taille de $13.6$
+et $200$ !
+	
+Pour chaque algorithme, on observe les comportements suivants (figure
+\ref{fig:laplace1dresults}):
+\begin{itemize}
+\item La descente de gradient minimise rapidement la dérivée seconde
+  prés des contraintes, mais peine à propager les contraintes vers
+  l'intérieur du domaine.
+\item La méthode par projection propage la contrainte de gauche au fur
+  et à mesure, mais ne tient compte de celle de droite qu'à la
+  dernière itération. Ce comportement est certes dû au choix des
+  $r^{(k)}$, mais illustre bien la nécessité de faire l'ensemble des
+  itérations.
+\item Le gradient conjugué se comporte comme s'il ne voyait qu'une
+  région autour des contraintes (définies au bord, en orange), sur
+  laquelle il résout parfaitement le problème. Cette région grandit à
+  chaque itération pour recouvrir tout le domaine à partir de la
+  moitié des itérations, mais il faut attendre les $n$ itérations pour
+  que chacune des deux contraintes ait eu le temps d'influencer
+  l'ensemble du domaine.
+\end{itemize}
+	
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=1\linewidth]{cg/laplace1d.png}
+  \caption{Problème de Laplacien 1D. On a une fonction définie en n
+    points (ici, $n=5$) et cherche à minimiser la dérivée seconde
+    estimée par différences finies i.e., $\Sigma_i
+    x_i-(x_{i-1}+x_{i+1})/2$. Au bord on fixe des valeurs $h_0$ et
+    $h_n$, ce qui donne le problème $Ax-b=0$ avec $A$ et $b$ définis
+    dans la figure.}
+  \label{fig:laplace1d}
+  \vspace{5mm}
+
+  \includegraphics[width=1\linewidth]{cg/laplace1dresults.png}
+  \caption{Évolution de la solution du Laplacien 1D avec $n=20$: l'axe
+    gris représente la fonction échantillonnée par $x$, et l'axe bleu
+    est celui des itérations, et les segments oranges sont les
+    contraintes du bord. Les trois solveurs sont (de gauche à droite)
+    une descente de gradient, une conjugaison et un gradient
+    conjugué.}
+  \label{fig:laplace1dresults}
+  \vspace{5mm}
+
+  \includegraphics[width=1\linewidth]{cg/laplace2d.png}
+  \caption{Évolution de la solution du Laplacien 2D sur une grille de
+    $20 \times 20$. La solution $x$ est affichée par la hauteur de la
+    fonction, et les contraintes de bords sont données par les
+    segments oranges.}
+  \label{fig:laplace2d}
+\end{figure}
+
+\subsection{Laplacien 2D.}
+	
+Le Laplacien 2D fonctionne sur le même principe que le Laplacien
+1D. On a discrétisé une fonction f sur une grille 2d et à chaque nœud
+de la grille on associe une coordonnée de $x$. Le Laplacien est estimé
+par différence finie, donc la matrice $A$ est définie par: $a_{ii}=1$,
+$a_{ij}=-1/4$ si les n{\oe}uds $i$ et $j$ sont voisins, et $a_{ij}=0$
+sinon.
+	
+Dans le cas 2D, on ne peut plus représenter la simulation sur une
+seule image, alors nous affichons l'état à certaines itérations. Grâce
+à la figure \ref{fig:laplace2d}, on peut analyser le comportement des
+différents algorithmes:
+\begin{itemize}
+\item Descente de gradient: Comme avec le Laplacien 1D, on observe que
+  les premières itérations lissent bien la fonction, mais que le
+  solveur peine à propager les contraintes vers l'intérieur du
+  domaine. Ceci étant, en $100$ itérations, la convergence sur cette
+  grille de $20 \times 20$ semble similaire à celle observée sur la
+  grille 1D de $n=20$. La difficulté ne semble pas être due aux $400$
+  variables, mais plutôt à la distance aux contraintes (qui est à peu
+  près la même en 1D et en 2D).
+\item Conjugaison: le solveur règle les $x_i$ les uns après les
+  autres, et n'a pas convergé car il n'y a pas eu les 400 itérations
+  nécessaires.
+\item Gradient conjugué: il converge en moins de $30$ itérations, ce
+  qui est donc loin des $400$ itérations nécessaires (méthode directe)
+  pour assurer la convergence. Ce comportement s'explique par le temps
+  nécessaire à chaque contrainte pour influencer l'ensemble du
+  domaine.
+\end{itemize}
+	
+	
+%	inputs for http://www.bluebit.gr/matrix-calculator/calculate.aspx
+%	-1  .5 0 0 0   
+%	.5  -1 .5 0 0   
+%	0 .5 -1 .5  0 
+%	0 0  .5 -1 .5 
+%	0 0  0 .5 -1 
+%	
+%	 -1  .5 0 0 0   0 0 0 0 0    0 0 0 0 0    0 0 0 0 0  
+%	.5  -1 .5 0 0   0 0 0 0 0    0 0 0 0 0    0 0 0 0 0 
+%	0 .5 -1 .5  0   0 0 0 0 0    0 0 0 0 0    0 0 0 0 0 
+%	0 0  .5 -1 .5   0 0 0 0 0    0 0 0 0 0    0 0 0 0 0 
+%	0 0 0 .5 -1    .5 0 0 0 0      0 0 0 0 0   0 0 0 0 0
+%	0 0 0 0 .5    -1 .5 0 0 0    0 0 0 0 0   0 0 0 0 0
+%	0 0 0 0 0    .5 -1 .5 0 0      0 0 0 0 0   0 0 0 0 0
+%	0 0 0 0 0    0 .5 -1 .5 0   0 0 0 0 0   0 0 0 0 0
+%	0 0 0 0 0    0 0 .5 -1 .5    0 0 0 0 0   0 0 0 0 0
+%	0 0 0 0 0    0 0 0 .5 -1    .5 0 0 0 0    0 0 0 0 0
+%	0 0 0 0 0   0 0 0 0 .5    -1 .5 0 0 0    0 0 0 0 0
+%	0 0 0 0 0   0 0 0 0 0    .5 -1 .5 0 0      0 0 0 0 0
+%	0 0 0 0 0   0 0 0 0 0    0 .5 -1 .5 0   0 0 0 0 0
+%	0 0 0 0 0   0 0 0 0 0    0 0 .5 -1 .5    0 0 0 0 0
+%	0 0 0 0 0   0 0 0 0 0    0 0 0 .5 -1    .5 0 0 0 0 
+%	0 0 0 0 0   0 0 0 0 0    0 0 0 0 .5    -1 .5 0 0 0 
+%	0 0 0 0 0   0 0 0 0 0   0 0 0 0 0    .5 -1 .5 0 0   
+%	0 0 0 0 0   0 0 0 0 0   0 0 0 0 0    0 .5 -1 .5 0
+%	0 0 0 0 0   0 0 0 0 0   0 0 0 0 0    0 0 .5 -1 .5 
+%	0 0 0 0 0   0 0 0 0 0   0 0 0 0 0    0 0 0 .5 -1 
+
+
+	
+
+\subsection{Conclusion.}
+	
+La difficulté à résoudre des problèmes dans lesquels $A$ est une
+matrice creuse est fortement liée à la distance maximale (par rapport
+au graphe d'adjacence défini par $A$) à laquelle une contrainte peut
+influencer la solution. De fait, pour un nombre similaire de
+variables, les problèmes 1D paraissent plus difficiles que les problèmes 2D.
+	
+\section{Récapitulatif}
+	
+On a présenté le gradient conjugué comme l'unification de deux
+méthodes (gradient et conjugaison). On a aussi vu ce qui rend cette
+méthode si efficace, et on en a observé le comportement sur des
+problèmes classiques dans lesquels $A$ est une matrice
+creuse. Récapitulons le contenu:
+	
+\begin{itemize}
+\item {\bf Objectif:} Résoudre $Ax=b$ pour une matrice $A$ définie
+  positive
+\item {\bf Descente de gradient:} Résoudre $Ax-b =0$ équivaut à
+  minimiser $x^\top Ax-2b$
+  \begin{itemize}
+  \item On peut descendre le gradient avec un pas optimal.
+  \item Méthode itérative, extrêmement dépendante du conditionnement
+    de $A$
+  \end{itemize}
+  
+\item {\bf Conjugué:} Il existe $M$ telle que $M^\top M=A$.
+  \begin{itemize}
+  \item On sait modifier une famille de vecteurs $r^{(k)}$ pour
+    construire une autre famille $d^{(k)}$, dont les images par $M$
+    sont orthogonales, à savoir $Md^{(k)}.Md^{(i)}=0$;
+  \item On sait décomposer $x^*$ sur les $d^{(k)}$ en projetant $Mx^*$
+    sur les $Md^{(k)}$.;
+  \item Méthode directe : requiert $n$ itérations, faisant chacune
+    $O(n)$ multiplications matrice/vecteur.
+  \end{itemize}
+		
+\item Le {\bf Gradient Conjugué} (GC) peut être obtenu en modifiant l'une
+  ou l'autre des méthodes:
+  \begin{itemize}
+  \item Le GC est une descente de gradient dont on corrige la
+    direction de descente pour ne pas retourner dans une direction
+    déjà optimisée;
+	
+  \item Le GC est un algorithme de conjugaison dont les $r^{(k)}$ sont
+    soigneusement choisis (le gradient) pour se rapprocher au plus
+    vite de la solution;
+    
+  \item Le GC est donc une méthode directe et itérative \textbf{à la fois}, qui converge
+    généralement en peu d'itérations;
+	
+  \item Ce qui en fait un algorithme efficace c'est qu'à l’étape $k$
+    le gradient est déjà orthogonal (dans $M$) à tous les $d^{(i)}$,
+    sauf $d^{(k-1)}$. Cela permet de faire un nombre constant de
+    multiplications matrice/vecteur par itération.
+	
+  \end{itemize}
+	
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1534,7 +2189,9 @@ Note that convergence fails if the two classes are linearly separable. In that c
 
 
 \appendix
+\authoredby{B}
 \chapter{Program listings}
+\fancyhead[R]{\textcolor{green}{core text}}
 
 \begin{listing}[p]
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
@@ -1562,4 +2219,3 @@ Note that convergence fails if the two classes are linearly separable. In that c
 
 
 \end{document}
-
