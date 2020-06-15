@@ -9,7 +9,7 @@ n = len(x)
 cx = [x[i] - (x[(i-1+n)%n]+x[(i+1)%n])/2 for i in range(n)] # precompute the
 cy = [y[i] - (y[(i-1+n)%n]+y[(i+1)%n])/2 for i in range(n)] # discrete curvature
 
-for iter in range(1000):
+for _ in range(1000):
     for i in range(n):
         x[i] = (x[(i-1+n)%n]+x[(i+1)%n])/2 + cx[i]*1.9
         y[i] = (y[(i-1+n)%n]+y[(i+1)%n])/2 + cy[i]*1.9

@@ -1350,7 +1350,6 @@ engineers try different combinations of competing goals until they obtain a sati
 
 \section{Caricature}
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_a.py}
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.2_b.py}
 
 
 \begin{figure}[ht]
@@ -1516,7 +1515,7 @@ The gradient descent consists of, starting from an initial position $x^{(0)}$,
 to move in the direction opposite to the gradient so as to minimize the function as quickly as possible.
 Thus, we build a sequence of approximations $x^{(k)}$ that converges to the solution $x^*$.
 In the case of a quadratic form, the gradient is easy to compute: $\nabla f(x^{(k)}) = 2Ax^{(k)} - 2b$.
-Then the iterative descent method can be instantiaed as follows:
+Then the iterative descent method can be instantiated as follows:
 
 \begin{framed}
 \begin{itemize}
@@ -1812,6 +1811,7 @@ line &  Direct adaptation & Optimized adaptation  \\
 \end{tabular}
 \end{center}
 
+The right column presents an optimized version of the algorithm that we will describe in details shortly.
 Note the drastic change in complexity: the performance-killing sum in the last line disappears in the optimization!
 While the left column is quite straightforward to obtain, the optimized version requires a little bit more analysis.
 The most striking property allowing us to perform this optimization is the orthogonality of the residuals:
@@ -1870,12 +1870,17 @@ By definition of betas, we have:
   &= \frac{r^{(k+1)\top}r^{(i)}- r^{(k+1)\top}r^{(i+1)}}{\alpha^{(i)} d^{(i)\top}Ad^{(i)}},
 \end{align*}
 where the first transformation is made thanks to the recursive definition of the residuals $r^{(i+1)}= r^{(i)}+\alpha^{(i)} A d^{(i)}$.
-The, by the orthogonality of the residuals, we have:
+Then, by orthogonality of the residuals, we have:
 
-\begin{align*}
+\begin{equation}
+\nonumber
+\boxed{
+\begin{array}{rcl}
 \beta^{(k+1)}_i &= \left \{ \begin{array}{r l} \frac{- r^{(k+1)\top}r^{(k+1)}}{\alpha^{(k)} d^{(k)\top}Ad^{(k)}}, & i=k\\ 0, & i<k \end{array} \right. \\
                 &= \left \{ \begin{array}{r l} \frac{- r^{(k+1)\top}r^{(k+1)}}{r^{(k)\top}r^{(k)}}, & i=k\\ 0, & i<k \end{array} \right. 
-\end{align*}
+\end{array}
+}
+\end{equation}
 The last transformation was obtained by plugging the optimized definition of $\alpha^{(k)}$ into the right-hand side of the equation.
 
 To sum up, by orthogonality of the residuals, $\beta^{(k+1)}_i=0$ if $k\neq i$, which makes it possible to simplify the notations by omitting the $i$:
@@ -2128,6 +2133,89 @@ creuse. Récapitulons le contenu:
 
 
 \chapter{From least squares to neural networks}
+\section{Logistic growth model}
+Logistic growth functions are useful as models accounting for constraints placed on the growth.
+An example is a bacteria culture allowed to grow under initially ideal conditions, followed by less favorable conditions that inhibit growth.
+Imagine a colony of the bacteria \textit{B. dendroides} is growing in a Petri dish. The colony's area $a$ (in square centimeters) can be modeled by where $t$ is the elapsed time in hours.
+\begin{equation}
+\label{eq:logistic-growth}
+a(t) = \frac{c}{1+e^{-wt - w_0}},
+\end{equation}
+where $c$, $w_0$ and $w$ are the parameters of the model. Here $c$ is the carrying capacity, $w_0$ is the initial population size and $w$ is the growth rate.
+This model was proposed in 1840s by a belgian mathematician Pierre François Verhulst.
+
+Let us say that we want to recover the parameters of the model from an experiment: we have a series of $n$ measurements $(a_i, t_i)$, refer to the left image of Figure~\ref{fig:logistic-growth} for the scatter plot of the data.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.32\linewidth]{example_8.1_a.png}
+    \includegraphics[width=.32\linewidth]{example_8.1_b.png}
+    \includegraphics[width=.32\linewidth]{example_8.1_c.png}
+    \caption{Logistic growth least squares fitting. \textbf{Left:} experimental data, \textbf{middle: } ordinary least squares initial guess, \textbf{right:} final fit after a series of least squares problems.}
+    \label{fig:logistic-growth}
+\end{figure}
+
+Under the assumption of independent and normally distributed errors, with 0 expectations and common variance, maximizing the likelyhood for the general nonlinear model~\eqref{eq:logistic-growth}
+is equivalent to the minimization of the sum of squared errors:
+$$
+S(c,w_0,w) = \sum\limits_{i=1}^n (a(t_i) - a_i)^2
+$$
+
+There multiple way to deal with non-linearities, for example, we can try to apply some transformation to the model.
+Let us take transform the equation~\eqref{eq:logistic-growth}:
+\begin{align*}
+a(t) &= \frac{c}{1+e^{-wt - w_0}} \\
+\frac{c}{a(t)-1} & = e^{-wt-w_0}  \\
+\log\left(\frac{c-a(t)}{a(t)}\right) & = -wt-w_0
+\end{align*}
+If we have an estimation $c^{(0)}$ for the parameter $c$, this model is well suited for an ordinary linear regression.
+We can find the estimation $w_0^{(0)}$ and $w^{(0)}$ for the parameters $w_0$ and $w$ by solving the following system in the least squares sense:
+\begin{equation}
+\label{eq:logistic-initial-guess}
+\begin{pmatrix}
+1 & t_1 \\
+1 & t_2 \\
+\vdots & \\
+1 & t_n
+\end{pmatrix}
+\begin{pmatrix}
+w^{(0)}_0\\
+w^{(0)}
+\end{pmatrix}
+=
+\begin{pmatrix}
+\log\frac{a_1}{c^{(0)} - a_1}\\
+\log\frac{a_2}{c^{(0)} - a_2}\\
+\vdots \\
+\log\frac{a_n}{c^{(0)} - a_n}
+\end{pmatrix}
+\end{equation}
+
+How can we estimate $c^{(0)}$? Knowing that it corresponds to the carrying capacity, we can do a quick-n-ugly estimation $c^{(0)}:=\max\limits_{i\in 1\dots n} a_i + \varepsilon$, where a small constant $\varepsilon$ is added in order to avoid division by
+zero in the equation~\eqref{eq:logistic-initial-guess}.
+Refer to Listing~\ref{listing:logistic-growth} for the source code; left image of Figure~\ref{fig:logistic-growth} shows the logistic curve fitted to our data.
+
+\TODO{explication fitting pourri}
+
+$r_i(b) := a(t_i) - a_i$
+
+$$
+S(b) = \sum\limits_{i=1}^n r_i(b)^2 = \|\vec{r}(b)\|^2
+$$
+
+Gauss–Newton algorithm
+
+$b^{(k+1)} = b^{(k)} + \Delta b^{(k)}$
+
+$$
+\vec{r}(b) \approx \vec{r}\left(b^{(k)}\right) + J\vec{r}\left(b^{(k)}\right) \left(b - b^{(k)}\right)
+$$
+$$
+\min \left\| J\vec{r}\left(b^{(k)}\right) \Delta b^{(k)} - \vec{r}\left(b^{(k)}\right) \right\|^2 
+$$
+$b^{(0)} := \left(c^{(0)}, w_0^{(0)}, w^{(0)}\right)$
+
+
+
 \section{Logistic regression}
 Two possible classes encoded as $y \in \{0,1\}$ and assume
 $$
@@ -2212,10 +2300,37 @@ Note that convergence fails if the two classes are linearly separable. In that c
 \end{listing}
 
 \begin{listing}[p]
+\inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing.py}
+\caption{Poisson image editing.}
+\label{listing:pie}
+\end{listing}
+
+\begin{listing}[p]
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.2_b.py}
+\caption{A caricature on a 2D silhouette.}
+\label{listing:silhouette}
+\end{listing}
+
+\begin{listing}[p]
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_c.cpp}
+\caption{3D caricature.}
+\label{listing:caricature}
+\end{listing}
+
+
+\begin{listing}[p]
+\setminted{fontsize=\scriptsize}
+\inputminted[frame=single,linenos=true]{python}{listings/lscm.cpp}
 \caption{Least squares conformal mapping.}
 \label{listing:lscm}
 \end{listing}
+
+\begin{listing}[p]
+\inputminted[frame=single,linenos=true]{python}{listings/example_8.1.py}
+\caption{Logistic growth least squares fitting.}
+\label{listing:logistic-growth}
+\end{listing}
+
 
 
 \end{document}
