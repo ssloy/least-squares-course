@@ -48,8 +48,8 @@ plt.contour(X0, X1, Y,levels=[.49995, .50005], colors='k', linestyles='--')
 
 
 for sample, label in zip(samples,labels):
-    c = 'g'
-    if (label<.5): c = 'r'
+    c = 'lime'
+    if (label<.5): c = 'tomato'
     plt.scatter(sample[0], sample[1], color=c, edgecolors='black',s=200,linewidths=2)
 
 plt.tight_layout()
