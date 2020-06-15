@@ -2160,7 +2160,7 @@ $$
 S(c,w_0,w) = \sum\limits_{i=1}^n (a(t_i) - a_i)^2
 $$
 
-There multiple way to deal with non-linearities, for example, we can try to apply some transformation to the model.
+There are multiple ways to deal with non-linearities, for example, we can try to apply some transformation to the model.
 Let us take transform the equation~\eqref{eq:logistic-growth}:
 \begin{align*}
 a(t) &= \frac{c}{1+e^{-wt - w_0}} \\
@@ -2213,6 +2213,19 @@ $$
 \min \left\| J\vec{r}\left(b^{(k)}\right) \Delta b^{(k)} - \vec{r}\left(b^{(k)}\right) \right\|^2 
 $$
 $b^{(0)} := \left(c^{(0)}, w_0^{(0)}, w^{(0)}\right)$
+
+
+\section{Binary classification}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.305\linewidth]{linear-1d-a.png}
+    \includegraphics[width=.64\linewidth]{linear-1d-b.png}
+    \includegraphics[width=.305\linewidth]{logistic-1d-a.png}
+    \includegraphics[width=.64\linewidth]{logistic-1d-b.png}
+    \caption{Binary classification}
+    \label{fig:logistic-vs-linear}
+\end{figure}
 
 
 
@@ -2274,6 +2287,15 @@ a weighted least-squares problem, and hense iterating~\eqref{eq:newton2} is ofte
 It is easy to see that the Hessian matrix $X^\top V X$ is positive definite (it follows from the fact that $V>0$), and thus is a convex optimization problem.
 
 Note that convergence fails if the two classes are linearly separable. In that case we can handle this via a regularization.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.3\linewidth]{logistic-regression-2d.png}
+    \caption{Logistic regression}
+    \label{fig:logistic-vs-linear}
+\end{figure}
+
+
 
 
 \appendix
