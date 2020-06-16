@@ -53,8 +53,8 @@ for sample, label in zip(samples,labels):
     plt.scatter(sample[0], sample[1], color=c, edgecolors='black',s=200,linewidths=2)
 
 plt.tight_layout()
-#plt.gca().axes.get_yaxis().set_visible(False)
-#plt.gca().axes.get_xaxis().set_visible(False)
+plt.gca().axes.get_yaxis().set_visible(False)
+plt.gca().axes.get_xaxis().set_visible(False)
 plt.savefig("logistic-regression-2d.png", bbox_inches='tight')
 plt.show()
 
