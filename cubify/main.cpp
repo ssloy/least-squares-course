@@ -1,12 +1,8 @@
-#include <vector>
-#include <iostream>
-
 #include "OpenNL_psm.h"
-#include "geometry.h"
 #include "model.h"
 
-const Vec3f axes[] = {Vec3f(1,0,0), Vec3f(-1,0,0), Vec3f(0,1,0), Vec3f(0,-1,0), Vec3f(0,0,1), Vec3f(0,0,-1)};
-int snap(Vec3f n) { // returns the coordinate axis closest to the given normal
+const vec3 axes[] = {vec3(1,0,0), vec3(-1,0,0), vec3(0,1,0), vec3(0,-1,0), vec3(0,0,1), vec3(0,0,-1)};
+int snap(vec3 n) { // returns 0,1 or 2: the coordinate axis closest to the given normal
     double nmin = -2.0;
     int    imin = -1;
     for (int i=0; i<6; i++) {
@@ -16,22 +12,18 @@ int snap(Vec3f n) { // returns the coordinate axis closest to the given normal
             imin = i;
         }
     }
-    return imin;
+    return imin/2;
 }
 
-int main(int argc, char** argv) {
-    if (argc<2) {
-        std::cerr << "Usage: " << argv[0] << " obj/model.obj" << std::endl;
-        return 1;
-    }
+int main() {
+    Model m("../input-face.obj");
 
-    Model m(argv[1]);
-
+    // for each facet find the coordinate axis (x,y or z) closest to the normal
     std::vector<int> nearest_axis(m.nfaces());
     for (int i=0; i<m.nfaces(); i++) {
-        Vec3f v[3];
+        vec3 v[3];
         for (int j=0; j<3; j++) v[j] = m.point(m.vert(i, j));
-        Vec3f n = cross(v[1]-v[0], v[2]-v[0]).normalize();
+        vec3 n = cross(v[1]-v[0], v[2]-v[0]).normalize();
         nearest_axis[i] = snap(n);
     }
 
@@ -42,21 +34,22 @@ int main(int argc, char** argv) {
         nlBegin(NL_SYSTEM);
         nlBegin(NL_MATRIX);
 
-        for (int i=0; i<m.nhalfedges(); i++) {
-            int v1 = m.from(i);
-            int v2 = m.to(i);
+        for (int h=0; h<m.nhalfedges(); h++) {
+            int v1 = m.from(h);
+            int v2 = m.to(h);
 
-            nlRowScaling(1.);
+            nlRowScaling(1.); // light attachment to the old geometry
             nlBegin(NL_ROW);
             nlCoefficient(v1,  1);
             nlCoefficient(v2, -1);
             nlRightHandSide(m.point(v1)[d] - m.point(v2)[d]);
             nlEnd(NL_ROW);
 
-            int axis = nearest_axis[i/3]/2;
+            int face = h/3;
+            int axis = nearest_axis[face];
             if (d!=axis) continue;
 
-            nlRowScaling(2.);
+            nlRowScaling(2.); // flatten
             nlBegin(NL_ROW);
             nlCoefficient(v1,  1);
             nlCoefficient(v2, -1);
@@ -67,9 +60,8 @@ int main(int argc, char** argv) {
         nlEnd(NL_SYSTEM);
         nlSolve();
 
-        for (int i=0; i<m.nverts(); i++) {
+        for (int i=0; i<m.nverts(); i++)
             m.point(i)[d] = nlGetVariable(i);
-        }
     }
 
     std::cout << m;

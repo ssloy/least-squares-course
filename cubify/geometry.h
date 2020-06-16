@@ -93,10 +93,10 @@ template <size_t DIM, typename T> std::ostream& operator<<(std::ostream& out, ve
 
 /////////////////////////////////////////////////////////////////////////////////
 
-typedef vec<2,  float> Vec2f;
-typedef vec<2,  int>   Vec2i;
-typedef vec<3,  float> Vec3f;
-typedef vec<3,  int>   Vec3i;
+typedef vec<2,  float> vec2;
+typedef vec<2,  int>   vec2i;
+typedef vec<3,  float> vec3;
+typedef vec<3,  int>   vec3i;
 
 #endif //__GEOMETRY_H__
 

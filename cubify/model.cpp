@@ -19,11 +19,11 @@ Model::Model(const char *filename) : verts(), faces(), v2h(), opposites() {
         char trash;
         if (!line.compare(0, 2, "v ")) {
             iss >> trash;
-            Vec3f v;
+            vec3 v;
             for (int i=0;i<3;i++) iss >> v[i];
             verts.push_back(v);
         } else if (!line.compare(0, 2, "f ")) {
-            Vec3i f;
+            vec3i f;
             int idx, cnt=0;
             iss >> trash;
             while (iss >> idx) {
@@ -86,7 +86,7 @@ int Model::nhalfedges() {
     return faces.size()*3;
 }
 
-void Model::get_bbox(Vec3f &min, Vec3f &max) {
+void Model::get_bbox(vec3 &min, vec3 &max) {
     min = max = verts[0];
     for (int i=1; i<(int)verts.size(); ++i) {
         for (int j=0; j<3; j++) {
@@ -97,7 +97,7 @@ void Model::get_bbox(Vec3f &min, Vec3f &max) {
     std::cerr << "bbox: [" << min << " : " << max << "]" << std::endl;
 }
 
-Vec3f &Model::point(int i) {
+vec3 &Model::point(int i) {
     assert(i>=0 && i<nverts());
     return verts[i];
 }

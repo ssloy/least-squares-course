@@ -6,8 +6,8 @@
 
 class Model {
 private:
-    std::vector<Vec3f> verts;
-    std::vector<Vec3i> faces;
+    std::vector<vec3> verts;
+    std::vector<vec3i> faces;
     std::vector<std::vector<int> > v2h; // vertex to halfedge incidency
     std::vector<int> opposites; // halfedges
     void compute_opposites();
@@ -18,9 +18,9 @@ public:
     int nfaces();
     int nhalfedges();
 
-    Vec3f &point(int i);
+    vec3 &point(int i);
     int vert(int fi, int li);
-    void get_bbox(Vec3f &min, Vec3f &max);
+    void get_bbox(vec3 &min, vec3 &max);
     void print_obj();
 
     int from(int hid);

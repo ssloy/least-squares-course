@@ -39,6 +39,7 @@
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Div}{div}
 
 
 \usepackage{amssymb}
@@ -100,6 +101,42 @@ linkbordercolor=lightgray
 \chapter{The reading guide}
 %\addcontentsline{toc}{chapter}{Preface}
 
+%Intended Audience (50 words => 46)
+%We present the Least Squares method to manipulate geometric objects (curves, images, surfaces).
+%It is a basic (fundamental) of numerical optimization that can be efficiently used by programmers that are not specialized in applied mathematics because it is simple, efficient and general enough to handle a large family of problems.
+
+%Course Prerequisites (50 words)
+% Anyone able to program computer graphics algorithms can learn to use Least Squares with this course. Attendee already using it or having stronger mathematical background may discover some interesting relations with other domains.
+
+%Executive Statement (Maximum 50 words)
+%We present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using the Least Squares method; a very efficient tool that doesn’t require too much mathematical background.
+
+
+%Course Syllabus
+%The course is decomposed in three parts: an introduction, many use cases to demonstrate its usefulness, and the presentation of its strong relations with some important scientific domains.
+% * It starts with a gentle introduction of the Least Squares method, that provides some intuitions about what is a linear system, and how solving it can be used to design new algorithms.
+% * Then we proceed to the main course: how can instantiate the Least squares in order to some problems? What can be the variables? the energy? how to deal with constraints? how far can we go from linearity? This part is illustrated with examples with simple code that allows to experiment by yourself.
+% * The last part will provide some insights about the strong connections between this fundamental method and probability, numerical simulations with FEM, and neuronal networks.
+
+%Course rationale
+%In computer graphics, many problems can be efficiently solved by numerical optimizations e.g. texture mapping, deformations, physic simulations, morphing, etc. These methods come from the applied mathematics community and are not always mastered by computer science students.
+%The purpose of this course is to bring to the audience a first brick of numerical optimization. We choose the Least Squares method because it doesn’t require strong mathematical background, it is extremely efficient, and can handle many different problems.
+%We not only present the mathematical foundation of the method, but also illustrate it with many use cases, ranging from 1D function smoothing to texture mapping or nonlinear 3D deformations. Examples are fundamental in this course because the main difficulties with this method are to determine the best variable set, and how to define the energy.
+%We consider Least Squares as a keystone of numerical optimization, and we explain why this simple method is so strongly related with probability, FEM, and Neural Networks. 
+
+% Pedagogic Intentions and Methods
+% Linear regression is a simple tool for data analysis.
+% We propose to discover how the same method (least squares) applies to the manipulation of geometric objects.
+% This first step into the numerical optimization world can be done without strong applied mathematics background;
+% while being simple, this step suffices for many applications, and is a good starting point for learning more advanced algorithms.
+% We strive to communicate the underlying intuitons through numerous examples of classic problems, we show different choices of variables and the ways the energies are built.
+% Over the last two decades, the geometry processing community have used it for computing 2D maps, deformations, geodesic paths, frame fields, etc.
+% Our examples provide many examples of applications that can be directly solved by the least squares method.
+% Note that linear regression is an efficient tool that has deep connections to other scientific domains;
+% we show a few such links to broaden the reader's horizons.
+
+
+
 
 This course is intended for students/engineers/researchers who know how to program in the traditional way:
 by breaking down complex tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes\dots).
@@ -109,6 +146,30 @@ This course explains least squares optimization, nowadays a simple and well-mast
 We show how this simple method can solve a large number of problems that would be difficult to approach in any other way.
 This course provides a simple, understandable yet powerful tool that most coders can use,
 in the contrast with other algorithms sharing this paradigm (numerical simulation and deep learning) which are more complex to master.
+
+Linear regression is ofter underestimated being considered only as a sub-domain of statistics / data analysis, but it is much more than that.
+We propose to discover how the same method (least squares) applies to the manipulation of geometric objects.
+This first step into the numerical optimization world can be done without strong applied mathematics background;
+while being simple, this step suffices for many applications, and is a good starting point for learning more advanced algorithms.
+We strive to communicate the underlying intuitons through numerous examples of classic problems, we show different choices of variables and the ways the energies are built.
+Over the last two decades, the geometry processing community have used it for computing 2D maps, deformations, geodesic paths, frame fields, etc.
+Our examples provide many examples of applications that can be directly solved by the least squares method.
+Note that linear regression is an efficient tool that has deep connections to other scientific domains;
+we show a few such links to broaden the reader's horizons.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \authoredby{A}
 \chapter{Do you believe in the probability theory?}
@@ -320,9 +381,11 @@ In the real world, any measurement gives \textit{an approximation} of this value
 The methods I am describing here were developed by Gauß at the end of the 18th century, when he measured the orbits of celestial bodies
 \footnote{Note that Legendre has published an equivalent method in 1805, 
 whereas Gauß' first publication is dated by 1809. Gauß has always claimed that he had been using the method since 1795,
-and this is a very famous priority dispute~\cite{https://projecteuclid.org/download/pdf_1/euclid.aos/1176345451} in the history of statistics.
+% https://projecteuclid.org/download/pdf_1/euclid.aos/1176345451
+and this is a very famous priority dispute~\cite{} in the history of statistics.
 There are, however, numerous evidence to support the thesis that Gauß possessed the method before Legendre, but he was late in his communication.}.
-~\cite{Theoria Motus Corporum Coelestium}
+%Theoria Motus Corporum Coelestium
+~\cite{}
 
 For example, if we measure the battery voltage $N$ times, we get $N$ different measurements. Which of them should we take? All of them! 
 So, let us say that we have $N$ measurements $U_j$:
@@ -1348,6 +1411,89 @@ In practice, just like we did in this section,
 engineers try different combinations of competing goals until they obtain a satisfactory transient time while not exceeding regulation capabilites.
 
 
+
+
+
+
+\section{Poisson image editing}
+\label{sec:poisson}
+The next problem is motivated by image editing.
+Figure~\ref{fig:pie} provides an illustration:
+we want to replace the baseball from the image \textbf{(a)} with the football \textbf{(b)}. A direct overlay leads to a unsatisfactory result \textbf{(c)}.
+How to swap the content seamlessly?
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=.34\linewidth]{pie-1d.png}
+    \caption{1D Poisson's equation: the function $f(x)$ is constrained at the extremities and it has the same second derivative as $g(x)$.}
+    \label{fig:pie1d}
+\end{figure}
+
+Poisson's equation can be of help here. Let us start with a 1D example from Figure~\ref{fig:pie1d}: we are looking for a unknown function $f(x)$ defined on $x\in[0,2\pi]$ that is as close as possible to $g(x):=\sin x$, but is constrained to have $f(0)=1$ and $f(2\pi) = 3$.
+We can formulate it as the Poisson's equation with Dirichlet boundary conditions:
+$$
+\frac{d^2}{dx^2}f  = \frac{d^2}{dx^2} g \quad \text{s.t.~} f(0)=1,~f(2\pi) = 3
+$$
+
+Two decades ago people used Gauß-Seidel to solve these linear systems~\cite{10.1145/882262.882269},
+however with modern conjugate gradients-based solvers~\cite{OpenNL} it is much easier to reformulate it as a minimization problem.
+Poisson's equation with Dirichlet boundary conditions corresponds to the following least squares formulation:
+$$
+\min\limits_{f} \int_0^{2\pi} \|f' - g'\|^2 \quad \text{with~} f(0)=1,~f(2\pi) = 3
+$$
+
+Let us say that we represent the functions $f$ and $g$ by $n$ samples, then we can obtain $f$ by solving the following linear system in the least squares sense:
+\begin{equation}
+\label{eq:pie1d}
+\left \{ \begin{array}{ccccl}
+f_1 &       &       &           & =  g_1 - g_0 + f_0  \\
+-f_1 & + f_2 &       &           & = g_2 - g_1 \\
+    &       &       & \vdots    &             \\
+     &        &  -f_{n-3}     &  f_{n-2}          & = g_{n-2} - g_{n-3} \\
+     &        &       & - f_{n-2} & =  g_{n-1}-g_{n-2} -f_{n-1}
+\end{array} \right.
+\end{equation}
+Here we approximate the derivative by finite differences;
+this system has $n-1$ equations (one equation per finite difference) with $n-2$ unknowns, $f_0$ and $f_{n-1}$ being fixed.
+Listing~\ref{listing:pie1d} solves this system, and the result is shown in  Figure~\ref{fig:pie1d}.
+
+Back to the image editing example (Figure~\ref{fig:pie}). All color channels are solved independently one from another, so we can say that we manipulate grayscale images.
+Let us say that we have two real-valued functions $a$ (sub-image of the baseball photo) and $b$ (the football image) defined over $\Omega$.
+For the sake of simplicity we consider a rectangular domain $\Omega$.
+We are looking for the function $f$ who takes its boundary conditions from $a$ and the gradients from $b$:
+$$
+\min\limits_{f} \int_\Omega \|\nabla f - \nabla b\|^2 \quad \text{with~} f|_{\partial\Omega} = a|_{\partial\Omega}
+$$
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.24\linewidth]{pie_baseball.png}~
+    \raisebox{0.65\height}{\includegraphics[width=.08\linewidth]{pie_football.png}}~
+    \includegraphics[width=.24\linewidth]{pie_overlay.png}~
+    \includegraphics[width=.24\linewidth]{pie_poisson.png}
+    \\
+    \begin{flushleft}
+    {\hspace{.18\linewidth}\textbf{(a)\hspace{.15\linewidth}(b)\hspace{.14\linewidth}(c)\hspace{.22\linewidth}(d)}}
+    \end{flushleft}
+    \caption{Poisson image editing. We want to replace the baseball from the image \textbf{(a)} with the football \textbf{(b)}. A direct overlay leads to a unsatisfactory result \textbf{(c)}, whereas the Poisson image editing produces an image with much less visible seams \textbf{(d)}.}
+    \label{fig:pie}
+\end{figure}
+
+We can discretize the problem exactly as in the previous example: if we have $w \times h$-pixels grayscale images $a$ and $b$.
+To compute a $w \times h$-pixels image $f$, we can solve the following system in the least squares sense:
+\begin{equation}
+\label{eq:pie}
+\left \{ \begin{array}{rll}
+f_{i+1, j}-f_{i,j} & = b_{i+1, j}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
+f_{i, j+1}-f_{i,j} & = b_{i, j+1}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
+f_{i,j}            & = a_{i,j}            & \forall (i,j) \text{~s.t.~} i=0 \vee i=w-1 \vee j=0 \vee j=h-1
+\end{array} \right.
+\end{equation}
+Listing~\ref{listing:pie} solves this system, and the result is shown in the rightmost image of Figure~\ref{fig:pie}.
+
+
+
+
 \section{Caricature}
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_a.py}
 
@@ -1381,20 +1527,6 @@ engineers try different combinations of competing goals until they obtain a sati
 	\label{fig:????}
 \end{figure}
 
-
-\begin{figure}[ht]
-	\centering
-    \includegraphics[width=.24\linewidth]{pie_baseball.png}~
-    \raisebox{0.65\height}{\includegraphics[width=.08\linewidth]{pie_football.png}}~
-    \includegraphics[width=.24\linewidth]{pie_overlay.png}~
-    \includegraphics[width=.24\linewidth]{pie_poisson.png}
-    \\
-    \begin{flushleft}
-    {\hspace{.18\linewidth}\textbf{(a)\hspace{.15\linewidth}(b)\hspace{.14\linewidth}(c)\hspace{.22\linewidth}(d)}}
-    \end{flushleft}
-	\caption{Poisson image editing. We want to replace the baseball from the image \textbf{(a)} with the football \textbf{(b)}. A direct overlay leads to a unsatisfactory result \textbf{(c)}, whereas the Poisson image editing produces an image with much less visible seams \textbf{(d)}.}
-	\label{fig:????}
-\end{figure}
 
 \begin{figure}[ht]
 	\centering
@@ -2322,21 +2454,38 @@ Note that convergence fails if the two classes are linearly separable. In that c
 \end{listing}
 
 \begin{listing}[p]
+\setminted{fontsize=\footnotesize}
+\inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing-1d.py}
+\caption{1D Poisson image editing (\S\ref{sec:poisson}). This program solves Equation~\eqref{eq:pie1d}.}
+\label{listing:pie1d}
+\end{listing}
+
+\begin{listing}[p]
+\setminted{fontsize=\footnotesize}
 \inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing.py}
-\caption{Poisson image editing.}
+\caption{Poisson image editing (\S\ref{sec:poisson}). This program solves Equation~\eqref{eq:pie}.}
 \label{listing:pie}
 \end{listing}
 
 \begin{listing}[p]
+\setminted{fontsize=\scriptsize}
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_b.py}
 \caption{A caricature on a 2D silhouette.}
 \label{listing:silhouette}
 \end{listing}
 
 \begin{listing}[p]
+\setminted{fontsize=\scriptsize}
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_c.cpp}
 \caption{3D caricature.}
 \label{listing:caricature}
+\end{listing}
+
+\begin{listing}[p]
+\setminted{fontsize=\scriptsize}
+\inputminted[frame=single,linenos=true]{python}{listings/cubify.cpp}
+\caption{Cubify.}
+\label{listing:cubify}
 \end{listing}
 
 
@@ -2353,6 +2502,7 @@ Note that convergence fails if the two classes are linearly separable. In that c
 \label{listing:logistic-growth}
 \end{listing}
 
-
+\bibliographystyle{acm}
+\bibliography{least-squares}
 
 \end{document}
