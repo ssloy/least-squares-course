@@ -109,7 +109,7 @@ linkbordercolor=lightgray
 % Anyone able to program computer graphics algorithms can learn to use Least Squares with this course. Attendee already using it or having stronger mathematical background may discover some interesting relations with other domains.
 
 %Executive Statement (Maximum 50 words)
-%We present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using the Least Squares method; a very efficient tool that doesn’t require too much mathematical background.
+%We present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using the Least Squares method; a very efficient tool that doesn't require too much mathematical background.
 
 
 %Course Syllabus
@@ -120,7 +120,7 @@ linkbordercolor=lightgray
 
 %Course rationale
 %In computer graphics, many problems can be efficiently solved by numerical optimizations e.g. texture mapping, deformations, physic simulations, morphing, etc. These methods come from the applied mathematics community and are not always mastered by computer science students.
-%The purpose of this course is to bring to the audience a first brick of numerical optimization. We choose the Least Squares method because it doesn’t require strong mathematical background, it is extremely efficient, and can handle many different problems.
+%The purpose of this course is to bring to the audience a first brick of numerical optimization. We choose the Least Squares method because it doesn't require strong mathematical background, it is extremely efficient, and can handle many different problems.
 %We not only present the mathematical foundation of the method, but also illustrate it with many use cases, ranging from 1D function smoothing to texture mapping or nonlinear 3D deformations. Examples are fundamental in this course because the main difficulties with this method are to determine the best variable set, and how to define the energy.
 %We consider Least Squares as a keystone of numerical optimization, and we explain why this simple method is so strongly related with probability, FEM, and Neural Networks. 
 
@@ -157,8 +157,22 @@ Our examples provide many examples of applications that can be directly solved b
 Note that linear regression is an efficient tool that has deep connections to other scientific domains;
 we show a few such links to broaden the reader's horizons.
 
+\iffalse
 
+Ce cours présente comment la méthode des moindres carrés peut résoudre un grand nombre des problèmes rencontrés en manipulation de maillages.
+Contrairement aux outils classiques de manipulation de maillages par optimisation combinatoire, cette approche appartient aux méthodes d'optimisation numériques dans lesquelles, 
+plutôt que de décrire chaque étape du déroulement du programme, on définit notre objectif sous forme d'équations à respecter, qu'un solveur va savoir optimiser tout seul.
+Dans le monde de l'optimisation numérique, les moindres carrés sont particulièrement simples à mettre en œuvre car ils ne requièrent pas de connaissances poussées en mathématiques. 
+De plus, les solveurs pour résoudre ce type de problème sont très efficaces… à tel point que la majorité des autres méthodes se ramènent à des suites de problèmes similaires. 
+Cette simplicité de mise en œuvre, combinée à l'efficacité des solveurs fait de cette approche le candidat idéal pour introduire un peu d'optimisation numérique dans des logiciels de design, rendu, etc.
+Ce cours présente donc les moindres carrés, en rappelant les bases d'algèbre linéaire nécessaire, et en les illustrant sur des cas simples. 
+Mais pour que ce formidable outil puisse être exploité pleinement, il faut surtout savoir reconnaitre les situations dans lesquelles il saura se montrer efficace. 
+Un cours de deux heures ne peut évidemment pas remplacer des années d'expériences, mais nous avons répertorié un ensemble de cas d'utilisation simples et représentatifs 
+de la variété de configurations dans lesquelles les moindres carrés ont résolu des problèmes en computer graphics.
+Afin d'aller plus loin dans la compréhension de cette méthode, nous clarifierons son positionnement vis-à-vis d'autre domaines scientifiques : quel est son rapport avec les probabilités ? 
+dans quel cas est-ce équivalent à une formulation FEM ? la linearité est-elle la seule différence avec le deep learning ?
 
+\fi
 
 
 
@@ -177,7 +191,7 @@ we show a few such links to broaden the reader's horizons.
 
 This short section is not mandatory for the understanding of the main course; 
 the idea behind is to warm up before attacking code and formulae.
-I’ll start with the least squares methods through the maximum likelihood estimation;
+I'll start with the least squares methods through the maximum likelihood estimation;
 this requires some (at least superficial) knowledge of probability theory. 
 So, right from the beginning, I would like to digress a little.
 
@@ -1465,7 +1479,7 @@ $$
 \min\limits_{f} \int_\Omega \|\nabla f - \nabla b\|^2 \quad \text{with~} f|_{\partial\Omega} = a|_{\partial\Omega}
 $$
 
-\begin{figure}[ht]
+\begin{figure}[b]
     \centering
     \includegraphics[width=.24\linewidth]{pie_baseball.png}~
     \raisebox{0.65\height}{\includegraphics[width=.08\linewidth]{pie_football.png}}~
@@ -1493,20 +1507,43 @@ Listing~\ref{listing:pie} solves this system, and the result is shown in the rig
 
 
 
-
 \section{Caricature}
+Caricature, a type of exaggerated artistic portrait, amplifies the characteristic traits of human faces.
+Typically, this task is left to artists, as it has proven difficult for automated methods.
+Here we show an extremely naive approach, starting with a 2D silhouette.
+This section is closely related to Poisson image editing described in the previous section.
+Let us consider the following program:
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_a.py}
 
+It defines a 2D silhouette as a closed polyline represented by two same length arrays \mintinline{python}{x} and \mintinline{python}{y} (Figure~\ref{fig:lenin-naive}, (a)).
+The idea is to increase the curvature of the polyline, thus exaggerating the traits.
+To this end, we compute the curvatures via finite differences and store it in the arrays \mintinline{python}{cx} and \mintinline{python}{cy}.
+Then we want to solve the Poisson's equation with the increased curvature as the right hand side of the equation.
+So, we perform 1000 Gauß-Seidel iterations to solve the equation. Figure~\ref{fig:lenin-naive} shows the evolution of the polyline.
+After 10 iterations the drawing looks very good, exactly what I had in mind, but what happens next?
+Well, there is no surprise: the polyline is inflated, because it corresponds exactly to what we have asked for.
+To scale finite differences is to scale the input signal... How to fix it?
+Well, we can stop the process after 10 iterations, thus exploiting the fact that Gauß-Seidel has a slow convergence for in low frequencies, but it is a unsatisfactory solution.
+It would much be better if the result was at the true minimum of our optimization routine.
 
-\begin{figure}[ht]
+\begin{figure}[h]
+\begin{minipage}{.66\linewidth}
     \centering
-    \includegraphics[width=.24\linewidth]{example_6.2_a.png}
-    \includegraphics[width=.24\linewidth]{example_6.2_b.png}
-%    \includegraphics[width=.2\linewidth]{example_6.2_c.png}
-    \includegraphics[width=.24\linewidth]{example_6.2_d.png}
-    \includegraphics[width=.24\linewidth]{example_6.2_e.png}
+    \includegraphics[height=.33\linewidth]{example_6.3_a.png}
+    \includegraphics[height=.33\linewidth]{example_6.3_b.png}
+    \includegraphics[height=.33\linewidth]{example_6.3_d.png}
+    \begin{flushleft}
+    {\hspace{.18\linewidth}\textbf{(a)\hspace{.17\linewidth}(b)\hspace{.30\linewidth}(c)}}
+    \end{flushleft}
+    \caption{Gauß-Seidel iterations amplifying the curvature of the closed polyline shown in image \textbf{(a)}. Image \textbf{(b):} 10 iterations, image \textbf{(c):} 1000 iterations.}
+    \label{fig:lenin-naive}
+\end{minipage}
+\qquad
+\begin{minipage}{.25\linewidth}
+    \includegraphics[width=\linewidth]{example_6.3_e.png}
     \caption{}
     \label{fig:lenin}
+\end{minipage}
 \end{figure}
 
 
@@ -2236,7 +2273,7 @@ creuse. Récapitulons le contenu:
   \item Le GC est donc une méthode directe et itérative \textbf{à la fois}, qui converge
     généralement en peu d'itérations;
 	
-  \item Ce qui en fait un algorithme efficace c'est qu'à l’étape $k$
+  \item Ce qui en fait un algorithme efficace c'est qu'à l'étape $k$
     le gradient est déjà orthogonal (dans $M$) à tous les $d^{(i)}$,
     sauf $d^{(k-1)}$. Cela permet de faire un nombre constant de
     multiplications matrice/vecteur par itération.
@@ -2420,14 +2457,52 @@ It is easy to see that the Hessian matrix $X^\top V X$ is positive definite (it 
 
 Note that convergence fails if the two classes are linearly separable. In that case we can handle this via a regularization.
 
-\begin{figure}[htb]
+\begin{figure}[t]
     \centering
+    \includegraphics[width=.35\linewidth]{neuron.png}
     \includegraphics[width=.3\linewidth]{logistic-regression-2d.png}
     \caption{Logistic regression}
     \label{fig:logistic-vs-linear}
 \end{figure}
 
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=.9\linewidth]{3n.jpg}
+    \caption{Sigmoids sum}
+    \label{fig:sigmoids}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=.5\linewidth]{3neurons.png}
+    \quad
+    \includegraphics[width=.3\linewidth]{neural.png}
+    \caption{NN}
+    \label{fig:neural}
+\end{figure}
+
+
+
+\section{3 neurons}
+$$
+\sigma(x,w) = \frac{1}{1+e^{-w^\top x}},
+$$
+
+$$
+x'_i :=  \begin{pmatrix} \sigma(u^\top x_i) &  \sigma(v^\top x_i) & 1\end{pmatrix}^\top
+$$
+
+$$
+E = \frac{1}{2}\sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right) - y_i\right)^2
+$$
+
+\begin{align*}
+\frac{\partial E}{\partial w} & =  \sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right)  - y_i\right) \sigma'\left(w^\top x'_i\right)  x'_i \\
+                              & =  \sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right)  - y_i\right) \sigma\left(w^\top x'_i\right) (1-\sigma\left(w^\top x'_i\right) ) x'_i \\
+\frac{\partial E}{\partial u} & =  \sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right)  - y_i\right) \sigma\left(w^\top x'_i\right) (1-\sigma\left(w^\top x'_i\right) ) \sigma\left(u^\top x_i\right) (1-\sigma\left(u^\top x_i\right) ) x_i \\
+\frac{\partial E}{\partial v} & =  \sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right)  - y_i\right) \sigma\left(w^\top x'_i\right) (1-\sigma\left(w^\top x'_i\right) ) \sigma\left(v^\top x_i\right) (1-\sigma\left(v^\top x_i\right) ) x_i \\
+\end{align*}
 
 
 \appendix
@@ -2497,10 +2572,26 @@ Note that convergence fails if the two classes are linearly separable. In that c
 \end{listing}
 
 \begin{listing}[p]
+\setminted{fontsize=\footnotesize}
 \inputminted[frame=single,linenos=true]{python}{listings/example_8.1.py}
 \caption{Logistic growth least squares fitting.}
 \label{listing:logistic-growth}
 \end{listing}
+
+\begin{listing}[p]
+\setminted{fontsize=\footnotesize}
+\inputminted[frame=single,linenos=true]{python}{listings/logistic-regression-2d.py}
+\caption{Logistic regression.}
+\label{listing:logistic-regression}
+\end{listing}
+
+
+\begin{listing}[p]
+\inputminted[frame=single,linenos=true]{python}{listings/neural.py}
+\caption{NN.}
+\label{listing:NN}
+\end{listing}
+
 
 \bibliographystyle{acm}
 \bibliography{least-squares}
