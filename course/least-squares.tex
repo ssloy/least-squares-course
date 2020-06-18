@@ -38,6 +38,8 @@
 
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\proj}{proj}
 \DeclareMathOperator{\Span}{span}
 \DeclareMathOperator{\Div}{div}
 
@@ -1508,6 +1510,7 @@ Listing~\ref{listing:pie} solves this system, and the result is shown in the rig
 
 
 \section{Caricature}
+\label{sec:caricature}
 Caricature, a type of exaggerated artistic portrait, amplifies the characteristic traits of human faces.
 Typically, this task is left to artists, as it has proven difficult for automated methods.
 Here we show an extremely naive approach, starting with a 2D silhouette.
@@ -1541,29 +1544,76 @@ It would much be better if the result was at the true minimum of our optimizatio
 \qquad
 \begin{minipage}{.25\linewidth}
     \includegraphics[width=\linewidth]{example_6.3_e.png}
-    \caption{}
+    \caption{A trade-off between the desirable curvature and data attachment produces the expected effect.}
     \label{fig:lenin}
 \end{minipage}
 \end{figure}
 
+The minimization problem that corresponds to the above listing can be written as follows:
+$$
+\min \sum\limits_{\forall \text{~edge~} (i,j)} \left(x'_j - x'_i -  c\cdot\left(x_j - x_i\right)  \right)^2,
+$$
+where $c$ corresponds to the scaling coefficient, $x_i$ are the input coordinates and $x_i'$ are the unknowns.
+The problem is separable in two coordinates, so we list here only the $x$ part.
 
-
+The simplest way to prevent the ``inflation'' of the model is to add a data attachment term:
+\begin{equation}
+\label{eq:caricature}
+\min \sum\limits_{\forall \text{~edge~} (i,j)} \left(x'_j - x'_i -  c_0\cdot\left(x_j - x_i\right)  \right)^2 + \sum\limits_{\forall \text{~vertex~} i} c_1^2 \left( x'_i - x_i \right)^2
+\end{equation}
+The coefficients $c_0$ and $c_1$ allow us to tune the optimization to achieve the desired trade-off between the curvature exaggeration and the data attachment.
+The result is shown in Figure~\ref{fig:lenin}.
+To minimize the energy (Equation~\eqref{eq:caricature}), we can solve the following system in the least squares sense:
+\begin{equation}
+\label{eq:carsyst}
+\left \{ \begin{array}{ccccl}
+c_0\cdot x'_0 &            &       &               & =  c_0\cdot x_0  \\
+& c_0\cdot x'_1            &       &               & =  c_0\cdot x_1  \\
+    &       &       & \vdots    &             \\
+&             &       &    c_0\cdot x'_{n-1}           & =  c_0\cdot x_{n-1}  \\
+-x'_0 & + x'_1      &       &               & =  c_1\cdot \left( x_1 - x_0\right)  \\
+     & - x'_1      & +x'_2      &           & =  c_1 \cdot \left(x_2 - x_1\right)  \\
+    &       &       & \vdots    &             \\
+    &            & x'_{n-2}   &    +x'_{n-1}       & =  c_1 \cdot \left(x_{n-2} - x_{n-1}\right)  \\
+x'_0 &            &    &    -x'_{n-1}       & =  c_1 \cdot \left(x_{n-1} - x_0\right)  \\
+\end{array} \right.
+\end{equation}
+Refer to Listing~\ref{listing:silhouette} for the corresponding source code. Note that we can solve Equation\eqref{eq:caricature} for 3D surfaces as well, an example is shown in Figure~\ref{fig:caricature},
+refer to Listing~\ref{listing:caricature} for the source code.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.8\linewidth]{caricature.jpg}
-    \caption{.}
+    \caption{We can solve Equation\eqref{eq:caricature} for 3D surfaces as well (Listing~\ref{listing:caricature}).}
     \label{fig:caricature}
 \end{figure}
+
+\section{Cubificator}
+
+$$
+\vec{a}_{ijk} := \argmax\limits_{\vec{u}\in \{(1,0,0), (0,1,0), (0,0,1)\}} \left|\vec{u} \cdot \vec{N}_{ijk}\right| 
+$$
+
+$$
+\text{proj}_{\vec{u}} \vec{v} := \frac{\vec{v}\cdot\vec{v}}{\vec{u}\cdot\vec{u}}\vec{u}
+$$
+
+\begin{align*}
+\min \sum\limits_{\forall \text{~edge~} ij}\left\|\vec{e'}_{ij} - \vec{e}_{ij}\right\|^2 +
+\sum\limits_{\forall \text{~triangle~} ijk}\biggl(& \left\|\vec{e'}_{ij} - \vec{e}_{ij} + \text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{ij}\right) \right\|^2 +\\
+&\left\|\vec{e'}_{jk} - \vec{e}_{jk} + \text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{jk}\right) \right\|^2 +\\
+&\left\|\vec{e'}_{ki} - \vec{e}_{ki} + \text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{ki}\right) \right\|^2\biggr)
+\end{align*}
 
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=.8\linewidth]{cubify-flagging.jpg}
-	\caption{.}
-	\label{fig:????}
+	\caption{If we flatten an input surface in one of three coordinates (flagging shown in color), we can obtain a moai statue effect.}
+	\label{fig:moai}
 \end{figure}
 
+\section{Least squares conformal mapping}
 
 \begin{figure}[ht]
 	\centering
@@ -2458,28 +2508,35 @@ It is easy to see that the Hessian matrix $X^\top V X$ is positive definite (it 
 Note that convergence fails if the two classes are linearly separable. In that case we can handle this via a regularization.
 
 \begin{figure}[t]
+\begin{minipage}{.5\linewidth}
     \centering
-    \includegraphics[width=.35\linewidth]{neuron.png}
-    \includegraphics[width=.3\linewidth]{logistic-regression-2d.png}
-    \caption{Logistic regression}
+    \includegraphics[width=.7\linewidth]{neuron.png}
+    \caption{Single neuron perceptron.}
+    \label{fig:neuron1}
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+    \centering
+    \includegraphics[width=.6\linewidth]{logistic-regression-2d.png}
+    \caption{Logistic regression.}
     \label{fig:logistic-vs-linear}
+\end{minipage}
 \end{figure}
 
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=.9\linewidth]{3n.jpg}
-    \caption{Sigmoids sum}
-    \label{fig:sigmoids}
-\end{figure}
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=.5\linewidth]{3neurons.png}
     \quad
     \includegraphics[width=.3\linewidth]{neural.png}
-    \caption{NN}
+    \caption{Left: 3 neurons perceptron with a hidden layer. Right: learning the database shown by red and green dots, the decision boundary is shown by the dashed line, the color gradient corresponds to the output sigmoid.}
     \label{fig:neural}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=.9\linewidth]{3n.jpg}
+    \caption{A perceptron with a hidden layer combines sigmoids from the hidden layer and applies a sigmoid over it. The idea is to be able to represent nonlinear decision boundaries by stacking neurons.}
+    \label{fig:sigmoids}
 \end{figure}
 
 
@@ -2545,14 +2602,14 @@ $$
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_b.py}
-\caption{A caricature on a 2D silhouette.}
+\caption{A caricature on a 2D silhouette (\S\ref{sec:caricature}). This program solves Equation~\eqref{eq:carsyst}.}
 \label{listing:silhouette}
 \end{listing}
 
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_c.cpp}
-\caption{3D caricature.}
+\caption{3D surface caricature (\S\ref{sec:caricature}). Refer to Equation~\eqref{eq:caricature} for the problem definition.}
 \label{listing:caricature}
 \end{listing}
 
