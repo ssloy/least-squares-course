@@ -1550,9 +1550,10 @@ It would much be better if the result was at the true minimum of our optimizatio
 \end{figure}
 
 The minimization problem that corresponds to the above listing can be written as follows:
-$$
+\begin{equation}
+\label{eq:lenin}
 \min \sum\limits_{\forall \text{~edge~} (i,j)} \left(x'_j - x'_i -  c\cdot\left(x_j - x_i\right)  \right)^2,
-$$
+\end{equation}
 where $c$ corresponds to the scaling coefficient, $x_i$ are the input coordinates and $x_i'$ are the unknowns.
 The problem is separable in two coordinates, so we list here only the $x$ part.
 
@@ -1583,39 +1584,65 @@ refer to Listing~\ref{listing:caricature} for the source code.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.8\linewidth]{caricature.jpg}
+    \includegraphics[width=\linewidth]{caricature.jpg}
     \caption{We can solve Equation\eqref{eq:caricature} for 3D surfaces as well (Listing~\ref{listing:caricature}).}
     \label{fig:caricature}
 \end{figure}
 
-\section{Cubificator}
-
-$$
-\vec{a}_{ijk} := \argmax\limits_{\vec{u}\in \{(1,0,0), (0,1,0), (0,0,1)\}} \left|\vec{u} \cdot \vec{N}_{ijk}\right| 
-$$
-
-$$
-\text{proj}_{\vec{u}} \vec{v} := \frac{\vec{v}\cdot\vec{v}}{\vec{u}\cdot\vec{u}}\vec{u}
-$$
-
-\begin{align*}
-\min \sum\limits_{\forall \text{~edge~} ij}\left\|\vec{e'}_{ij} - \vec{e}_{ij}\right\|^2 +
-\sum\limits_{\forall \text{~triangle~} ijk}\biggl(& \left\|\vec{e'}_{ij} - \vec{e}_{ij} + \text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{ij}\right) \right\|^2 +\\
-&\left\|\vec{e'}_{jk} - \vec{e}_{jk} + \text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{jk}\right) \right\|^2 +\\
-&\left\|\vec{e'}_{ki} - \vec{e}_{ki} + \text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{ki}\right) \right\|^2\biggr)
-\end{align*}
-
-
-\begin{figure}[ht]
+\newpage
+\section{Cubify it!}
+\label{sec:cubify}
+Let us compute another deformation of a 3D surface, refer to Figure~\ref{fig:moai} for an illustration.
+The idea is to deform the surface by aligning triangles with one of the global coordinate planes, thus obtaining a moaï statue effect.
+\begin{figure}[!h]
 	\centering
-	\includegraphics[width=.8\linewidth]{cubify-flagging.jpg}
-	\caption{If we flatten an input surface in one of three coordinates (flagging shown in color), we can obtain a moai statue effect.}
+	\includegraphics[width=.75\linewidth]{cubify-flagging.jpg}
+	\caption{If we flatten an input surface in one of three coordinates (flagging shown in color), we can obtain a moaï statue effect.}
 	\label{fig:moai}
 \end{figure}
 
-\section{Least squares conformal mapping}
+First for each triangle we compute the coordinate axis closest to its normal:
+$$
+\vec{a}_{ijk} := \argmax\limits_{\vec{u}\in \{(1,0,0), (0,1,0), (0,0,1)\}} \left|\vec{u} \cdot \vec{N}_{ijk}\right| 
+$$
+Three different colors in the left image of Figure~\ref{fig:moai} correspond to the axes.
+And then we want to deform the surface according to this coloring.
+It is very easy to do. Let $\vec{e}_{ij}$ denote the vector corresponding to the edge $(i,j)$ in the input data,
+and $\vec{e'}_{ij}$ be the modified geometry (the unknowns).
+Here is a small test: what would be the result of the following optimization?
+$$
+\min \sum\limits_{\forall \text{~edge~} ij}\left\|\vec{e'}_{ij} - \vec{e}_{ij}\right\|^2
+$$
+Surely you have recognized Equation~\eqref{eq:lenin}, it is the simplest Poisson problem, giving the output geometry equal to the input.
+We will add few more terms to this energy to obtain the desired effect.
 
-\begin{figure}[ht]
+To align the triangles with the coordinate axes, we can define the projection operator by
+$$
+\text{proj}_{\vec{u}} \vec{v} := \frac{\vec{v}\cdot\vec{v}}{\vec{u}\cdot\vec{u}}\vec{u}
+$$
+This operator projects the vector $v$ orthogonally onto the line spanned by vector $u$.
+Then the desired geometry can be obtained by minimizing the following energy:
+\begin{align*}
+\min \sum\limits_{\forall \text{~edge~} ij}c_0\left\|\vec{e'}_{ij} - \vec{e}_{ij}\right\|^2 +
+\sum\limits_{\forall \text{~triangle~} ijk}c_1\biggl(& \left\|\vec{e'}_{ij} - \vec{e}_{ij} + \text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{ij}\right) \right\|^2 +\\
+&\left\|\vec{e'}_{jk} - \vec{e}_{jk} + \text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{jk}\right) \right\|^2 +\\
+&\left\|\vec{e'}_{ki} - \vec{e}_{ki} + \text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{ki}\right) \right\|^2\biggr)
+\end{align*}
+where $c_0$ and $c_1$ represent the trade-off between the flattening and the old data attachment.
+Note that $\text{proj}_{\vec{a}_{ijk}} \left( \vec{e}_{ij}\right)$ corresponds to the projection of the vector $\vec{e}_{ij}$ to the plane with the normal vector $\vec{a}_{ijk}$.
+Thus, this energy has two types of terms: attachment to the original geometry and the attachment to the triangles projected to one of the coordinate planes.
+Listing~\ref{listing:cubify} provides the source code whose result is visible in Figure~\ref{fig:moai}.
+
+\newpage
+\section{Least squares conformal mapping}
+\label{sec:lscm}
+A parameterization of a surface consists in finding a way to store the colors of the surface in a texture.
+The mapping of the points of the surface to the texture is defined by a mapping function $\mathbb R^3 \rightarrow \mathbb R^2$.
+By inverting this function we can colorize the surface using a flat image drawn by an artist.
+Parameterization of a surface is a problem equivalent to flattening this surface.
+Figure~\ref{fig:lscm} gives us a pretty intuitive idea of the purpose of parameterization.
+
+\begin{figure}[!h]
 	\centering
     \includegraphics[width=.2\linewidth]{lscm-head-mesh.jpg}
     \quad
@@ -1623,8 +1650,56 @@ $$
     \quad
     \includegraphics[width=.2\linewidth]{lscm-head-textured.jpg}
 	\caption{Least squares conformal mapping. \textbf{Left:} input mesh; \textbf{middle:} unfolded mesh textured by an artist; \textbf{right:} final textured surface. Two pinned vertices are shown in red.}
-	\label{fig:????}
+	\label{fig:lscm}
 \end{figure}
+
+
+In our context, we are manipulating triangulated surfaces and we define a parametrization as a piecewise linear function where the pieces are the triangles.
+Such functions are stored in texture coordinates which are the 2D coordinates of the vertices of the triangulation.
+
+It is very difficult to define what a good parameterization is, there are many different ways to compare the quality of maps.
+The distortion of a mapping can be defined by the two eigenvalues of the metric tensor.
+Ideally, the goal would be to make them both equal to 1, but this is an unreachable goal.
+In practice, there are two approaches: we can optimize for conformity, which seeks to find eigenvalues equal to each other, but relaxes the condition of their equality to 1, and area conservation, which seeks to find eigenvalues opposite to each other.
+In this example we manipulate conformal (angle preserving) maps.
+
+Conformal maps have a very interesting feature:  their distortion is locally reduced to a scaling.
+The stretching of the map is the same in all directions (the map is called isotropic), which makes this type of parameterization relatively simple to manipulate.
+The conservation of angles implies that the texture (locally) is not elongated.
+On the other hand, the area is not conserved, implying eventual strong changes in stretching from one place to another on the surface.
+
+Computing such a mapping is a direct instantiation of the Cauchy-Riemann equations on a pair of real-valued functions of two real variables $u(x,y)$ and $v(x,y)$ representing the texture coordinates:
+$$\left\{
+ \begin{array}{rl}
+\frac{\partial u}{\partial x} &= \frac{\partial v}{\partial y} \\
+\frac{\partial u}{\partial y} &= -\frac{\partial v}{\partial x}
+\end{array}
+\right.
+$$
+%Typically $u$ and $v$ are taken to be the real and imaginary parts respectively of a complex-valued function of a single complex variable $z = x + iy$, $f(x + iy) = u(x,y) + iv(x,y)$.
+%Then the Cauchy–Riemann equations may be written in complex form 
+%$$
+%i\frac{\partial f}{\partial x} = \frac{\partial f}{\partial y}
+%$$
+In this form, the equations correspond structurally to the condition that the Jacobian matrix is of the form
+$ \begin{pmatrix}a & -b \\ b &a\end{pmatrix} $.
+Geometrically, such a matrix is always the composition of a rotation with a scaling, and in particular preserves angles.
+The Jacobian of a function $(u, v)$ takes infinitesimal line segments at the intersection of two curves in the parameter plane $(x,y)$ and rotates them to the corresponding segments in $u,v$.
+Consequently, a function satisfying the Cauchy–Riemann equations, with a nonzero derivative, preserves the angle between curves in the plane.
+That is, the Cauchy–Riemann equations are the conditions for a function to be conformal.
+
+Of course, there will be no exact solutions for a triangle mesh, therefore, as usual, we can sum failure of this relationship to hold over all triangles:
+$$\min \sum\limits_{\forall\text{~triangle~} ijk} A_{ijk}\left((\nabla u)_{ijk} - N_{ijk}\times(\nabla v)_{ijk}\right)^2,$$
+where $A_{ijk}$ is the area of the triangle $ijk$, and $N_{ijk}$ is the normal vector to the triangle. Our maps are linear per triangle, therefore the gradients are constant and can be computed as follows:
+$(\nabla u)_{ijk} = \frac{1}{2 A_{ijk}}(u_i \vec{e}_{jk} + u_j\vec{e}_{ki} + u_k\vec{e}_{ij})$.
+
+Of course, we can not do better than $u(x,y)=v(x,y)=0$, and such a map is unsatisfactory. Therefore we can ``pin'' two arbitrary vertices to some arbitrary points in the $u,v$ plane.
+Pinning one vertex determines translation in the plane of the texture, whereas the other determines rotation and scale.
+This energy is very easy to minimize, just as before we need to solve a linear system.
+Refer to Listing~\ref{listing:lscm} for the source code.
+This is a very simple program: for each triangle we compute its coordinates in a local 2D basis, compute the expression of $(\nabla u)_{ijk}$ and $(\nabla v_{ijk}$ in this bais
+and create two rows in the matrix (one row per the Cauchy-Riemann equation).
+Figure~\ref{fig:lscm} shows the result of the execution of the program.
 
 
 
@@ -1646,7 +1721,7 @@ by adjusting the number of iterations according to the type of problem, or by pr
 (i.e., without explicitly storing large matrices in memory).
 
 Our approach is to take the point of view of someone looking to reinvent the algorithm.
-We will first specify which problem is solved by the method, then we will present two methods of resolution (gradient descent and conjugation), 
+We will first specify which problem is solved by the method, then we will present two methods of resolution (gradient descent and conjugation),
 which can be combined to obtain the conjugate gradient.
 We will also illustrate the behaviour of these algorithms under the most common conditions, i.e. with sparse matrices.
 
@@ -2616,7 +2691,7 @@ $$
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}
 \inputminted[frame=single,linenos=true]{python}{listings/cubify.cpp}
-\caption{Cubify.}
+\caption{``Cubification'' of a 3d surface (\S\ref{sec:cubify}).}
 \label{listing:cubify}
 \end{listing}
 
@@ -2624,7 +2699,7 @@ $$
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}
 \inputminted[frame=single,linenos=true]{python}{listings/lscm.cpp}
-\caption{Least squares conformal mapping.}
+\caption{Least squares conformal mapping (\S\ref{sec:lscm}).}
 \label{listing:lscm}
 \end{listing}
 
