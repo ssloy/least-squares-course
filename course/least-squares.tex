@@ -77,8 +77,8 @@ linkbordercolor=lightgray
 \title{{\Huge Least squares for programmers}\\
 {\large with illustrations}\\
 \vspace{10mm}}
-\author{Dmitry Sokolov and Nicolas Ray}
-\date{}
+\author{Dmitry Sokolov, Nicolas Ray and Étienne Corman}
+\date{Université de Lorraine, CNRS, Inria, LORIA, F-54000 Nancy, France}
 
 \begin{document}
 
@@ -247,7 +247,7 @@ Clearly, both Germany and Uruguay cannot win at the same time, so the chance of 
 At the same time, the bookmaker thinks that the probability that either Uruguay or Germany (and not Argentina or Australia) will win is 80\%.
 Let's write it down in the following form:
 $$P(a) = .4  \qquad  P(a\wedge b) = 0 \qquad P(b) = .3 \qquad P(a\vee b) = .8$$
-	
+
 If the bookmaker asserts that his degree of confidence in the event $a$ is equal to 0.4, i.e., $P(a) = 0.4$, 
 then the player can choose whether he will bet on or against the statement $a$,
 placing amounts that are compatible with the degree of confidence of the bookmaker.
@@ -1697,9 +1697,50 @@ Of course, we can not do better than $u(x,y)=v(x,y)=0$, and such a map is unsati
 Pinning one vertex determines translation in the plane of the texture, whereas the other determines rotation and scale.
 This energy is very easy to minimize, just as before we need to solve a linear system.
 Refer to Listing~\ref{listing:lscm} for the source code.
-This is a very simple program: for each triangle we compute its coordinates in a local 2D basis, compute the expression of $(\nabla u)_{ijk}$ and $(\nabla v_{ijk}$ in this bais
+This is a very simple program: for each triangle we compute its coordinates in a local 2D basis, compute the expression of $(\nabla u)_{ijk}$ and $(\nabla v)_{ijk}$ in this bais
 and create two rows in the matrix (one row per the Cauchy-Riemann equation).
 Figure~\ref{fig:lscm} shows the result of the execution of the program.
+
+
+\section{As-rigid-as possible deformations}
+\label{sec:arap}
+How to deform a character in a plausible manner?
+Usually this task is done by artists expertly rigged 3D models.
+However simple deformation models can still produce satisfying deformations.
+Our deformation will be controlled by a set of vertices $\mathcal{I}$ on the surface which will forced to the position $p_k$ (Figure~\ref{fig:ARAP} left).
+
+\begin{figure}[!h]
+ \centering
+ \includegraphics[width=\linewidth]{ARAP.jpg}
+ \caption{\textbf{Left:} deformation constraints. \textbf{Right:} deformation solution of Equation~\eqref{eq:ARAP}.}
+ \label{fig:ARAP}
+\end{figure}
+
+The first requirement one might have is that the deformation must be smooth. So the first idea is to best preserve the edge of the original surface as best as possible while satisfying the position constraints. The new vertex positions $x'$ are obtained be solving the least squares problem:
+\begin{equation}
+ \min_{x'} \sum_{\forall \text{ edge } (i,j)} \left\| x_i' - x_j'- (x_i - x_j) \right\|^2 \quad \text{with } x_k' = p_k , k \in \mathcal{I} .
+\label{eq:ARAP_lap}
+\end{equation}
+
+The resulting deformation however does not look realistic at all: the surface is badly stretched near the constraints (Figure~\ref{fig:arap-lap}) and the our deformation model is unable to create the global rotation induced by the constraints. How to make the deformation looks like the character is moving? Human(-oid) motions are constraints by a skeleton making any movement a composition of rotations around joints. To simulate this effect we can ask that a vertex neighborhood is the rotation of the vertex neighborhood from the original mesh. This way the deformation will seem more rigid. We assign rotation matrices $R_i$ at each vertex $i$ which will affect all incident edges. The least squares problem has now two sets of unknowns the vertex positions and the rotations:
+\begin{equation}
+ \min_{x', R} \sum_{\forall \text{ edge } (i,j)} \left\| x_i' - x_j'- R_i (x_i - x_j) \right\|^2 \quad \text{with } x_k' = p_k , k \in \mathcal{I}.
+\label{eq:ARAP}
+\end{equation}
+
+The problem~\eqref{eq:ARAP} is a non-linear least squares problem but it can be solved efficiently by alternatively solving for the vertex position and solving for the rotation.
+Solving for the vertex positions is a linear problem that can solved by using Gau\ss-Seidel iterations.
+Finding the rotations is a so-called \textit{orthogonal Procrustes problem} which has a closed form solution: Let $U \Sigma V^\top$ be the singular value decomposition of the matrix $\sum_{j\text{ incident }i} (x_i' - x_j')(x_i - x_j)^\top$ then $R_i = U V^\top$. 
+The resulting deformation is able to create a global rotation of the model while the position constraints  nicely spread out across the surface (Figure~\ref{fig:ARAP} and \ref{fig:arap-lap} right).
+Refer to Listing~\ref{listing:arap} for the source code.
+
+\begin{figure}[h]
+ \centering
+ \includegraphics[width=0.35\linewidth]{arap-lap-a.jpg}
+ \includegraphics[width=0.35\linewidth]{arap-lap-b.jpg}
+ \caption{\textbf{Left:} the deformation solution of Equation~\eqref{eq:ARAP_lap} is very local and overstretch one finger. \textbf{Right:} the solution of Equation~\eqref{eq:ARAP} creates a local rotation of the hand.}
+\label{fig:arap-lap}
+\end{figure}
 
 
 
@@ -2701,6 +2742,13 @@ $$
 \inputminted[frame=single,linenos=true]{python}{listings/lscm.cpp}
 \caption{Least squares conformal mapping (\S\ref{sec:lscm}).}
 \label{listing:lscm}
+\end{listing}
+
+\begin{listing}[p]
+\setminted{fontsize=\scriptsize}
+\inputminted[frame=single,linenos=true]{matlab}{listings/arap.m}
+\caption{As-rigid-as possible deformations (\S\ref{sec:arap}).}
+\label{listing:arap}
 \end{listing}
 
 \begin{listing}[p]
