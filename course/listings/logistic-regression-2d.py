@@ -15,9 +15,9 @@ X = np.matrix(samples)
 y = np.matrix(labels).T
 wk = np.matrix([[.3], [.7], [-.02]]) # small random numbers
 
-l = -0.001 # regularization coefficient
+l = 0.001 # regularization coefficient
 for _ in range(5):
     pk = np.matrix([p(xi,wk) for xi in samples]).T
     Vk = np.matrix(np.diag([pk[i,0]*(1.-pk[i,0]) for i in range(n)]))
-    wk += np.linalg.inv(X.T*(Vk-l*np.matrix(np.identity(n)))*X)*(X.T*(y-pk) + l*wk)
+    wk += np.linalg.inv(X.T*Vk*X + l*np.matrix(np.identity(len(samples[0]))))*(X.T*(y-pk) - l*wk)
 print(wk)

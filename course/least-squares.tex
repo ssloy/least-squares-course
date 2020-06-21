@@ -62,7 +62,11 @@ linkbordercolor=lightgray
 \graphicspath{{./img/}}
 
 
-\usepackage[cache=false]{minted}
+\usepackage{caption}
+\usepackage[newfloat,cache=false]{minted}
+\captionsetup[listing]{position=top}
+\captionsetup[listing]{skip=-3pt}
+
 
 \usepackage{colortbl}
 \newcommand\TODO[1]{\textcolor{red}{{\bf TODO :} \it #1}}
@@ -81,6 +85,7 @@ linkbordercolor=lightgray
 \date{Université de Lorraine, CNRS, Inria, LORIA, F-54000 Nancy, France}
 
 \begin{document}
+
 
 \authoredby{B}
 \pagestyle{fancy}
@@ -159,22 +164,20 @@ Our examples provide many examples of applications that can be directly solved b
 Note that linear regression is an efficient tool that has deep connections to other scientific domains;
 we show a few such links to broaden the reader's horizons.
 
-\iffalse
 
-Ce cours présente comment la méthode des moindres carrés peut résoudre un grand nombre des problèmes rencontrés en manipulation de maillages.
-Contrairement aux outils classiques de manipulation de maillages par optimisation combinatoire, cette approche appartient aux méthodes d'optimisation numériques dans lesquelles, 
-plutôt que de décrire chaque étape du déroulement du programme, on définit notre objectif sous forme d'équations à respecter, qu'un solveur va savoir optimiser tout seul.
-Dans le monde de l'optimisation numérique, les moindres carrés sont particulièrement simples à mettre en œuvre car ils ne requièrent pas de connaissances poussées en mathématiques. 
-De plus, les solveurs pour résoudre ce type de problème sont très efficaces… à tel point que la majorité des autres méthodes se ramènent à des suites de problèmes similaires. 
-Cette simplicité de mise en œuvre, combinée à l'efficacité des solveurs fait de cette approche le candidat idéal pour introduire un peu d'optimisation numérique dans des logiciels de design, rendu, etc.
-Ce cours présente donc les moindres carrés, en rappelant les bases d'algèbre linéaire nécessaire, et en les illustrant sur des cas simples. 
-Mais pour que ce formidable outil puisse être exploité pleinement, il faut surtout savoir reconnaitre les situations dans lesquelles il saura se montrer efficace. 
-Un cours de deux heures ne peut évidemment pas remplacer des années d'expériences, mais nous avons répertorié un ensemble de cas d'utilisation simples et représentatifs 
-de la variété de configurations dans lesquelles les moindres carrés ont résolu des problèmes en computer graphics.
-Afin d'aller plus loin dans la compréhension de cette méthode, nous clarifierons son positionnement vis-à-vis d'autre domaines scientifiques : quel est son rapport avec les probabilités ? 
-dans quel cas est-ce équivalent à une formulation FEM ? la linearité est-elle la seule différence avec le deep learning ?
+%Ce cours présente comment la méthode des moindres carrés peut résoudre un grand nombre des problèmes rencontrés en manipulation de maillages.
+%Contrairement aux outils classiques de manipulation de maillages par optimisation combinatoire, cette approche appartient aux méthodes d'optimisation numériques dans lesquelles, 
+%plutôt que de décrire chaque étape du déroulement du programme, on définit notre objectif sous forme d'équations à respecter, qu'un solveur va savoir optimiser tout seul.
+%Dans le monde de l'optimisation numérique, les moindres carrés sont particulièrement simples à mettre en œuvre car ils ne requièrent pas de connaissances poussées en mathématiques. 
+%De plus, les solveurs pour résoudre ce type de problème sont très efficaces… à tel point que la majorité des autres méthodes se ramènent à des suites de problèmes similaires. 
+%Cette simplicité de mise en œuvre, combinée à l'efficacité des solveurs fait de cette approche le candidat idéal pour introduire un peu d'optimisation numérique dans des logiciels de design, rendu, etc.
+%Ce cours présente donc les moindres carrés, en rappelant les bases d'algèbre linéaire nécessaire, et en les illustrant sur des cas simples. 
+%Mais pour que ce formidable outil puisse être exploité pleinement, il faut surtout savoir reconnaitre les situations dans lesquelles il saura se montrer efficace. 
+%Un cours de deux heures ne peut évidemment pas remplacer des années d'expériences, mais nous avons répertorié un ensemble de cas d'utilisation simples et représentatifs 
+%de la variété de configurations dans lesquelles les moindres carrés ont résolu des problèmes en computer graphics.
+%Afin d'aller plus loin dans la compréhension de cette méthode, nous clarifierons son positionnement vis-à-vis d'autre domaines scientifiques : quel est son rapport avec les probabilités ? 
+%dans quel cas est-ce équivalent à une formulation FEM ? la linearité est-elle la seule différence avec le deep learning ?
 
-\fi
 
 
 
@@ -319,6 +322,7 @@ Now let us proceed to maximum likelihood estimation, thus motivating the least s
 
 \chapter{Maximum likelihood through examples}
 \section{First example: coin toss}
+\label{sec:cointoss}
 Let us consider a simple example of coin flipping, also known as the Bernoulli's scheme. 
 We conduct $n$ experiments, two events can happen in each one (``success'' or ``failure''): 
 one happens with probability $p$, the other one with probability $1-p$. 
@@ -1107,9 +1111,9 @@ $$
 	\label{fig:min1d}
 \end{figure}
 
-Let us return to the one-dimensional world for a while; I want to find the minimum of the function $f(x) = ax^2 - 2bx$. 
+Let us return to the unidimensional world for a while; I want to find the minimum of the function $f(x) = ax^2 - 2bx$. 
 The number $a$ is positive, therefore the minimum exists; to find it, we equate with the corresponding derivative with zero: $\frac{d}{dx}f(x) = 0$. 
-It is easy to differentiate a one-dimensional quadratic function: $\frac{d}{dx}f(x) = 2ax - 2b = 0$; so our problem boils down to the equation $ax-b=0$.
+It is easy to differentiate a unidimensional quadratic function: $\frac{d}{dx}f(x) = 2ax - 2b = 0$; so our problem boils down to the equation $ax-b=0$.
 With some effort we can find the solution $x^* = b/a$. Figure~\ref{fig:min1d} illustrates the equivalence of two problems:
 the solution $x^*$ of the equation $ax-b=0$ coincides with the minimizer $\argmin\limits_x(ax^2 - 2bx)$.
 
@@ -1308,7 +1312,8 @@ Moreover, $A^\top A$ is positive definite in the case where $A$ has linearly ind
 
 \vspace{5mm}
 
-So, for a system with two unknowns, we have proven that to minimize the quadratic function $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|^2$
+Congratulations, we have just found another way to do the spring scale calibration (\S\ref{sec:springscale}).
+For a system with two unknowns, we have proven that to minimize the quadratic function $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|^2$
 is equivalent to solve the linear system $A^\top A x = A^\top b$.
 Of course, all this reasoning applies to any other number of variables, but let us write it all down again a compact algebraic way.
 Let us start with a least squares problem:
@@ -1420,7 +1425,7 @@ Listing~\ref{listing:lqr3} solves this system, and the resulting arrays are show
 
 Note that the signal $u(t)$ is equal to the signal $v(t)$ up to a multiplication by a constant gain:
 $$
-u(t) = -F v(t),
+u(t) = -F (v(t) - v_{\text{goal}}),
 $$
 This gain is necessary to know in order to build a closed-loop regulator, and it can be computed from $J$.
 In practice, just like we did in this section,
@@ -1502,7 +1507,7 @@ To compute a $w \times h$-pixels image $f$, we can solve the following system in
 \left \{ \begin{array}{rll}
 f_{i+1, j}-f_{i,j} & = b_{i+1, j}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
 f_{i, j+1}-f_{i,j} & = b_{i, j+1}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
-f_{i,j}            & = a_{i,j}            & \forall (i,j) \text{~s.t.~} i=0 \vee i=w-1 \vee j=0 \vee j=h-1
+f_{i,j}            & = a_{i,j}            & \forall (i,j) \text{~s.t.~} i=0 \text{~or~} i=w-1 \text{~or~} j=0 \text{~or~} j=h-1
 \end{array} \right.
 \end{equation}
 Listing~\ref{listing:pie} solves this system, and the result is shown in the rightmost image of Figure~\ref{fig:pie}.
@@ -1523,10 +1528,10 @@ The idea is to increase the curvature of the polyline, thus exaggerating the tra
 To this end, we compute the curvatures via finite differences and store it in the arrays \mintinline{python}{cx} and \mintinline{python}{cy}.
 Then we want to solve the Poisson's equation with the increased curvature as the right hand side of the equation.
 So, we perform 1000 Gauß-Seidel iterations to solve the equation. Figure~\ref{fig:lenin-naive} shows the evolution of the polyline.
-After 10 iterations the drawing looks very good, exactly what I had in mind, but what happens next?
+After 10 iterations the drawing looks very good, exactly what we had in mind, but what happens next?
 Well, there is no surprise: the polyline is inflated, because it corresponds exactly to what we have asked for.
 To scale finite differences is to scale the input signal... How to fix it?
-Well, we can stop the process after 10 iterations, thus exploiting the fact that Gauß-Seidel has a slow convergence for in low frequencies, but it is a unsatisfactory solution.
+Well, we can stop the process after 10 iterations, thus exploiting the fact that Gauß-Seidel has a slow convergence in low frequencies, but it is a unsatisfactory solution.
 It would much be better if the result was at the true minimum of our optimization routine.
 
 \begin{figure}[h]
@@ -1658,10 +1663,10 @@ In our context, we are manipulating triangulated surfaces and we define a parame
 Such functions are stored in texture coordinates which are the 2D coordinates of the vertices of the triangulation.
 
 It is very difficult to define what a good parameterization is, there are many different ways to compare the quality of maps.
-The distortion of a mapping can be defined by the two eigenvalues of the metric tensor.
-Ideally, the goal would be to make them both equal to 1, but this is an unreachable goal.
-In practice, there are two approaches: we can optimize for conformity, which seeks to find eigenvalues equal to each other, but relaxes the condition of their equality to 1, and area conservation, which seeks to find eigenvalues opposite to each other.
-In this example we manipulate conformal (angle preserving) maps.
+The distortion of a mapping is defined by the Jacobian matrix.
+Ideally, it should be an isometric transformation, but this is an unreachable goal.
+In continuous settings, there only exist maps that preserve angles (conformal) and maps that preserve area (authalic).
+In this example, we manipulate conformal (angle preserving) maps.
 
 Conformal maps have a very interesting feature:  their distortion is locally reduced to a scaling.
 The stretching of the map is the same in all directions (the map is called isotropic), which makes this type of parameterization relatively simple to manipulate.
@@ -1728,7 +1733,7 @@ The resulting deformation however does not look realistic at all: the surface is
 \label{eq:ARAP}
 \end{equation}
 
-The problem~\eqref{eq:ARAP} is a non-linear least squares problem but it can be solved efficiently by alternatively solving for the vertex position and solving for the rotation.
+The problem~\eqref{eq:ARAP} is a nonlinear least squares problem but it can be solved efficiently by alternatively solving for the vertex position and solving for the rotation.
 Solving for the vertex positions is a linear problem that can solved by using Gau\ss-Seidel iterations.
 Finding the rotations is a so-called \textit{orthogonal Procrustes problem} which has a closed form solution: Let $U \Sigma V^\top$ be the singular value decomposition of the matrix $\sum_{j\text{ incident }i} (x_i' - x_j')(x_i - x_j)^\top$ then $R_i = U V^\top$. 
 The resulting deformation is able to create a global rotation of the model while the position constraints  nicely spread out across the surface (Figure~\ref{fig:ARAP} and \ref{fig:arap-lap} right).
@@ -1751,7 +1756,7 @@ Refer to Listing~\ref{listing:arap} for the source code.
 
 The resolution of linear systems is the keystone of a large number of numerical optimization algorithms encountered in many application contexts.
 For example, such linear systems play a central role in least-squares-type optimization problems, in
-finite-element-based numerical simulation methods as well as in non-linear function optimization algorithms that solve a series of linear problems.
+finite-element-based numerical simulation methods as well as in nonlinear function optimization algorithms that solve a series of linear problems.
 
 In this chapter we describe the conjugate gradient method, an algorithm for solving linear systems.
 It is widely used because it is very efficient and relatively simple to implement.
@@ -2468,7 +2473,75 @@ creuse. Récapitulons le contenu:
 
 
 \chapter{From least squares to neural networks}
+%Мы видим, что даже в случае одного или двух параметров и сравнительно простой нелинейной модели отыскание приемлемых оценок параметров путём решения всего лишь одного нормального уравнения оказывается вовсе не такой уж лёгкой задачей.
+%Если же параметров много, и модель становится более сложной, то решение нормальных уравнений может превратиться в чрезвычайно трудную задачу.
+%Для её решения, как правило, приходится применять итеративные методы.
+%Эти трудности усугубляются ещё и тем, что может существовать множество решений, соответствующих входным данным.
+
+Nowadays machine learning is a very trendy topic, almost everyone wants to use it somehow, whether it is reasonable or not.
+Machine learning seems to be the answer to all the business prayers.
+It is amazing how people are now diving into the abyss of neural networks without ever looking back.
+However, it is much more surprising to witness the existence of two irreconcilable camps: those for whom neural networks are the answer
+to the meaning of life, the universe, and everything, and those who despise neural networks and deny the right to use the tool.
+We do not advocate for either party; two main points of this chapters are:
+\begin{itemize}
+\item neural networks are not the only machine learning tool;
+\item there is no clear boundary between least squares methods and neural networks.
+\end{itemize}
+
+Obviously, we cannot fit all of the data with a straight line, or a plane, but with powerful feature extractors, we may be able to reduce our problem to a much simpler one.
+To put it into perspective, this is what neural networks do effectively, the only difference being that we use some nonlinearity as the activation function in the last layer.
+If we would remove this, we could look at the last layer of the neural network as a least squares problem, i.e. fitting a plane on the data (activations from previous layers).
+
+Note that this chapter is marked as \textcolor{red}{optional} for reading.
+We do not aim here to teach new tools / techniques, this chapter is here for cultural reasons.
+Anyhow, let us start with the simplest unidimensional problem.
+
+\section{Binary classification, the first attempt}
+\label{sec:binarylinear}
+The most simple, standard and yet quite common machine learning problem is binary classification.
+Many very interesting and important problems can be reduced to it.
+For example, we are given a set of data where $n$ vectors are each marked with a ``red'' or ``green'' label.
+This is the simplest example, but in practice the red/green dataset can be really useful: for example, spam/not spam  email classification,
+where the input vectors encode various characteristics of the content (e.g. the number of mentions of a certain magic carpet cleaning solution).
+
+Our goal in binary classification is to build a function that takes a vector as an input and predicts its label.
+First we nead to learn from the database: we need to build such a function whose predictions match the database labels.
+In the end, once the function is constructed, we can discard the database and use the function we have built as an oracle to predict labels for previously unseen vectors.
+
+Long story short, let us consider the simplest example: we have $n$ real numbers and the corresponding colors that we encode as 0 (``red'') and 1 (``green'').
+In other words, we have a sequence $\{(x_i, y_i)\}_{i=1}^n$ as the input, where $x_i\in\mathbb R$ and $y_i\in \{0,1\}$.
+How do we build the classifying function? Let us start with the basics: we can fit a straight line $y=w x + w_0$,  to the set of input points $\{(x_i, y_i)\}_{i=1}^n$,
+thus performing an ordinary linear regression:
+$$
+\argmin\limits_{w,w_0\in \mathbb R} \sum\limits_{i=1}^n (w x_i + w_0 - y_i)^2
+$$
+Refer to Listing~\ref{listing:binarylinear} for the source code that fits a straight line onto the database shown in Figure~\ref{fig:linear-regression-classification}.
+
+Next we endow the straight line with the classification rule: if $y(x)>1/2$ then $x$ is green, otherwise it is red.
+Left image of Figure~\ref{fig:linear-regression-classification} provides an example: the colored dots show the database; the straight line is the linear regression result,
+and the decision boundary is shown by the dashed line. All points on the right of the line are classified as green, and on the left as red.
+We can see that the database is perfectly learned, and there is no misclassification in the database
+(for the sake of simplicity, we do not make the distinction between the database we learn on and the database we use to assess the quality of the classifying function).
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.305\linewidth]{linear-1d-a.png}
+    \includegraphics[width=.64\linewidth]{linear-1d-b.png}
+    \caption{Ordinary linear regression as a binary classification function. The decision boundary is shown by the dashed line.}
+    \label{fig:linear-regression-classification}
+\end{figure}
+
+It may sound stupid, but ordinary linear regression is not always a bad choice for a binary classification.
+Of course, it only works well if certain assumptions about the input data are satisfied (e.g. independent and normally distributed class samples).
+If, however, these assumptions are not met, we may face problems, as illustrated in right image of Figure~\ref{fig:linear-regression-classification}.
+In this example, we have added to the previous database few more ``green'' samples. This affects the linear regression, and we encounter misclassified
+database entries even if the database is perfectly separable. We can fix the situation by fitting a nonlinear model; to do so, first let us meet the logistic growth model
+before we return to the classification.
+
+
 \section{Logistic growth model}
+\label{sec:logistic-growth}
 Logistic growth functions are useful as models accounting for constraints placed on the growth.
 An example is a bacteria culture allowed to grow under initially ideal conditions, followed by less favorable conditions that inhibit growth.
 Imagine a colony of the bacteria \textit{B. dendroides} is growing in a Petri dish. The colony's area $a$ (in square centimeters) can be modeled by where $t$ is the elapsed time in hours.
@@ -2491,12 +2564,13 @@ Let us say that we want to recover the parameters of the model from an experimen
 
 Under the assumption of independent and normally distributed errors, with 0 expectations and common variance, maximizing the likelyhood for the general nonlinear model~\eqref{eq:logistic-growth}
 is equivalent to the minimization of the sum of squared errors:
-$$
+\begin{equation}
+\label{eq:logistic-lq-error}
 S(c,w_0,w) = \sum\limits_{i=1}^n (a(t_i) - a_i)^2
-$$
+\end{equation}
 
-There are multiple ways to deal with non-linearities, for example, we can try to apply some transformation to the model.
-Let us take transform the equation~\eqref{eq:logistic-growth}:
+There are multiple ways to deal with nonlinearities of the model, for example, we can try to apply some transformation to the model prior the fitting.
+Let us transform the equation~\eqref{eq:logistic-growth}:
 \begin{align*}
 a(t) &= \frac{c}{1+e^{-wt - w_0}} \\
 \frac{c}{a(t)-1} & = e^{-wt-w_0}  \\
@@ -2528,65 +2602,157 @@ w^{(0)}
 How can we estimate $c^{(0)}$? Knowing that it corresponds to the carrying capacity, we can do a quick-n-ugly estimation $c^{(0)}:=\max\limits_{i\in 1\dots n} a_i + \varepsilon$, where a small constant $\varepsilon$ is added in order to avoid division by
 zero in the equation~\eqref{eq:logistic-initial-guess}.
 Refer to Listing~\ref{listing:logistic-growth} for the source code; left image of Figure~\ref{fig:logistic-growth} shows the logistic curve fitted to our data.
-
-\TODO{explication fitting pourri}
-
-$r_i(b) := a(t_i) - a_i$
-
-$$
+Of course, the fitting is far from being ideal: we have estimated the distance from the points $a_i$ to the curve $a(t_i)$ in a very indirect and distoring way.
+Nevertheless, this fitting can be of use as a first guess for a further optimization.
+Let us denote by $r_i(b)$ the residual between the input label $a_i$ and the prediction $a(t_i)$:
+$$r_i(b) := a(t_i) - a_i,$$
+where $b$ is the set of the parameters of the model, in our example $b=(c, w_0, w)$.
+Then Equation~\eqref{eq:logistic-lq-error} can be written in the following way:
+\begin{equation}
+\label{eq:logistic-lq-error2}
 S(b) = \sum\limits_{i=1}^n r_i(b)^2 = \|\vec{r}(b)\|^2
-$$
-
-Gauss–Newton algorithm
-
-$b^{(k+1)} = b^{(k)} + \Delta b^{(k)}$
-
-$$
-\vec{r}(b) \approx \vec{r}\left(b^{(k)}\right) + J\vec{r}\left(b^{(k)}\right) \left(b - b^{(k)}\right)
-$$
-$$
-\min \left\| J\vec{r}\left(b^{(k)}\right) \Delta b^{(k)} - \vec{r}\left(b^{(k)}\right) \right\|^2 
-$$
+\end{equation}
+We can minimize $S(b)$ by the Gauß–Newton algorithm.
+The idea is extremely simple: starting from the initial guess 
 $b^{(0)} := \left(c^{(0)}, w_0^{(0)}, w^{(0)}\right)$
+that we have built by the ordinary least squares on the transformed model (or from three random values),
+we build a sequence $b^{(k+1)} = b^{(k)} + \Delta b^{(k)}$,
+where $\Delta b^{(k)}$ stands for the increment (it makes no sense to apply the Laplace operator to a vector).
+To find the increment, we can linearize the function $\vec{r}$ at the point $b^{(k)}$:
+$$
+\vec{r}(b) \approx \vec{r}\left(b^{(k)}\right) + J\vec{r}\left(b^{(k)}\right) \left(b - b^{(k)}\right),
+$$
+where $J\vec{r}\left(b^{(k)}\right)$ is the Jacobian $n\times 3$ matrix evaluated at point $b^{(k)}$.
+Then we are looking for such an increment vector $ \Delta b^{(k)}$ that the squared norm of the residual is minimized:
+$$
+\min \left\| J\vec{r}\left(b^{(k)}\right) \Delta b^{(k)} - \vec{r}\left(b^{(k)}\right) \right\|^2
+$$
+This again is an ordinary least squares problem equivalent to solving a $3\times 3$ system of linear equations.
+Refer to Listing~\ref{listing:logistic-growth} for the source code; right image of Figure~\ref{fig:logistic-growth} shows the logistic curve fitted to our data
+by solving a series of least squares problems.
 
 
-\section{Binary classification}
+\section{Back to the binary classification: the 2nd attempt}
+\label{sec:logistic1d}
+
+Surely, you have already guessed where all this is coming: we will put the logistic function inside the binary classification example from \S\ref{sec:binarylinear}.
+So, we have a sequence $\{(x_i, y_i)\}_{i=1}^n$ as the input, where $x_i\in\mathbb R$ and $y_i\in \{0,1\}$.
+We saw that ordinary linear regression is not an ideal choice for the classifying function,
+probably the logistic curve would do better.
+We already know to fit a logistic curve onto a set of points,
+so we can directly adopt Equation~\eqref{eq:logistic-lq-error2} with a slight modification: now we have two parameters $w$ and $w_0$,
+We are fitting the curve $1/(1+e^{-wt - w_0})$ that varies between 0 and 1, so we can remove the carrying capacity $c$ from the equation.
+
+Let the initial guess be $b^{(0)} := \left(w_0^{(0)}, w^{(0)}\right)$, where $w_0^{(0)}$ and $w^{(0)}$ are two arbitrary values (usually it makes sense to have small non-zero numbers).
+Then, just as before, we construct a sequence $b^{(k+1)} = b^{(k)} + \Delta b^{(k)}$,
+where the increment $\Delta b^{(k)}$ can be found through a least squares problem
+$$
+\min \left\| J\vec{r}\left(b^{(k)}\right) \Delta b^{(k)} - \vec{r}\left(b^{(k)}\right) \right\|^2
+$$
+In this example, $J\vec{r}\left(b^{(k)}\right)$ is the Jacobian $n\times 2$ matrix.
+Refer to Listing~\ref{listing:logistic1d} for the source code, the result is given in Figure~\ref{fig:logistic-vs-linear}.
+Compare the result to Figure~\ref{fig:linear-regression-classification}: both datasets are well learned without any misclassification,
+so fitting a sigmoid shows a clear advantage over ordinary linear regression classifier.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=.305\linewidth]{linear-1d-a.png}
-    \includegraphics[width=.64\linewidth]{linear-1d-b.png}
     \includegraphics[width=.305\linewidth]{logistic-1d-a.png}
     \includegraphics[width=.64\linewidth]{logistic-1d-b.png}
-    \caption{Binary classification}
+    \caption{Binary classification made by fitting a logistic curve. The decision boundary is shown by the dashed line.}
     \label{fig:logistic-vs-linear}
 \end{figure}
 
+It turns out that we have just built and trained a neural network made of a single neuron, refer to Figure~\ref{fig:neuron1} for an illustration.
+1-neuron perceptron with mean squared error loss function is equivalent to our nonlinear least squares problem.
+
+\begin{figure}[!b]
+\begin{minipage}{.37\linewidth}
+    \includegraphics[width=\linewidth]{neuron.png}
+    \caption{Single neuron perceptron shown in this image is equivalent to a nonlinear least squares problem; the decision boundary is always linear despite the dimensionality of the vector $x$.}
+    \label{fig:neuron1}
+\end{minipage}
+\hspace{0.02\linewidth}
+\begin{minipage}{.6\linewidth}
+\vspace{-6mm}\includegraphics[width=\linewidth]{ls-vs-crossentropy-energies1.jpg}
+    \caption{
+    Energy plot as a function of parameters $b= (w_0,w)$ for the training database shown in the left image of Figure~\ref{fig:logistic-vs-linear}.
+ Left image shows a plot of $S(b)$ without any regularization, the right one is a plot of the regularized energy $S(b)+ 10^{-3} \|b\|^2$.
+    }
+    \label{fig:energies}
+\end{minipage}
+\end{figure}
 
 
-\section{Logistic regression}
-Two possible classes encoded as $y \in \{0,1\}$ and assume
+While the example we have shown here is unidimensional, it is straightforward to generalize it: we can fit the $m$-dimensional logistic function
+$\frac{1}{1+e^{-w^\top x}}$ to the data, where $w$ is a $(m+1)$-parameter vector and the last element of $x$ is the constant 1.
+Note that the decision boundary is always linear: it is a point in 1D, a straight line in 2D, a plane in 3D and so forth.
+Refer to Figure~\ref{fig:logistic2d} for an illustration, where the dashed line shows the decision boundary between two sets of 2D points.
+
+In all our examples the training sets were linearly separable, and thus we did not have any misclassification in the training set.
+There is a caveat though. It might seem that linear separability is good news for binary classification:
+linear separability means that the problem is easy in some sense and that learning algorithms have a clear and achievable goal.
+Consider the fact that the decision boundary in a linear classifier is independent of the scale of the parameters.
+For instance, in the above example, the decision boundary is given by $t$ such that $\frac{1}{2} = \frac{1}{1+e^{-wt - w_0}}$.
+Solving this simple equation for $t$ we get $t=\frac{w_0}{w}$.
+The decision boundary would not move a tiny bit if we multiply both $w_0$ and $w$ by a constant superior to 1.
+The boundary does not move, however, the scale does impact the likelihood in logistic regression by causing the logistic function to become more steep.
+If we have found such a decision boundary that all the samples from the learning database are correctly classified,
+we can infinitely scale the weights $w$ and $w_0$, pushing the predictions closer and closer to their correct labels.
+The logistic function thus converges to the Heaviside step function.
+It is one of numerous possible instances of what is called overfitting:
+the model is becoming overconfident about the data and uses very large weights to describe it.
+There is a very simple solution to this problem: regularize the weights.
+Essentially it means that we are going to find the MLE with a Gaussian prior on the weights:
 $$
-p(y=1|x,w) = \frac{1}{1+e^{-w^\top x}},
+\min \left\| J\vec{r}\left(b^{(k)}\right) \Delta b^{(k)} - \vec{r}\left(b^{(k)}\right) \right\|^2 + \lambda \left\|b^{(k)} + \Delta b^{(k)}\right\|^2
 $$
+
+Figure~\ref{fig:energies} shows the energy plots with and without the regularization. It is easy to see that the regularized version has a unique minimum.
+The energy, however, is highly non-convex, making the numerical optimization a difficult problem.
+There are standard ways to overcome it, e.g., the Tikhonov regularization, whose idea is to make the steps $\Delta b^{(k)} $ small, thus working 
+in a zone where the Jacobian $J\vec{r}\left(b^{(k)}\right)$ is a fair approximation, but these tricks are out of the scope of this document.
+There is another way to do it: change the loss function in our neural network.
+
+\section{Logistic regression: the 3rd attempt to binary classification}
+\label{sec:logistic-regression}
+
+Logistic regression is another technique borrowed by machine learning from the field of statistics.
+As before, the basic idea of logistic regression consists in that the space of initial values can be divided by a
+linear boundary (i.e. a straight line) into two areas corresponding to classes.
+Simply answering ``red'' or ``green'' is pretty crude --- especially if there is no perfect rule.
+Something wich takes a noise into account, and does not just give a binary answer, will often be useful.
+In short, we want probabilities --- which means we need to fit a stochastic model.
+
+Let two possible classes encoded as $y \in \{0,1\}$ and assume
+\begin{equation}
+\label{eq:logitproba}
+p(y=1|x,w) := \frac{1}{1+e^{-w^\top x}},
+\end{equation}
 where $w$ is a $(m+1)$-parameter vector and the last element of $x$ is the constant 1.
-
+Here we interpret the sigmoid $p(y=1|x,w)$ as a conditional distribution of the response $y$, given the input variables. 
 Follows that
 $$
 p(y=0|x,w) = 1-P(y=1|x,w) = \frac{1}{1+e^{w^\top x}}
 $$
 
-Given $n$ independently distributed data points $x_i$ with corresponding labels $y_i$, we can write the log-likelihood as
-$$
-\log \mathcal{L}(w) = \log \prod_{i=1}^n p_i(w)^{y_i}  (1-p_i(w))^{1-y_i} = \sum_{i=1}^n \left(y_i w^\top x_i - \log\left(1+e^{w^\top x}\right)\right),
-$$
-where $p_i(w):=p(y_i=1|x_i, w)$.
+Given $n$ independently distributed data points $x_i$ with corresponding labels $y_i$, we want to fit the parameters of the sigmoid to match the data.
+Up to this moment, there are absolutely no changes w.r.t the previous section: we use the same one-neuron perceptron from Figure~\ref{fig:neuron1}.
+The crucial difference comes from the way we will train it.
+In previous section we have minimized the mean squared error loss function, implicitly assuming presence of zero-mean Gaussian noise in the labels of the dataset.
+Our data, however is not real-valued but binary-valued, and thus Bernoulli's scheme is more suited for this situation.
 
+Exactly like we have made it in \S\ref{sec:cointoss}, we can write the log-likelihood as
+$$
+\log \mathcal{L}(w) = \log \prod_{i=1}^n p_i(w)^{y_i}  (1-p_i(w))^{1-y_i} = \sum_{i=1}^n \left(y_i w^\top x_i - \log\left(1+e^{w^\top x_i}\right)\right),
+$$
+where $p_i(w):=p(y_i=1|x_i, w)$. To fit the sigmoid to the data, we need to maximize the log-likelyhood.
+
+All the hard decisions being made, it's time for basic calculus.
 To maximize $\log\mathcal L$, we set its derivatives to 0 and obtain
 $$
 \frac{\partial\log\mathcal L}{\partial w}(w) = \sum_{i=1}^n x_i(y_i-p_i(w)) = 0,
 $$
-so we have $m+1$ non-linear equations in $w$. 
+so we have $m+1$ nonlinear equations in $w$. 
 We can rewrite the system as
 \begin{equation}
 \frac{\partial\log\mathcal L}{\partial w}(w) = X^\top (y-p) = 0,
@@ -2620,62 +2786,107 @@ w^{(k+1)} = \argmin\limits_w \left(z^{(k)}-Xw\right)^\top V^{(k)} \left(z^{(k)}-
 $$
 a weighted least-squares problem, and hense iterating~\eqref{eq:newton2} is often called iteratively reweighted least squares.
 It is easy to see that the Hessian matrix $X^\top V X$ is positive definite (it follows from the fact that $V>0$), and thus is a convex optimization problem.
+Figure~\ref{fig:energy} provides a plot of the log-likelyhood function for a uni-dimensional dataset shown in left image of Figure~\ref{fig:logistic-vs-linear}.
+Compare it to the right image of Figure~\ref{fig:energies}, both plots are made for the same dataset.
 
-Note that convergence fails if the two classes are linearly separable. In that case we can handle this via a regularization.
+Note that like in the previous section, convergence fails if the two classes are linearly separable. In that case we can handle this via a regularization.
+Instead of maximizing $\log \mathcal{L}(w)$, we can maximize $\log \mathcal{L}(w) - \frac{\lambda}{2} w^\top w$ for some small constant $\lambda$.
+It is easy to see that in this case the gradient and the Hessian matrix take the following form:
+$$
+\frac{\partial\{\log\mathcal L - \lambda \|w\|^2\}}{\partial w}(w) = X^\top (y-p) - \lambda w
+\qquad
+\qquad
+\frac{\partial^2 \{\log \mathcal L - \lambda \|w\|^2\}}{\partial w \partial w^\top}\left(w\right) = -X^\top V X - \lambda I,
+$$
+where I is the $(m+1)\times (m+1)$ identity matrix.
+
+Listing~\ref{listing:logistic-regression} contains the source code, whose result is shown in Figure~\ref{fig:logistic2d}.
 
 \begin{figure}[t]
-\begin{minipage}{.5\linewidth}
+\begin{minipage}{.45\linewidth}
     \centering
-    \includegraphics[width=.7\linewidth]{neuron.png}
-    \caption{Single neuron perceptron.}
-    \label{fig:neuron1}
+    \includegraphics[width=.7\linewidth]{ls-vs-crossentropy-energies2.jpg}
+    \caption{In the case of a logistic regression, cross-entropy is convex and very easy to optimize. Compare this plot with Figure~\ref{fig:energies}.}
+    \label{fig:energy}
 \end{minipage}
-\begin{minipage}{.5\linewidth}
+\hspace{.05\linewidth}
+\begin{minipage}{.45\linewidth}
     \centering
-    \includegraphics[width=.6\linewidth]{logistic-regression-2d.png}
-    \caption{Logistic regression.}
-    \label{fig:logistic-vs-linear}
+    \includegraphics[width=.8\linewidth]{logistic-regression-2d.png}
+    \caption{Logistic regression is a machine learning technique to fit linear decision boundaries (the dashed line) to the training data (colored dots).}
+    \label{fig:logistic2d}
 \end{minipage}
 \end{figure}
 
 
+
+\section{Nonlinear decision boundaries: 3 neurons perceptron}
+\label{sec:NN}
+Okay, now we have mastered the art of binary classification with linear decision boundaries.
+What about nonlinear boundaries? Refer to the right image of Figure~\ref{fig:neural} for an illustration.
+A straightforward way to do it is to plug something nonlinear (e.g. a polynomial) instead of $-w^\top x$ into Equation~\eqref{eq:logitproba}.
+It has been done, however the problem is that such a prior is hard to put on the data; moreover, the optimization scheme is different for every choice of function.
+Here neural networks come handy.
+
 \begin{figure}[t]
     \centering
-    \includegraphics[width=.5\linewidth]{3neurons.png}
+    \includegraphics[width=.55\linewidth]{3neurons.png}
     \quad
-    \includegraphics[width=.3\linewidth]{neural.png}
+    \includegraphics[width=.4\linewidth]{neural.png}
     \caption{Left: 3 neurons perceptron with a hidden layer. Right: learning the database shown by red and green dots, the decision boundary is shown by the dashed line, the color gradient corresponds to the output sigmoid.}
     \label{fig:neural}
 \end{figure}
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=.9\linewidth]{3n.jpg}
-    \caption{A perceptron with a hidden layer combines sigmoids from the hidden layer and applies a sigmoid over it. The idea is to be able to represent nonlinear decision boundaries by stacking neurons.}
-    \label{fig:sigmoids}
-\end{figure}
-
-
-
-\section{3 neurons}
+Our last example in this chapter is a regular perceptron made of 3 neurons: two neurons in the hidden layer and one output neuron.
+Refer to the left image of Figure~\ref{fig:neural} for the topology and the corresponding notations.
+The input is the same as in all classification examples throughout this chapter: we have $\{(x_i, y_i)\}_{i=1}^n$ as the input, where $x_i\in\mathbb R^m$ and $y_i\in \{0,1\}$.
+Let us define the sigmoid function:
 $$
 \sigma(x,w) = \frac{1}{1+e^{-w^\top x}},
 $$
-
+where $w$ is a $(m+1)$-parameter vector and the last element of $x$ is the constant 1.
+Then we define a mean squared loss function $E$ as follows:
+$$
+E = \frac{1}{2}\sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right) - y_i\right)^2,
+$$
+where
 $$
 x'_i :=  \begin{pmatrix} \sigma(u^\top x_i) &  \sigma(v^\top x_i) & 1\end{pmatrix}^\top
 $$
 
-$$
-E = \frac{1}{2}\sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right) - y_i\right)^2
-$$
-
+The loss function $E$ is parameterized by three $(m+1)$-component vectors $u, v$ and $w$.
+For the lack of better alternative, we can minimize $E$ by a gradient descent.
+The gradient of the loss function with respect to each weight can be calculated by the chain rule, computing the gradient one layer at a time,
+iterating backward from the last layer to avoid redundant calculations of intermediate terms in the chain rule; this is an example of dynamic programming.
+For our particular example, 
 \begin{align*}
 \frac{\partial E}{\partial w} & =  \sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right)  - y_i\right) \sigma'\left(w^\top x'_i\right)  x'_i \\
                               & =  \sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right)  - y_i\right) \sigma\left(w^\top x'_i\right) (1-\sigma\left(w^\top x'_i\right) ) x'_i \\
 \frac{\partial E}{\partial u} & =  \sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right)  - y_i\right) \sigma\left(w^\top x'_i\right) (1-\sigma\left(w^\top x'_i\right) ) \sigma\left(u^\top x_i\right) (1-\sigma\left(u^\top x_i\right) ) x_i \\
 \frac{\partial E}{\partial v} & =  \sum_{i=1}^{n} \left(\sigma\left(w^\top x'_i\right)  - y_i\right) \sigma\left(w^\top x'_i\right) (1-\sigma\left(w^\top x'_i\right) ) \sigma\left(v^\top x_i\right) (1-\sigma\left(v^\top x_i\right) ) x_i \\
 \end{align*}
+The right image of Figure~\ref{fig:neural} is computed by the program given in Listing~\ref{listing:NN}.
+All the training data is correctly classified by a nonlinear decision boundary.
+
+Let us deconstrcut the network to understand how the nonlinearity of the boundary is obtained, Figure~\ref{fig:sigmoids} provides an illustration.
+A perceptron with a hidden layer combines sigmoids from the hidden layer and applies a sigmoid over it.
+In our example the data is two-dimensional; for the sake of simplicity, imagine that the hidden layer neurons produce unit steps instead of sigmoids.
+Let us suppose that all the weights are equal to 1, then the sum of these steps separates the data plane into four quadrants where the sum is equal to 0, 1 and 2.
+By applying a unit step over this result, we can isolate one particular quadrant, effectively creating a non-linear decision boundary.
+It is the last layer activation function that makes the difference.
+If we would remove this, the decision boundary would remain linear.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=.9\linewidth]{3n.jpg}
+    \caption{A perceptron with a hidden layer combines sigmoids from the hidden layer and applies a sigmoid over it.
+    The idea is to be able to represent nonlinear decision boundaries by stacking neurons.}
+    \label{fig:sigmoids}
+\end{figure}
+
+So, we can choose the type of the decision boundary by adapting the topology of the network, but be aware that you are entering the black magic realm!
+Generally speaking, there is no whatsoever guarantee of convergence; and even this simplest network has too much degrees of freedom for our training dataset.
+We can negate all the weights without affecting the decision boundary\dots
 
 
 \appendix
@@ -2684,91 +2895,106 @@ $$
 \fancyhead[R]{\textcolor{green}{core text}}
 
 \begin{listing}[p]
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
 \caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2$.}
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
 \label{listing:lqr1}
 \end{listing}
 
 \begin{listing}[p]
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
 \caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2$.}
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
 \label{listing:lqr2}
 \end{listing}
 
 \begin{listing}[p]
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
 \caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v},\vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2$.}
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
 \label{listing:lqr3}
 \end{listing}
 
 \begin{listing}[p]
 \setminted{fontsize=\footnotesize}
-\inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing-1d.py}
 \caption{1D Poisson image editing (\S\ref{sec:poisson}). This program solves Equation~\eqref{eq:pie1d}.}
+\inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing-1d.py}
 \label{listing:pie1d}
 \end{listing}
 
 \begin{listing}[p]
 \setminted{fontsize=\footnotesize}
-\inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing.py}
 \caption{Poisson image editing (\S\ref{sec:poisson}). This program solves Equation~\eqref{eq:pie}.}
+\inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing.py}
 \label{listing:pie}
 \end{listing}
 
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.2_b.py}
 \caption{A caricature on a 2D silhouette (\S\ref{sec:caricature}). This program solves Equation~\eqref{eq:carsyst}.}
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.2_b.py}
 \label{listing:silhouette}
 \end{listing}
 
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.2_c.cpp}
 \caption{3D surface caricature (\S\ref{sec:caricature}). Refer to Equation~\eqref{eq:caricature} for the problem definition.}
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.2_c.cpp}
 \label{listing:caricature}
 \end{listing}
 
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}
-\inputminted[frame=single,linenos=true]{python}{listings/cubify.cpp}
 \caption{``Cubification'' of a 3d surface (\S\ref{sec:cubify}).}
+\inputminted[frame=single,linenos=true]{python}{listings/cubify.cpp}
 \label{listing:cubify}
 \end{listing}
 
 
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}
-\inputminted[frame=single,linenos=true]{python}{listings/lscm.cpp}
 \caption{Least squares conformal mapping (\S\ref{sec:lscm}).}
+\inputminted[frame=single,linenos=true]{python}{listings/lscm.cpp}
 \label{listing:lscm}
 \end{listing}
 
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}
-\inputminted[frame=single,linenos=true]{matlab}{listings/arap.m}
 \caption{As-rigid-as possible deformations (\S\ref{sec:arap}).}
+\inputminted[frame=single,linenos=true]{matlab}{listings/arap.m}
 \label{listing:arap}
 \end{listing}
 
 \begin{listing}[p]
-\setminted{fontsize=\footnotesize}
+\setminted{fontsize=\scriptsize}
+\caption{Ordinary linear regression for binary classification (\S\ref{sec:binarylinear}).}
 \inputminted[frame=single,linenos=true]{python}{listings/example_8.1.py}
-\caption{Logistic growth least squares fitting.}
+\label{listing:binarylinear}
+\end{listing}
+
+\begin{listing}[p]
+\setminted{fontsize=\scriptsize}
+\caption{Logistic growth least squares fitting (\S\ref{sec:logistic-growth}).}
+\inputminted[frame=single,linenos=true]{python}{listings/example_8.2.py}
 \label{listing:logistic-growth}
 \end{listing}
 
 \begin{listing}[p]
+\setminted{fontsize=\scriptsize}
+\caption{Binary classification: logistic curve fitting by least squares (\S\ref{sec:logistic1d}).}
+\inputminted[frame=single,linenos=true]{python}{listings/example_8.3.py}
+\label{listing:logistic1d}
+\end{listing}
+
+\begin{listing}[p]
 \setminted{fontsize=\footnotesize}
+\caption{Binary classification: logistic regression with crossentropy loss function (\S\ref{sec:logistic-regression}).}
 \inputminted[frame=single,linenos=true]{python}{listings/logistic-regression-2d.py}
-\caption{Logistic regression.}
 \label{listing:logistic-regression}
 \end{listing}
 
 
 \begin{listing}[p]
+\setminted{fontsize=\footnotesize}
+\caption{Binary classification: training a neural network made of 3 neurons (\S\ref{sec:NN}).}
 \inputminted[frame=single,linenos=true]{python}{listings/neural.py}
-\caption{NN.}
 \label{listing:NN}
 \end{listing}
 

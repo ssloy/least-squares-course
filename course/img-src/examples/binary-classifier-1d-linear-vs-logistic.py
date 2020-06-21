@@ -18,21 +18,25 @@ if moresamples:
 
 xmin = np.min([x for x,_ in samples])
 xmax = np.max([x for x,_ in samples])
-print(xmax-xmin)
 
 if logistic:
     U = np.matrix([[1],[0]])
     for _ in range(5):
-        JR = np.matrix(np.zeros((n, 2)))
-        R  = np.matrix(np.zeros((n, 1)))
+        JR = np.matrix(np.zeros((n+2, 2)))
+        R  = np.matrix(np.zeros((n+2, 1)))
         for i in range(n):
             ei = np.exp(-U[1,0] - samples[i][0]*U[0,0])
             R[i,0] = -1/(1+ei) + labels[i]
             for j in range(3):
                 JR[i, 0] = samples[i][0]*ei/(1+ei)**2
                 JR[i, 1] = ei/(1+ei)**2
+        l = .001 # regularization
+        JR[n,0] = JR[n+1, 1] = 1.*l
+        R[n,0] = -U[0]*l
+        R[n+1,0] = -U[1]*l
         U = U + np.linalg.inv(JR.T*JR)*JR.T*R
     a,b = U.T.tolist()[0]
+    print(a,b)
     sep = -b/a
     xred = np.linspace(xmin, sep, 100)
     yred = [1/(1+np.exp(-x*U[0,0] - U[1,0])) for x in xred]
@@ -69,6 +73,8 @@ else:
 plt.axvline(sep, ymin=-0.25, ymax=1.25, color='black', linestyle='--', linewidth=3)
 plt.plot(xred, yred, '-r', linewidth=2)
 plt.plot(xgrn, ygrn, '-g', linewidth=2)
+plt.ylim(-.25, 1.25)
+
 
 for sample, label in zip(samples,labels):
     c = 'g'
@@ -76,5 +82,14 @@ for sample, label in zip(samples,labels):
     plt.scatter(sample[0], label, color=c, edgecolors='black')
 
 plt.tight_layout()
-plt.savefig("a.png", bbox_inches='tight')
+if logistic:
+    if moresamples:
+        plt.savefig("logistic-1d-b.png", bbox_inches='tight')
+    else:
+        plt.savefig("logistic-1d-a.png", bbox_inches='tight')
+else:
+    if moresamples:
+        plt.savefig("linear-1d-b.png", bbox_inches='tight')
+    else:
+        plt.savefig("linear-1d-a.png", bbox_inches='tight')
 plt.show()
