@@ -977,6 +977,69 @@ $$
 \right.
 $$
 
+$$
+\tilde{\varphi}(x) := 0\cdot w_0(x) + b\cdot w_1(x) + c\cdot w_2(x) + 1\cdot w_3(x),
+$$
+
+$$
+\frac{d^2\tilde{\varphi}}{dx^2} = 3b(\delta_0(x) - 2\delta_{1/3}(x) + \delta_{2/3}(x)) + 3c(\delta_{1/3}(x) - 2\delta_{2/3}(x) + \delta_{1}(x)) + 3\delta_{2/3}(x)
+$$
+
+\begin{align*}
+\int\limits_0^1 \tilde{\varphi} \cdot \left(\frac{d^2\tilde{\varphi}}{dx^2} - 2f\right)\,dx  &= 
+\int\limits_0^1 (b w_1 + c w_2 + w_3 ) \cdot (3b(\delta_0 - 2\delta_{1/3} + \delta_{2/3}) + 3c(\delta_{1/3} - 2\delta_{2/3} + \delta_{1}) + 3\delta_{2/3} - 2f)\,dx \\
+\end{align*}
+
+(%i1) integrate(3*x*(x+1),x,0,1/3);
+                                      11
+(%o1)                                 --
+                                      54
+(%i2) integrate(3*x*(x+1),x,0,1/3) + integrate((2-3*x)*(x+1),x,1/3,2/3);
+                                       4
+(%o2)                                  -
+                                       9
+(%i3) integrate((3*x-1)*(x+1),x,1/3,2/3);
+                                      7
+(%o3)                                 --
+                                      27
+(%i4) integrate((3*x-1)*(x+1),x,1/3,2/3) + integrate((3-3*x)*(x+1),x,2/3,1) ;
+                                       5
+(%o4)                                  -
+                                       9
+(%i5) integrate((4-3*x)*(x+1),x,2/3,1);
+                                      49
+(%o5)                                 --
+                                      54
+(%i6) b*(integrate(3*x*(x+1),x,0,1/3) + integrate((2-3*x)*(x+1),x,1/3,2/3))+ c*(integrate((3*x-1)*(x+1),x,1/3,2/3) + integrate((3-3*x)*(x+1),x,2/3,1))+ integrate((4-3*x)*(x+1),x,2/3,1);
+                                5 c   4 b   49
+(%o6)                           --- + --- + --
+                                 9     9    54
+(%i7) f:-6*b^2;
+                                         2
+(%o7)                               - 6 b
+(%i8) f:-6*b^2 + 6*b*c -6*c^2 +6*c -2*(5/9*c + 4/9*b + 49/54);
+                    2                     5 c   4 b   49       2
+(%o8)         (- 6 c ) + 6 b c + 6 c - 2 (--- + --- + --) - 6 b
+                                           9     9    54
+(%i9) diff(f, c);
+                                               44
+(%o9)                         (- 12 c) + 6 b + --
+                                               9
+(%i10) diff(f, b);
+                                             8
+(%o10)                          6 c - 12 b - -
+                                             9
+(%i11) 44/54;
+                                      22
+(%o11)                                --
+                                      27
+(%i12) 8/54;
+                                      4
+(%o12)                                --
+                                      27
+(%i13)
+
+
 % \frac{\partial}{\partial c} \Phi(\tilde\varphi) & = 0
 %radcan(
 %   integrate((3*x+3*e-2+1)^2/(12*e)*(-b*3/e+c*3/(2*e)), x, 1/3-e, 1/3+e) +
@@ -996,6 +1059,9 @@ $$
 
 
 \TODO{Galerkin = Ritz is the same as minimization of quadratic function = linear system}
+
+b*(integrate(3*x*(x+1),x,0,1/3) + integrate((2-3*x)*(x+1),x,1/3,2/3))+ c*(integrate((3*x-1)*(x+1),x,1/3,2/3) + integrate((3-3*x)*(x+1),x,2/3,1))+ integrate((4-3*x)*(x+1),x,2/3,1);
+
 
 \authoredby{B}
 \chapter{Minimization of quadratic functions and linear systems}
