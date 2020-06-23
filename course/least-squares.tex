@@ -778,22 +778,31 @@ While it is extremely cool, what are the practical consequences for a programmer
 Well, there is a huge community of people who start with a continuous problem, then the problem is carefully discretized and eventually reduced to a linear system.
 In this chapter I show a tiny bit of the bottomless pit called finite element methods.
 Namely, I show a mathematician's approach to the program we saw in \S\ref{sec:rhs}.
-
 Note that this chapter is marked as \textcolor{blue}{optional}.
 It is here to make connections to adjacent domains; feel free to skip it, the core text about least squares continues in the next chapter.
 
+This chapter is closely related both to \S\ref{sec:rhs} and the chapter that follows.
+In \S\ref{sec:equadiff} we introduce two fundamental methods for determining the coefficients of the linear system from \S\ref{sec:rhs}.
+We start with an illustration on 2D vectors, because vectors in vector spaces give a more intuitive understanding than starting directly with approximation of functions in function spaces.
+
 \section{Approximation of vectors}
+
+Suppose we have given a vector $\vec{\varphi}$ and that we want to approximate this vector by a vector aligned with the vector $\vec{w}$.
+Figure~\ref{fig:vector_approximation} vector depicts the situation.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.3\linewidth]{vector_approximation.pdf}
-	\caption{.}
+	\includegraphics[width=.4\linewidth]{vector_approximation.pdf}
+	\caption{Approximation of a vector $\vec{\varphi}$ by a vector $\vec{\tilde{\varphi}}$ constrained to be collinear with a chosen vector $\vec{w}$.}
 	\label{fig:vector_approximation}
 \end{figure}
 
-\TODO{small example on vectors}
+Our aim is to find the vector $\vec{\tilde{\varphi}} = a\vec{w}$ which best approximates the given vector $\varphi$.
+A reasonable criterion for the best approximation could be to minimize the length $\|\vec{e}(a)\|$ of the difference between the approximation $\tilde\varphi$ and the given $\varphi$.
+Note that this norm is minimized when $\vec{e}(a) \perp \vec{w}$.
 
 \section{Approximation of functions}
+\label{sec:equadiff}
 
 In this section we will consider a simple boundary value problem and its relation to systems of linear equations.
 The boundary value problem is the problem of finding a solution to a given differential equation satisfying boundary conditions at the the boundary of a region.
@@ -945,19 +954,19 @@ $$
 
 $b=\frac{14}{81}$, $c=\frac{40}{81}$
 \begin{figure}[t]
-\begin{minipage}{.45\linewidth}
+%\begin{minipage}{.45\linewidth}
 	\centering
-	\includegraphics[width=.8\linewidth]{fem.png}
+	\includegraphics[width=.4\linewidth]{fem.png}
 	\caption{The ground truth $\varphi(x) = \frac{1}{6} x^3 + \frac{1}{2} x^2 + \frac{1}{3} x$ and its approximation found by the FEM.}
 	\label{fig:fem}
-\end{minipage}
-\hspace{.1\linewidth}
-\begin{minipage}{.45\linewidth}
-	\centering
-	\includegraphics[width=.8\linewidth]{convolution.png}
-	\caption{}
-	\label{fig:convolution}
-\end{minipage}
+%\end{minipage}
+%\hspace{.1\linewidth}
+%\begin{minipage}{.45\linewidth}
+%	\centering
+%	\includegraphics[width=.8\linewidth]{convolution.png}
+%	\caption{}
+%	\label{fig:convolution}
+%\end{minipage}
 \end{figure}
 
 \subsection{The Ritz method}
@@ -965,7 +974,7 @@ $b=\frac{14}{81}$, $c=\frac{40}{81}$
 
 \begin{equation}
 \label{eq:ritz}
-\argmin\limits_{b,c\in \mathbb R} \Phi(\tilde\varphi), \text{~where~} \Phi(\tilde\varphi) := \int\limits_0^1 \tilde\varphi \cdot \left(\frac{d^2\tilde{\varphi}}{dx^2} -2 f\right) \, dx 
+\argmin\limits_{b,c\in \mathbb R} \Phi(\tilde\varphi), \text{~where~} \Phi(\tilde\varphi) := \int\limits_0^1 \tilde\varphi \frac{d^2}{dx^2}\tilde{\varphi}\, dx -2 \int\limits_0^1 \tilde\varphi f\ \, dx 
 \end{equation}
 
 $$
@@ -986,10 +995,12 @@ $$
 $$
 
 \begin{align*}
-\int\limits_0^1 \tilde{\varphi} \cdot \left(\frac{d^2\tilde{\varphi}}{dx^2} - 2f\right)\,dx  &= 
-\int\limits_0^1 (b w_1 + c w_2 + w_3 ) \cdot (3b(\delta_0 - 2\delta_{1/3} + \delta_{2/3}) + 3c(\delta_{1/3} - 2\delta_{2/3} + \delta_{1}) + 3\delta_{2/3} - 2f)\,dx \\
+\Phi(\tilde\varphi) &= \int\limits_0^1 \tilde{\varphi} \cdot \left(\frac{d^2\tilde{\varphi}}{dx^2} - 2(x+1)\right)\,dx \\
+&= \int\limits_0^1 (b w_1 + c w_2 + w_3 ) \cdot (3b(\delta_0 - 2\delta_{1/3} + \delta_{2/3}) + 3c(\delta_{1/3} - 2\delta_{2/3} + \delta_{1}) + 3\delta_{2/3} - 2(x+1))\,dx \\
+&= -6b^2 + 6bc -6c^2 + 6c -2\left(\frac{5}{9}c + \frac{4}{9}b + \frac{49}{54}\right)
 \end{align*}
 
+\iffalse
 (%i1) integrate(3*x*(x+1),x,0,1/3);
                                       11
 (%o1)                                 --
@@ -1058,10 +1069,11 @@ $$
 %);
 
 
-\TODO{Galerkin = Ritz is the same as minimization of quadratic function = linear system}
 
 b*(integrate(3*x*(x+1),x,0,1/3) + integrate((2-3*x)*(x+1),x,1/3,2/3))+ c*(integrate((3*x-1)*(x+1),x,1/3,2/3) + integrate((3-3*x)*(x+1),x,2/3,1))+ integrate((4-3*x)*(x+1),x,2/3,1);
 
+\fi
+\TODO{Galerkin = Ritz is the same as minimization of quadratic function = linear system}
 
 \authoredby{B}
 \chapter{Minimization of quadratic functions and linear systems}
