@@ -5,7 +5,6 @@ void project_triangle(const vec3& p0, const vec3& p1, const vec3& p2, vec2& z0, 
     vec3 X = (p1 - p0).normalize(); // construct an orthonormal 3d basis
     vec3 Z = cross(X, p2 - p0).normalize();
     vec3 Y = cross(Z, X);
-
     z0 = vec2(0,0); // project the triangle to the 2d basis (X,Y)
     z1 = vec2((p1 - p0).norm(), 0);
     z2 = vec2((p2 - p0)*X, (p2 - p0)*Y);
@@ -21,7 +20,6 @@ int main() {
 
     // select two arbitrary vertices to pin
     int lock1 = 10324 % m.nverts(), lock2 = 35492 % m.nverts();
-
     nlSetVariable(lock1*2+0, 0); // first vertex is pinned to (0,0)
     nlSetVariable(lock1*2+1, 0);
     nlSetVariable(lock2*2+0, 1); // the second one to (1,1)

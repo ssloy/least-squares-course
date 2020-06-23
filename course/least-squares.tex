@@ -90,7 +90,7 @@ linkbordercolor=lightgray
 \authoredby{B}
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
-\fancyhead[R]{\textcolor{green}{core text}}
+\fancyhead[R]{\textcolor{ao(english)}{core text}}
 \fancyhead[L]{\chaptername\ \thechapter\ --\ \leftmark}
 
 \maketitle
@@ -113,57 +113,60 @@ linkbordercolor=lightgray
 %It is a basic (fundamental) of numerical optimization that can be efficiently used by programmers that are not specialized in applied mathematics because it is simple, efficient and general enough to handle a large family of problems.
 
 %Course Prerequisites (50 words)
-% Anyone able to program computer graphics algorithms can learn to use Least Squares with this course. Attendee already using it or having stronger mathematical background may discover some interesting relations with other domains.
+% Anyone able to program computer graphics algorithms can learn to use least squares with this course. Attendees already using it or having stronger mathematical background may discover some interesting relations with other domains.
 
 %Executive Statement (Maximum 50 words)
-%We present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using the Least Squares method; a very efficient tool that doesn't require too much mathematical background.
+% We present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using least squares methods; it is a very efficient tool that does not require too much mathematical background.
 
 
 %Course Syllabus
-%The course is decomposed in three parts: an introduction, many use cases to demonstrate its usefulness, and the presentation of its strong relations with some important scientific domains.
-% * It starts with a gentle introduction of the Least Squares method, that provides some intuitions about what is a linear system, and how solving it can be used to design new algorithms.
-% * Then we proceed to the main course: how can instantiate the Least squares in order to some problems? What can be the variables? the energy? how to deal with constraints? how far can we go from linearity? This part is illustrated with examples with simple code that allows to experiment by yourself.
-% * The last part will provide some insights about the strong connections between this fundamental method and probability, numerical simulations with FEM, and neuronal networks.
+%The course is decomposed in three parts: an introduction of least squares, numerous use cases to demonstrate its usefulness, and the presentation of its strong relations with to adjacent scientific domains.
+% * It starts with a gentle introduction of the least squares method, providing some intuitions about linear systems.
+% * Then we proceed to the main course: how do we instantiate least squares to solve some problems? What can be the choice of variables? The energy? How to deal with constraints? Are we bound by the linearity?
+%   This part is thoroughly illustrated with real examples and comes with simple source code that is meant to be experimented with.
+% * The last part provides some insights about the strong connections between the fundamentals of least squares, probability theory, finite element methods and neuronal networks.
 
 %Course rationale
-%In computer graphics, many problems can be efficiently solved by numerical optimizations e.g. texture mapping, deformations, physic simulations, morphing, etc. These methods come from the applied mathematics community and are not always mastered by computer science students.
-%The purpose of this course is to bring to the audience a first brick of numerical optimization. We choose the Least Squares method because it doesn't require strong mathematical background, it is extremely efficient, and can handle many different problems.
-%We not only present the mathematical foundation of the method, but also illustrate it with many use cases, ranging from 1D function smoothing to texture mapping or nonlinear 3D deformations. Examples are fundamental in this course because the main difficulties with this method are to determine the best variable set, and how to define the energy.
-%We consider Least Squares as a keystone of numerical optimization, and we explain why this simple method is so strongly related with probability, FEM, and Neural Networks. 
+% In computer graphics, many problems can be efficiently solved by numerical optimizations: texture mapping, deformations, physical simulations, morphing, etc.
+% These methods come from the applied mathematics community and are not always accessible/mastered by computer science students.
+% The purpose of this course is to bring to the audience a first brick of numerical optimization. We choose the least squares method because it does not require strong mathematical background, it is extremely efficient, and can handle many different problems.
+% We not only present the mathematical foundation of the method, but also illustrate it with numerous use cases, ranging from 1D function smoothing to texture mapping or nonlinear 3D deformations.
+% Examples are fundamental in this course because the main difficulties with this method are to determine the best variable set, and how to define the energy.
+% We consider least squares as a keystone of numerical optimization, and we explain why this simple method is so strongly related with probability, FEM, and neural networks.
 
-% Pedagogic Intentions and Methods
-% Linear regression is a simple tool for data analysis.
-% We propose to discover how the same method (least squares) applies to the manipulation of geometric objects.
-% This first step into the numerical optimization world can be done without strong applied mathematics background;
-% while being simple, this step suffices for many applications, and is a good starting point for learning more advanced algorithms.
-% We strive to communicate the underlying intuitons through numerous examples of classic problems, we show different choices of variables and the ways the energies are built.
-% Over the last two decades, the geometry processing community have used it for computing 2D maps, deformations, geodesic paths, frame fields, etc.
-% Our examples provide many examples of applications that can be directly solved by the least squares method.
-% Note that linear regression is an efficient tool that has deep connections to other scientific domains;
-% we show a few such links to broaden the reader's horizons.
-
-
-
-
-This course is intended for students/engineers/researchers who know how to program in the traditional way:
-by breaking down complex tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes\dots).
-Here we present a different paradigm, in which we describe what a good result looks like, and let numerical optimization algorithms find it for us.
 
 This course explains least squares optimization, nowadays a simple and well-mastered technology.
 We show how this simple method can solve a large number of problems that would be difficult to approach in any other way.
 This course provides a simple, understandable yet powerful tool that most coders can use,
 in the contrast with other algorithms sharing this paradigm (numerical simulation and deep learning) which are more complex to master.
 
-Linear regression is ofter underestimated being considered only as a sub-domain of statistics / data analysis, but it is much more than that.
+\vspace{3mm}
+
+% Pedagogic Intentions and Methods
+Linear regression is often underestimated being considered only as a sub-domain of statistics / data analysis, but it is much more than that.
 We propose to discover how the same method (least squares) applies to the manipulation of geometric objects.
 This first step into the numerical optimization world can be done without strong applied mathematics background;
 while being simple, this step suffices for many applications, and is a good starting point for learning more advanced algorithms.
-We strive to communicate the underlying intuitons through numerous examples of classic problems, we show different choices of variables and the ways the energies are built.
+We strive to communicate the underlying intuitions through numerous examples of classic problems, we show different choices of variables and the ways the energies are built.
 Over the last two decades, the geometry processing community have used it for computing 2D maps, deformations, geodesic paths, frame fields, etc.
 Our examples provide many examples of applications that can be directly solved by the least squares method.
 Note that linear regression is an efficient tool that has deep connections to other scientific domains;
-we show a few such links to broaden the reader's horizons.
+we show a few such links to broaden reader's horizons.
 
+\vspace{3mm}
+
+%Intended Audience
+This course is intended for students/engineers/researchers who know how to program in the traditional way:
+by breaking down complex tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes\dots).
+Here we present a different paradigm, in which we describe what a good result looks like, and let numerical optimization algorithms find it for us.
+
+\vspace{3mm}
+
+You have probably noticed two different text colors of in the table of contents; there are chapters marked as \textcolor{ao(english)}{core text} and there are chapters marked as \textcolor{blue}{optional}.
+This should not surprise those who are familiar with mipmaps: if you are eager to master a new tool, jump right to chapter~\ref{ch:linsyst}.
+If, however, you want to zoom in and discover connections to adjacent domains, optional chapters might be of interest.
+
+\iffalse
 
 %Ce cours présente comment la méthode des moindres carrés peut résoudre un grand nombre des problèmes rencontrés en manipulation de maillages.
 %Contrairement aux outils classiques de manipulation de maillages par optimisation combinatoire, cette approche appartient aux méthodes d'optimisation numériques dans lesquelles, 
@@ -177,6 +180,19 @@ we show a few such links to broaden the reader's horizons.
 %de la variété de configurations dans lesquelles les moindres carrés ont résolu des problèmes en computer graphics.
 %Afin d'aller plus loin dans la compréhension de cette méthode, nous clarifierons son positionnement vis-à-vis d'autre domaines scientifiques : quel est son rapport avec les probabilités ? 
 %dans quel cas est-ce équivalent à une formulation FEM ? la linearité est-elle la seule différence avec le deep learning ?
+
+% abstract
+This course presents how least squares methods can solve numerous problems encountered in mesh manipulation.
+Unlike classical tools for mesh manipulation via combinatorial optimization, with this approach, instead of describing each step of the program flow,
+we define properties of our goal, and let a numerical solver to discover it.
+In the world of numerical optimization, least squares are particularly simple to implement because they do not require advanced mathematical knowledge.
+In addition, existing solvers are so efficient\dots that a vast number of other methods rely on solving sequences of least squares problems.
+This simplicity of implementation, combined with the efficiency of the solvers, makes this approach the ideal candidate to introduce some numerical optimization in design, rendering, etc.
+This course presents least squares by illustrating it on simple cases; for this great tool to be fully harnessed, one must above all know how to recognize the situations in which it will be effective.
+A two-hour course obviously cannot replace years of experience, but we have listed a set of simple use cases representative of the variety of configurations in which least squares have solved problems in computer graphics.
+For a deeper understanding of this method, we will clarify its positioning with respect to other scientific fields: what is the relation to the probability theory?
+In which case is it equivalent to a FEM formulation? Is there any connection to neural networks?
+\fi
 
 
 
@@ -192,12 +208,10 @@ we show a few such links to broaden the reader's horizons.
 
 \authoredby{A}
 \chapter{Do you believe in the probability theory?}
-\fancyhead[R]{\textcolor{red}{optional for reading}}
+\fancyhead[R]{\textcolor{blue}{optional for reading}}
 
-This short section is not mandatory for the understanding of the main course; 
-the idea behind is to warm up before attacking code and formulae.
-I'll start with the least squares methods through the maximum likelihood estimation;
-this requires some (at least superficial) knowledge of probability theory. 
+This short section is not mandatory for the understanding of the main course; the idea behind is to warm up before attacking code and formulae.
+We approach least squares methods through the maximum likelihood estimation; this requires some (at least superficial) knowledge of probability theory.
 So, right from the beginning, I would like to digress a little.
 
 
@@ -209,12 +223,12 @@ Take a short break, think about how you would answer.
 Being puzzled by the question, I have answered that I find it plausible. 
 Scientific theory has little to do with faith.
 In short, a theory only builds a model of the world, and there is no need to believe in it.
-Moreover, the Popperian criterion\cite{} requires a scientific theory be able to be falsifiable. 
+Moreover, the Popperian criterion\cite{popper1935logik} requires a scientific theory be able to be falsifiable. 
 A solid theory must possess, first of all, the power of prediction.
 For example, if you genetically modify crops in such a way that they produce pesticides themselves, 
 it is only logical that pesticide-resistant insects would appear. 
 However, it is much less obvious that this process can be slowed down by growing regular plants side by side with genetically modified plants. 
-Based on evolutionary theory, the corresponding modelling has made this prediction\cite{}, and it seems to have been validated\cite{}.
+Based on evolutionary theory, the corresponding modelling has made this prediction\cite{CERDA2004163}, and it seems to have been validated\cite{Tabashnik}.
 
 \paragraph*{Wait, what is the connection?}
 
@@ -402,10 +416,10 @@ The methods I am describing here were developed by Gauß at the end of the 18th 
 \footnote{Note that Legendre has published an equivalent method in 1805, 
 whereas Gauß' first publication is dated by 1809. Gauß has always claimed that he had been using the method since 1795,
 % https://projecteuclid.org/download/pdf_1/euclid.aos/1176345451
-and this is a very famous priority dispute~\cite{} in the history of statistics.
+and this is a very famous priority dispute~\cite{stigler1981} in the history of statistics.
 There are, however, numerous evidence to support the thesis that Gauß possessed the method before Legendre, but he was late in his communication.}.
 %Theoria Motus Corporum Coelestium
-~\cite{}
+~\cite{gauss1809theoria}
 
 For example, if we measure the battery voltage $N$ times, we get $N$ different measurements. Which of them should we take? All of them! 
 So, let us say that we have $N$ measurements $U_j$:
@@ -561,7 +575,8 @@ Next we will try to build a geometric intuition on least squares, and see how ca
 
 \authoredby{B}
 \chapter{Introduction to systems of linear equations}
-\fancyhead[R]{\textcolor{green}{core text}}
+\fancyhead[R]{\textcolor{ao(english)}{core text}}
+\label{ch:linsyst}
 
 \section{Smooth an array}
 \label{sec:arraysmooth}
@@ -755,8 +770,8 @@ Congratulations, you have just solved a Poisson's equation!
 
 
 \authoredby{A}
-\chapter{Finite elements example: the Galerkin weighted residual method}
-\fancyhead[R]{\textcolor{red}{optional for reading}}
+\chapter{Finite elements example}
+\fancyhead[R]{\textcolor{blue}{optional for reading}}
 
 In the previous section we saw that mere 3 lines of code can be sufficient to solve a linear system, and this linear system corresponds to a differential equation.
 While it is extremely cool, what are the practical consequences for a programmer?  How do we build these systems? Where do we use them?
@@ -764,7 +779,7 @@ Well, there is a huge community of people who start with a continuous problem, t
 In this chapter I show a tiny bit of the bottomless pit called finite element methods.
 Namely, I show a mathematician's approach to the program we saw in \S\ref{sec:rhs}.
 
-Note that this chapter is marked as \textcolor{red}{optional}.
+Note that this chapter is marked as \textcolor{blue}{optional}.
 It is here to make connections to adjacent domains; feel free to skip it, the core text about least squares continues in the next chapter.
 
 \section{Approximation of vectors}
@@ -776,6 +791,7 @@ It is here to make connections to adjacent domains; feel free to skip it, the co
 	\label{fig:vector_approximation}
 \end{figure}
 
+\TODO{small example on vectors}
 
 \section{Approximation of functions}
 
@@ -834,6 +850,8 @@ $$
 $$
 where the coefficients of $w_0(x)$ and $w_3(x)$ are the direct consequence of the boundary condition $\varphi(0)=0$, $\varphi(1)=1$;
 note that $b$ and $c$ give the values of the approximation for the points $x=\frac{1}{3}$ and $x=\frac{2}{3}$, respectively.
+
+\subsection{The Galerkin method}
 
 With a differential equation we do not know how to measure the true error, 
 so we must instead require the residual $\frac{d^2\tilde{\varphi}}{dx^2} - f$ to be orthogonal to $\Span\{w_1,\dots w_{n-1}\}$.
@@ -926,22 +944,62 @@ $$
 $$
 
 $b=\frac{14}{81}$, $c=\frac{40}{81}$
-\begin{figure}[ht]
+\begin{figure}[t]
+\begin{minipage}{.45\linewidth}
 	\centering
-	\includegraphics[width=.3\linewidth]{fem}
+	\includegraphics[width=.8\linewidth]{fem.png}
 	\caption{The ground truth $\varphi(x) = \frac{1}{6} x^3 + \frac{1}{2} x^2 + \frac{1}{3} x$ and its approximation found by the FEM.}
 	\label{fig:fem}
+\end{minipage}
+\hspace{.1\linewidth}
+\begin{minipage}{.45\linewidth}
+	\centering
+	\includegraphics[width=.8\linewidth]{convolution.png}
+	\caption{}
+	\label{fig:convolution}
+\end{minipage}
 \end{figure}
 
+\subsection{The Ritz method}
 \TODO{Mention Ritz and guide towards least squares}
 
+\begin{equation}
+\label{eq:ritz}
+\argmin\limits_{b,c\in \mathbb R} \Phi(\tilde\varphi), \text{~where~} \Phi(\tilde\varphi) := \int\limits_0^1 \tilde\varphi \cdot \left(\frac{d^2\tilde{\varphi}}{dx^2} -2 f\right) \, dx 
+\end{equation}
+
+$$
+\left\{
+\begin{split}
+\frac{\partial}{\partial b} \Phi(\tilde\varphi) & = 0 \\
+\frac{\partial}{\partial c} \Phi(\tilde\varphi) & = 0
+\end{split}
+\right.
+$$
+
+% \frac{\partial}{\partial c} \Phi(\tilde\varphi) & = 0
+%radcan(
+%   integrate((3*x+3*e-2+1)^2/(12*e)*(-b*3/e+c*3/(2*e)), x, 1/3-e, 1/3+e) +
+%   integrate((1-(3*x-2)^2-(3*e-1)^2)/(6*e)*(b*3/(2*e)-c*3/e+3/(2*e)), x, 2/3-e, 2/3+e) +
+%   integrate((3*x-3*e-2-1)^2/(12*e)*(c*3/(2*e)-3/e), x, 1-e, 1+e) +
+
+%-2*integrate((3*x+3*e-2+1)^2/(12*e)*(x+1),              x, 1/3-e, 1/3+e) +
+%-2*integrate((3*x-2+1)*(x+1), x, 1/3+e, 2/3-e) +
+%-2*integrate((1-(3*x-2)^2-(3*e-1)^2)/(6*e)*(x+1),                     x, 2/3-e, 2/3+e) +
+%-2*integrate((-3*x+2+1)*(x+1), x, 2/3+e, 1-e) +
+%-2*integrate((3*x-3*e-2-1)^2/(12*e)*(x+1),           x, 1-e, 1+e) +
+
+%   integrate((b*((1-(3*x-1)^2-(3*e-1)^2)/(6*e)) + c*(3*x+3*e-2+1)^2/(12*e))*(3/(2*e)), x, 1/3-e, 1/3+e) +
+%   integrate((b*(((3*x-3*e-1-1)^2)/(12*e)) + c*(1-(3*x-2)^2-(3*e-1)^2)/(6*e) + (3*x+3*e - 3 +1)^2/(12*e))*(-3/e), x, 2/3-e, 2/3+e) +
+%   integrate((c*(3*x-3*e-2-1)^2/(12*e) + (1-(3*x-3)^2 - (3*e-1)^2)/(6*e))*(3/(2*e)), x, 1-e, 1+e)
+%);
 
 
-
+\TODO{Galerkin = Ritz is the same as minimization of quadratic function = linear system}
 
 \authoredby{B}
 \chapter{Minimization of quadratic functions and linear systems}
-\fancyhead[R]{\textcolor{green}{core text}}
+\fancyhead[R]{\textcolor{ao(english)}{core text}}
 \label{sec:mineqlin}
 
 Recall that the main goal is to study least squares, therefore our main tool will be the minimization of quadratic functions;
@@ -1062,7 +1120,7 @@ Do not be in a hurry to answer that the number $a$ is positive if and only if $a
 The real number $a$ is positive if and only if for all non-zero real $x\in\mathbb R,\ x\neq 0$ the condition $ax^2>0$ is satisfied.
 \end{definition}
 
-Looks pretty awkward, but it applies perfectly to the matrices:
+This definition looks pretty awkward, but it applies perfectly to matrices:
 
 \begin{definition}
 The square matrix $A$ is called positive definite if for any non-zero $x$
@@ -1673,7 +1731,7 @@ The stretching of the map is the same in all directions (the map is called isotr
 The conservation of angles implies that the texture (locally) is not elongated.
 On the other hand, the area is not conserved, implying eventual strong changes in stretching from one place to another on the surface.
 
-Computing such a mapping is a direct instantiation of the Cauchy-Riemann equations on a pair of real-valued functions of two real variables $u(x,y)$ and $v(x,y)$ representing the texture coordinates:
+Computing such a mapping~\cite{levy2002least} is a direct instantiation of the Cauchy-Riemann equations on a pair of real-valued functions of two real variables $u(x,y)$ and $v(x,y)$ representing the texture coordinates:
 $$\left\{
  \begin{array}{rl}
 \frac{\partial u}{\partial x} &= \frac{\partial v}{\partial y} \\
@@ -1711,7 +1769,7 @@ Figure~\ref{fig:lscm} shows the result of the execution of the program.
 \label{sec:arap}
 How to deform a character in a plausible manner?
 Usually this task is done by artists expertly rigged 3D models.
-However simple deformation models can still produce satisfying deformations.
+However simple deformation models can still produce satisfying deformations~\cite{ARAP_modeling:2007}.
 Our deformation will be controlled by a set of vertices $\mathcal{I}$ on the surface which will forced to the position $p_k$ (Figure~\ref{fig:ARAP} left).
 
 \begin{figure}[!h]
@@ -1751,7 +1809,7 @@ Refer to Listing~\ref{listing:arap} for the source code.
 
 \authoredby{A}
 \chapter{Under the hood of the conjugate gradient method}
-\fancyhead[R]{\textcolor{red}{optional for reading}}
+\fancyhead[R]{\textcolor{blue}{optional for reading}}
 
 
 The resolution of linear systems is the keystone of a large number of numerical optimization algorithms encountered in many application contexts.
@@ -2232,135 +2290,82 @@ we use $\beta^{(k+1)}$ instead of $\beta_k^{(k+1)}$ because all the other $\beta
 \newpage
 \section{Performance}
 
-En l'absence d'erreurs d'arrondi, le gradient conjugué converge en $n$ itérations, et chaque itération
-ne requiert qu'une multiplication d'une matrice par un vecteur et
-cinq multiplications d'un vecteur par un autre. En pratique, le
-gradient conjugué est utilisé sur des grandes matrices creuses comme
-un solveur itératif qui est moins sensible au conditionnement de la
-matrice que la descente de gradient.
+In the absence of rounding errors, the conjugate gradient converges in $n$ iterations; each iteration requires only one matrix-vector multiplication of five dot products.
+In practice, the conjugate gradient is used on large sparse matrices as an iterative solver that is less sensitive to matrix conditioning than the gradient descent.
 
-Il est intéressant d'observer le comportement du gradient conjugué sur
-ce type de matrices. Nous allons voir deux cas simples: un Laplacien
-1D et un Laplacien 2D discrétisé sur une grille régulière. Bien que
-simples, ces choix montrent l'impact d'un facteur prédominant pour le
-comportement des solveurs: la disposition des zéros dans la matrice,
-qui correspond aux voisinages géométriques dans l'espace discrétisé.
-	
-Les matrices creuses définissent des graphes qui relient les indices~$i$ et~$j$
-des coefficients $a_{ij}$ non nuls. En modélisation par éléments finis (FEM)
-et en {\it geometry processing}, ces graphes sont très proches de la structure
-du maillage sur lequel on travaille: en effet, les équations aux
-dérivées partielles vont par définition lier des éléments
-géométriquement proches. Les deux Laplaciens sont des exemples 1D et
-2D qui permettent de voir comment se comportent les algorithmes que nous
-venons de présenter avec ce type de données.
-	
-		
-\subsection{Laplacien 1D.}
-	
-Nous représentons une fonction~$f$ par le vecteur~$x$ tel que $f(i) =
-x_i$. Ce que l'on appelle Laplacien 1D ici est un système linéaire qui
-donne en chaque point de la fonction sa dérivée seconde, estimée par
-différences finies. Le problème est de trouver une fonction (un
-vecteur $x$) dont cette dérivée seconde est nulle, et qui respecte des
-contraintes au bord, comme illustré dans la figure
-\ref{fig:laplace1d}.
-	
-Ce problème est très intéressant car il est relativement simple à
-analyser. De plus, on peut visualiser le comportement des différents
-algorithmes sur une seule image (figure \ref{fig:laplace1dresults}):
-il suffit d'afficher les $x_i^{(k)}$ en fonction de la position
-géométrique $i$ et de l'itération $k$. De plus, ce problème est
-extrêmement complexe à résoudre car le conditionnement du système est
-très mauvais: pour $n=5$ il est de $13.6= 1.9 / 0.14$ et pour $n=20$,
-il vaut $200 = 2/.01$. Géométriquement, cela correspond à vouloir
-résoudre un problème dont les iso-valeurs de $x^\top Ax-2b^\top x$
-sont des ellipses dont les axes ont des rapports de taille de $13.6$
-et $200$ !
-	
-Pour chaque algorithme, on observe les comportements suivants (figure
-\ref{fig:laplace1dresults}):
+It is interesting to observe the behaviour of the conjugate gradient on this type of matrices.
+In this section we present two simple cases: a 1D Laplacian and a 2D Laplacian discretized on a regular grid.
+Although simple, these choices show the impact of a predominant factor for the solvers behaviour: the arrangement of zeros in the matrix, which corresponds to the geometric neighborhoods in the discretized space.
+
+The sparse matrices define graphs that link the indices~$i$ and~$j$ by non-zero matrix entries $a_{ij}$.
+In finite element modeling (FEM) and in geometry processing, these graphs are very close to the structure of the underlying mesh.
+Indeed, by their definition, derivatives are estimated on neighbouring elements.
+These two example allow us to see how the algorithms we have just presented behave with this type of data.
+
+\subsection{1D Laplacian}
+
+We represent a function~$f$ by the vector~$x$ such that $f(i) = x_i$.
+We can estimate its second derivative by finite differences;
+the problem is to find a function (the vector $x$) whose second derivative is null, and which respects boundary constraints shown in Figure~\ref{fig:laplace1d}.
+
+This problem is very interesting because it is relatively simple to analyze.
+In addition, we can visualize the behavior of the various algorithms on a single image (Figure~\ref{fig:laplace1dresults}): we display $x_i^{(k)}$ as a function of the position $i$ and iteration $k$.
+Moreover, this problem is extremely complex to solve because the conditioning of the system is very bad: for $n=5$ it is $13.6= 1.9 / 0.14$ and for $n=20$, it's equal to $200 = 2/.01$.
+Geometrically, this corresponds to minimizing a quadratic function $x^\top Ax-2b^\top x$ whose iso-values are ellipses with aspect ratios of 13.6 and 200!
+
+
+For each algorithm, we observe following behaviour (Figure~\ref{fig:laplace1dresults}):
 \begin{itemize}
-\item La descente de gradient minimise rapidement la dérivée seconde
-  prés des contraintes, mais peine à propager les contraintes vers
-  l'intérieur du domaine.
-\item La méthode par projection propage la contrainte de gauche au fur
-  et à mesure, mais ne tient compte de celle de droite qu'à la
-  dernière itération. Ce comportement est certes dû au choix des
-  $r^{(k)}$, mais illustre bien la nécessité de faire l'ensemble des
-  itérations.
-\item Le gradient conjugué se comporte comme s'il ne voyait qu'une
-  région autour des contraintes (définies au bord, en orange), sur
-  laquelle il résout parfaitement le problème. Cette région grandit à
-  chaque itération pour recouvrir tout le domaine à partir de la
-  moitié des itérations, mais il faut attendre les $n$ itérations pour
-  que chacune des deux contraintes ait eu le temps d'influencer
-  l'ensemble du domaine.
+\item Gradient descent quickly minimizes the second derivative near the constraints, but struggles to propagate the constraints into the domain.
+\item The projection method propagates the left-hand constraint as it goes along, but does not take into account the right-hand constraint until the very last iteration.
+This behavior is certainly due to the choice of $r^{(k)}$, but illustrates the necessity to perform all $n$ iterations.
+\item The conjugate gradient behaves as if it only sees a small region around the constraints (shown in orange at the edges), where it perfectly solves the problem.
+This region grows at each iteration to cover the whole domain at $n/2$ iterations, but it is necessary to wait for all the $n$ iterations before each of the two constraints has had time to influence the whole domain.
 \end{itemize}
-	
+
 \begin{figure}[p]
   \centering
   \includegraphics[width=1\linewidth]{cg/laplace1d.png}
-  \caption{Problème de Laplacien 1D. On a une fonction définie en n
-    points (ici, $n=5$) et cherche à minimiser la dérivée seconde
-    estimée par différences finies i.e., $\Sigma_i
-    x_i-(x_{i-1}+x_{i+1})/2$. Au bord on fixe des valeurs $h_0$ et
-    $h_n$, ce qui donne le problème $Ax-b=0$ avec $A$ et $b$ définis
-    dans la figure.}
+  \caption{1D Laplacian problem. We have a function defined in $n=5$ points; the goal is to minimize the second derivative estimated by finite differences i.e., $\Sigma_i( x_i-(x_{i-1}+x_{i+1})/2)$. 
+    At the boundary we fix values $h_0$ and $h_n$, which gives the problem $Ax-b=0$ with $A$ and $b$ shown in the figure. }
   \label{fig:laplace1d}
   \vspace{5mm}
 
   \includegraphics[width=1\linewidth]{cg/laplace1dresults.png}
-  \caption{Évolution de la solution du Laplacien 1D avec $n=20$: l'axe
-    gris représente la fonction échantillonnée par $x$, et l'axe bleu
-    est celui des itérations, et les segments oranges sont les
-    contraintes du bord. Les trois solveurs sont (de gauche à droite)
-    une descente de gradient, une conjugaison et un gradient
-    conjugué.}
+  \caption{
+    Evolution of the solution with $n=20$: the gray axis represents the function sampled by $x$, and the blue axis is the iteration axis, the orange segments are the boundary constraints.
+  Three solvers are (from left to right) the gradient descent, the conjugation and the conjugated gradient.
+  }
   \label{fig:laplace1dresults}
   \vspace{5mm}
 
   \includegraphics[width=1\linewidth]{cg/laplace2d.png}
-  \caption{Évolution de la solution du Laplacien 2D sur une grille de
-    $20 \times 20$. La solution $x$ est affichée par la hauteur de la
-    fonction, et les contraintes de bords sont données par les
-    segments oranges.}
+  \caption{
+    Evolution of the 2D Laplacian solution on a $20\times 20$ grid.
+  The solution $x$ is displayed by the height of the function, and the boundary constraints are given by the orange segments.
+  }
   \label{fig:laplace2d}
 \end{figure}
 
-\subsection{Laplacien 2D.}
-	
-Le Laplacien 2D fonctionne sur le même principe que le Laplacien
-1D. On a discrétisé une fonction f sur une grille 2d et à chaque nœud
-de la grille on associe une coordonnée de $x$. Le Laplacien est estimé
-par différence finie, donc la matrice $A$ est définie par: $a_{ii}=1$,
-$a_{ij}=-1/4$ si les n{\oe}uds $i$ et $j$ sont voisins, et $a_{ij}=0$
-sinon.
-	
-Dans le cas 2D, on ne peut plus représenter la simulation sur une
-seule image, alors nous affichons l'état à certaines itérations. Grâce
-à la figure \ref{fig:laplace2d}, on peut analyser le comportement des
-différents algorithmes:
+\subsection{2D Laplacian}
+
+The 2D Laplacian works on the same principle as the 1D Laplacian.
+We have discretized a function $f$ on a 2D grid and each entry of the vector $x$ is associated with each node of the grid.
+The Laplacian is estimated by finite difference, so the matrix $A$ is defined by: $a_{ii}=1$, $a_{ij}=-1/4$ if the nodes $i$ and $j$ are neighbors, and $a_{ij}=0$ otherwise.
+
+In the 2D case, we can no longer represent the simulation on a single image, so we display the state at certain iterations.
+Thanks to the Figure~\ref{fig:laplace2d}, we can analyze the behavior of the algorithms:
 \begin{itemize}
-\item Descente de gradient: Comme avec le Laplacien 1D, on observe que
-  les premières itérations lissent bien la fonction, mais que le
-  solveur peine à propager les contraintes vers l'intérieur du
-  domaine. Ceci étant, en $100$ itérations, la convergence sur cette
-  grille de $20 \times 20$ semble similaire à celle observée sur la
-  grille 1D de $n=20$. La difficulté ne semble pas être due aux $400$
-  variables, mais plutôt à la distance aux contraintes (qui est à peu
-  près la même en 1D et en 2D).
-\item Conjugaison: le solveur règle les $x_i$ les uns après les
-  autres, et n'a pas convergé car il n'y a pas eu les 400 itérations
-  nécessaires.
-\item Gradient conjugué: il converge en moins de $30$ itérations, ce
-  qui est donc loin des $400$ itérations nécessaires (méthode directe)
-  pour assurer la convergence. Ce comportement s'explique par le temps
-  nécessaire à chaque contrainte pour influencer l'ensemble du
-  domaine.
+\item
+Gradient descent: like with 1D Laplacian, we observe that the first iterations smooth out the function well, but that the solver struggles to propagate the constraints towards the interior of the domain.
+This being said, in 100 iterations, the convergence on this $20\times 20$ grid seems similar to that observed on the 1D grid of $n=20$.
+The difficulty does not seem to be due to 400 variables, but rather to the distance to the constraints (which is about the same in 1D and 2D).
+\item Conjugation: the solver has set the $x_i$ one after the other, and did not converge because we stopped it before the necessary 400 iterations.
+\item Conjugate gradient: it converges in less than 30 iterations, which is far from the 400 iterations necessary (direct method) to guarantee convergence.
+This behavior can be explained by the time needed for each constraint to influence the whole domain.
 \end{itemize}
-	
-	
+
+
 %	inputs for http://www.bluebit.gr/matrix-calculator/calculate.aspx
 %	-1  .5 0 0 0   
 %	.5  -1 .5 0 0   
@@ -2390,84 +2395,43 @@ différents algorithmes:
 %	0 0 0 0 0   0 0 0 0 0   0 0 0 0 0    0 0 0 .5 -1 
 
 
-	
 
-\subsection{Conclusion.}
-	
-La difficulté à résoudre des problèmes dans lesquels $A$ est une
-matrice creuse est fortement liée à la distance maximale (par rapport
-au graphe d'adjacence défini par $A$) à laquelle une contrainte peut
-influencer la solution. De fait, pour un nombre similaire de
-variables, les problèmes 1D paraissent plus difficiles que les problèmes 2D.
-	
-\section{Récapitulatif}
-	
-On a présenté le gradient conjugué comme l'unification de deux
-méthodes (gradient et conjugaison). On a aussi vu ce qui rend cette
-méthode si efficace, et on en a observé le comportement sur des
-problèmes classiques dans lesquels $A$ est une matrice
-creuse. Récapitulons le contenu:
-	
+
+\subsection{Conclusion}
+
+The difficulty in solving problems with sparse matrix $A$ is strongly related to the maximum distance (w.r.t. the adjacency graph defined by $A$) at which a constraint can influence the solution.
+In fact, for a similar number of variables, 1D problems appear to be more difficult than 2D problems.
+
+\section{Chapter summary}
+The conjugate gradient was presented as the fusion of two methods (gradient and conjugation). 
+We saw what makes this method so effective, and observed its behaviour on classical problems in which $A$ is a sparse matrix. 
+
+\vspace{6mm}
+
+Let us summarize the content of the chapter:
+\begin{framed}
 \begin{itemize}
-\item {\bf Objectif:} Résoudre $Ax=b$ pour une matrice $A$ définie
-  positive
-\item {\bf Descente de gradient:} Résoudre $Ax-b =0$ équivaut à
-  minimiser $x^\top Ax-2b$
+\item \textbf{Objective:} Solve $Ax=b$ with a symmetric positive definite matrix $A$
+\item \textbf{Gradient descent:} Solving $Ax-b =0$ is equivalent to minimization of $x^\top Ax-2b^\top x$
   \begin{itemize}
-  \item On peut descendre le gradient avec un pas optimal.
-  \item Méthode itérative, extrêmement dépendante du conditionnement
-    de $A$
+  \item We can minimize with optimal step size.
+  \item Iterative method extremely dependent on the conditioning of $A$
   \end{itemize}
-  
-\item {\bf Conjugué:} Il existe $M$ telle que $M^\top M=A$.
+\item \textbf{Conjuguation:} There is $M$ such that $M^\top M=A$.
   \begin{itemize}
-  \item On sait modifier une famille de vecteurs $r^{(k)}$ pour
-    construire une autre famille $d^{(k)}$, dont les images par $M$
-    sont orthogonales, à savoir $Md^{(k)}.Md^{(i)}=0$;
-  \item On sait décomposer $x^*$ sur les $d^{(k)}$ en projetant $Mx^*$
-    sur les $Md^{(k)}$.;
-  \item Méthode directe : requiert $n$ itérations, faisant chacune
-    $O(n)$ multiplications matrice/vecteur.
+  \item We know how to modify a set of vectors $r^{(k)}$ to construct another set $d^{(k)}$, whose images by $M$ are orthogonal, i.e. $Md^{(k)}.Md^{(i)}=0$;
+  \item We know how to decompose the solution $x^*$ into $d^{(k)}$ by projecting  $Mx^*$ onto $Md^{(k)}$.;
+  \item Direct method: requires $n$ iterations, each taking $O(n)$ matrix-vector multiplications.
   \end{itemize}
-		
-\item Le {\bf Gradient Conjugué} (GC) peut être obtenu en modifiant l'une
-  ou l'autre des méthodes:
+\item \textbf{Conjuguated gradient (CG)} can be obntained by merging both methods:
   \begin{itemize}
-  \item Le GC est une descente de gradient dont on corrige la
-    direction de descente pour ne pas retourner dans une direction
-    déjà optimisée;
-	
-  \item Le GC est un algorithme de conjugaison dont les $r^{(k)}$ sont
-    soigneusement choisis (le gradient) pour se rapprocher au plus
-    vite de la solution;
-    
-  \item Le GC est donc une méthode directe et itérative \textbf{à la fois}, qui converge
-    généralement en peu d'itérations;
-	
-  \item Ce qui en fait un algorithme efficace c'est qu'à l'étape $k$
-    le gradient est déjà orthogonal (dans $M$) à tous les $d^{(i)}$,
-    sauf $d^{(k-1)}$. Cela permet de faire un nombre constant de
-    multiplications matrice/vecteur par itération.
-	
+  \item CG is a gradient descent, where we rectify the descent direction so as not to return to an already optimized direction;
+  \item CG is a conjuguation algorithm whose $r^{(k)}$  are carefully chosen (the gradient) to get as close as possible to the solution;
+  \item CG is therefore a direct and iterative method \textbf{at the same time} that usually converges in a several iterations;
+  \item What makes it an efficient algorithm is that at step $k$ the gradient is already orthogonal (in $M$) every $d^{(i)}$, except $d^{(k-1)}$. This allows us to do a constant number of matrix/vector multiplications per iteration.
   \end{itemize}
-	
 \end{itemize}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\end{framed}
 
 
 
@@ -2493,7 +2457,7 @@ Obviously, we cannot fit all of the data with a straight line, or a plane, but w
 To put it into perspective, this is what neural networks do effectively, the only difference being that we use some nonlinearity as the activation function in the last layer.
 If we would remove this, we could look at the last layer of the neural network as a least squares problem, i.e. fitting a plane on the data (activations from previous layers).
 
-Note that this chapter is marked as \textcolor{red}{optional} for reading.
+Note that this chapter is marked as \textcolor{blue}{optional} for reading.
 We do not aim here to teach new tools / techniques, this chapter is here for cultural reasons.
 Anyhow, let us start with the simplest unidimensional problem.
 
@@ -2506,7 +2470,7 @@ This is the simplest example, but in practice the red/green dataset can be reall
 where the input vectors encode various characteristics of the content (e.g. the number of mentions of a certain magic carpet cleaning solution).
 
 Our goal in binary classification is to build a function that takes a vector as an input and predicts its label.
-First we nead to learn from the database: we need to build such a function whose predictions match the database labels.
+First we need to learn from the database: we need to build such a function whose predictions match the database labels.
 In the end, once the function is constructed, we can discard the database and use the function we have built as an oracle to predict labels for previously unseen vectors.
 
 Long story short, let us consider the simplest example: we have $n$ real numbers and the corresponding colors that we encode as 0 (``red'') and 1 (``green'').
@@ -2892,7 +2856,7 @@ We can negate all the weights without affecting the decision boundary\dots
 \appendix
 \authoredby{B}
 \chapter{Program listings}
-\fancyhead[R]{\textcolor{green}{core text}}
+\fancyhead[R]{\textcolor{ao(english)}{core text}}
 
 \begin{listing}[p]
 \caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2$.}
@@ -2941,7 +2905,7 @@ We can negate all the weights without affecting the decision boundary\dots
 \end{listing}
 
 \begin{listing}[p]
-\setminted{fontsize=\scriptsize}
+\setminted{fontsize=\footnotesize}
 \caption{``Cubification'' of a 3d surface (\S\ref{sec:cubify}).}
 \inputminted[frame=single,linenos=true]{python}{listings/cubify.cpp}
 \label{listing:cubify}
@@ -2949,14 +2913,14 @@ We can negate all the weights without affecting the decision boundary\dots
 
 
 \begin{listing}[p]
-\setminted{fontsize=\scriptsize}
+\setminted{fontsize=\footnotesize}
 \caption{Least squares conformal mapping (\S\ref{sec:lscm}).}
 \inputminted[frame=single,linenos=true]{python}{listings/lscm.cpp}
 \label{listing:lscm}
 \end{listing}
 
 \begin{listing}[p]
-\setminted{fontsize=\scriptsize}
+\setminted{fontsize=\footnotesize}
 \caption{As-rigid-as possible deformations (\S\ref{sec:arap}).}
 \inputminted[frame=single,linenos=true]{matlab}{listings/arap.m}
 \label{listing:arap}
