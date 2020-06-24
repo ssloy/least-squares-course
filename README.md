@@ -1,5 +1,4 @@
-# Least squares course
-## by a programmer for programmers
+# Least squares for programmers
 ### with illustrations
 
 [Check the main document](https://github.com/ssloy/least-squares-course/blob/master/manuscript.pdf)
