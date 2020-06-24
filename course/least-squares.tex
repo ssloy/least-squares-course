@@ -37,6 +37,15 @@
 \usepackage{wrapfig}
 
 \usepackage{amsmath}
+\makeatletter
+\renewcommand*\env@matrix[1][\arraystretch]{%
+  \edef\arraystretch{#1}%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{*\c@MaxMatrixCols c}}
+\makeatother
+
+
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\proj}{proj}
@@ -815,17 +824,22 @@ Let us define a function $f(x) := x+1$.
 It is simply the second derivative of $\varphi(x)$, but remember that $\varphi(x)$ is not known!
 So, the problem is to find a function $\varphi(x)$ with prescribed second derivative and constrained at the limits of a region.
 One possible instance of the boundary value problem can be written as follows:
-$$
+\begin{equation}
+\label{eq:femproblem}
 \left\{
 \begin{split}
-\frac{d^2}{dx^2}\varphi(x) = f(x), \quad 0 < x < 1\\
-\varphi(0)=0, \quad \varphi(1)=1
+\mathcal A\varphi(x) = f(x), \quad 0 < x < 1\\
+\mathcal A=\frac{d^2}{dx^2}, \quad \varphi(0)=0, \quad \varphi(1)=1
 \end{split}
 \right.
-$$
+\end{equation}
 Here $f(x)$ is known, $\varphi(x)$ is unknown, but we have specified its values at the boundary.
 
 In general, finite elements method searches for an \textit{approximated} solution of the problem.
+The finite element method does not operate directly on the differential equations; instead the boundary problem is put into equivalent variational form.
+The solution apperas in the integral over a quantity over the domain. The integral of a function over an arbitrary domain can be broken up into the sum of integrals over an arbitrary collection 
+of subdomains called finite elements. As long as the subdomains are sufficiently small, polynomial functions can adequately represent the local behaviour of the solution.
+
 Let us split the interval in $n$ parts, these subsegments are the \textit{elements}.
 For example, for $n=3$ we can define four equispaced nodes $x_i$:
 $$
@@ -846,32 +860,44 @@ w_i(x) := \left\{
 $$
 
 \begin{figure}[ht]
+\begin{minipage}{.45\linewidth}
 	\centering
-	\includegraphics[width=.3\linewidth]{blending_functions.pdf}
+	\includegraphics[width=\linewidth]{blending_functions.pdf}
 	\caption{Hat function basis for FEM approximation.}
 	\label{fig:fem:blending}
+\end{minipage}
+\hspace{.05\linewidth}
+\begin{minipage}{.5\linewidth}
+	\centering
+	\includegraphics[width=\linewidth]{galerkin.pdf}
+	\caption{The Galerkin method imposes $\mathcal A$-orthogonality between the solution space $\Span\{w_1,\dots w_{n-1}\}$ and the solution error  $e := \tilde{\varphi} - \varphi$.}
+	\label{fig:galerkin}
+\end{minipage}
 \end{figure}
 
 This choice is somewhat arbitrary, there are numerous possible bases.
 Then the approximate solution is a linear combination of the weighting functions:
-$$
+\begin{equation}
+\label{eq:tildephi}
 \tilde{\varphi}(x) := 0\cdot w_0(x) + b\cdot w_1(x) + c\cdot w_2(x) + 1\cdot w_3(x),
-$$
+\end{equation}
 where the coefficients of $w_0(x)$ and $w_3(x)$ are the direct consequence of the boundary condition $\varphi(0)=0$, $\varphi(1)=1$;
 note that $b$ and $c$ give the values of the approximation for the points $x=\frac{1}{3}$ and $x=\frac{2}{3}$, respectively.
+In the rest of the section we present two different ways to find the coefficients $b$ and $c$.
 
 \subsection{The Galerkin method}
+At first, let us try to use the classic Galerkin method for finding the approximate solution $\tilde \varphi$ of the problem~\eqref{eq:femproblem}.
+Ideally, as we have done for vectors (Figure~\ref{fig:vector_approximation}), to approximate $\varphi$, we would like to project it onto the solution space $\Span\{w_1,\dots w_{n-1}\}$,
+and thus to ask for the error $\tilde\varphi - \varphi$ to be orthogonal to $\Span\{w_1,\dots w_{n-1}\}$.
+The problem, however, is that with a differential equation we do not know how to measure the true error ($\varphi$ is unknown).
+Nevertheless, we can measure the residual $\mathcal A\tilde{\varphi} - f$ and we can project it onto $\Span\{w_1,\dots w_{n-1}\}$.
+This corresponds to $\mathcal A$-orthogonality between the true error $\tilde\varphi - \varphi$ and the solution space, Figure~\ref{fig:galerkin} provides an illustration.
 
-With a differential equation we do not know how to measure the true error, 
-so we must instead require the residual $\frac{d^2\tilde{\varphi}}{dx^2} - f$ to be orthogonal to $\Span\{w_1,\dots w_{n-1}\}$.
-
-\TODO{explanation, figure, residual orthogonal to the solution space}
-
-
-The residual being orthogonal to the solution space can be written as follows:
-$$
-\int\limits_0^1 w_i \cdot \left(\frac{d^2\tilde{\varphi}}{dx^2} - f\right) dx = 0, \quad i = 1\dots n-1 
-$$
+The residual being orthogonal to the solution space can be written as the following system of $n-1$ equations:
+\begin{equation}
+\label{eq:galerkin}
+\int\limits_0^1 w_i \cdot \left(\mathcal A\tilde{\varphi} - f\right) dx = 0, \quad i = 1\dots n-1 
+\end{equation}
 
 Note that $w_i(x)$ is equal to zero outside the interval $[x_{i-1}, x_{i+1}]$, this allows us to rewrite the system:
 $$
@@ -895,12 +921,13 @@ Anyhow, let us integrate by parts the first integral:
 & = - \int\limits_{x_{i-1}}^{x_{i+1}} \frac{dw_i}{dx}\cdot \frac{d\tilde{\varphi}}{dx}\,dx \\
 \end{align*}
 
-It allows us to rewrite the system of equations:
+It allows us to rewrite the system~\eqref{eq:galerkin} as follows:
 \begin{equation}
 \label{eq:galerkin:system}
 \int\limits_{x_{i-1}}^{x_{i+1}} \frac{dw_i}{dx} \cdot \frac{d\tilde{\varphi}}{dx}\,dx + \int\limits_{x_{i-1}}^{x_{i+1}} w_i\cdot f\,dx = 0, \quad i = 1\dots n-1
 \end{equation}
 
+In our particular example we have two equations ($n=3$), let us instantiate the functions:
 $$
 \frac{d\tilde{\varphi}}{dx} (x) := \left\{
 \begin{split}
@@ -932,8 +959,7 @@ $$
 \right.
 $$
 
-Then the system~\eqref{eq:galerkin:system} can be rewritten as follows:
-
+By plugging these instances into the system~\eqref{eq:galerkin:system} we can rewrite it as follows:
 $$
 \left\{
 \begin{split}
@@ -943,20 +969,24 @@ $$
 \right.
 $$
 
-$$
+Next we compute all the integrals and the problem is reduced to the following system:
+\begin{equation}
+\label{eq:galerkin:bc}
 \left\{
 \begin{split}
 2b - c &= -\frac{4}{27}\\
 -b + 2c &= \frac{22}{27}
 \end{split}
 \right.
-$$
+\end{equation}
 
-$b=\frac{14}{81}$, $c=\frac{40}{81}$
+Note that this is exactly the linear system we have solved numerically in \S\ref{sec:rhs}.
+The analytical solution is $b=\frac{14}{81}$ and $c=\frac{40}{81}$, refer to Figure~\ref{fig:fem} for the plot.
+
 \begin{figure}[t]
 %\begin{minipage}{.45\linewidth}
 	\centering
-	\includegraphics[width=.4\linewidth]{fem.png}
+	\includegraphics[width=.3\linewidth]{fem.png}
 	\caption{The ground truth $\varphi(x) = \frac{1}{6} x^3 + \frac{1}{2} x^2 + \frac{1}{3} x$ and its approximation found by the FEM.}
 	\label{fig:fem}
 %\end{minipage}
@@ -970,35 +1000,54 @@ $b=\frac{14}{81}$, $c=\frac{40}{81}$
 \end{figure}
 
 \subsection{The Ritz method}
-\TODO{Mention Ritz and guide towards least squares}
-
+Let us see another method to solve the problem~\eqref{eq:femproblem}. 
+The Ritz method seeks to minimize the total potential energy $\Phi(\tilde\varphi) := ( \tilde\varphi, \mathcal A \tilde\varphi) - 2 (\tilde\varphi, f)$.
+For our particular problem it can be written as follows:
 \begin{equation}
 \label{eq:ritz}
-\argmin\limits_{b,c\in \mathbb R} \Phi(\tilde\varphi), \text{~where~} \Phi(\tilde\varphi) := \int\limits_0^1 \tilde\varphi \frac{d^2}{dx^2}\tilde{\varphi}\, dx -2 \int\limits_0^1 \tilde\varphi f\ \, dx 
+\argmin\limits_{b,c\in \mathbb R} \Phi(\tilde\varphi), \text{~where~} \Phi(\tilde\varphi) :=  \int\limits_0^1 \tilde\varphi \frac{d^2}{dx^2}\tilde{\varphi}\, dx -2 \int\limits_0^1 \tilde\varphi f\ \, dx 
 \end{equation}
 
-$$
+To find the minimum, we set the partial derivatives to zero:
+\begin{equation}
+\label{eq:ritz}
 \left\{
 \begin{split}
 \frac{\partial}{\partial b} \Phi(\tilde\varphi) & = 0 \\
 \frac{\partial}{\partial c} \Phi(\tilde\varphi) & = 0
 \end{split}
 \right.
-$$
+\end{equation}
 
-$$
-\tilde{\varphi}(x) := 0\cdot w_0(x) + b\cdot w_1(x) + c\cdot w_2(x) + 1\cdot w_3(x),
-$$
-
+%$$
+%\tilde{\varphi}(x) := 0\cdot w_0(x) + b\cdot w_1(x) + c\cdot w_2(x) + 1\cdot w_3(x),
+%$$
+Let us denote the Dirac delta centered at point $y$ as $\delta_y(x)$; then $\frac{d^2\tilde{\varphi}}{dx^2}$ has the following expression:
 $$
 \frac{d^2\tilde{\varphi}}{dx^2} = 3b(\delta_0(x) - 2\delta_{1/3}(x) + \delta_{2/3}(x)) + 3c(\delta_{1/3}(x) - 2\delta_{2/3}(x) + \delta_{1}(x)) + 3\delta_{2/3}(x)
 $$
 
+It is straightforward to compute the potential energy:
 \begin{align*}
 \Phi(\tilde\varphi) &= \int\limits_0^1 \tilde{\varphi} \cdot \left(\frac{d^2\tilde{\varphi}}{dx^2} - 2(x+1)\right)\,dx \\
 &= \int\limits_0^1 (b w_1 + c w_2 + w_3 ) \cdot (3b(\delta_0 - 2\delta_{1/3} + \delta_{2/3}) + 3c(\delta_{1/3} - 2\delta_{2/3} + \delta_{1}) + 3\delta_{2/3} - 2(x+1))\,dx \\
 &= -6b^2 + 6bc -6c^2 + 6c -2\left(\frac{5}{9}c + \frac{4}{9}b + \frac{49}{54}\right)
 \end{align*}
+
+By equating the partial derivatives to zero, the system~\ref{eq:ritz} can be reduced to:
+$$
+\left\{
+\begin{split}
+2b - c &= -\frac{4}{27}\\
+-b + 2c &= \frac{22}{27}
+\end{split}
+\right.
+$$
+
+Note that this is exaclty the same system as~\eqref{eq:galerkin:bc}!
+It turns out that for equations with self-adjoint positive definite operator ($-\frac{d^2}{dx^2}$ satisfies the conditions),
+the Galerkin formulation results in the same system of equations as in the Ritz formulation.
+A proof of this fact is out of scope of the present document; we can, however, demonstrate it for our problem~\eqref{eq:femproblem} approximated with the hat functions.
 
 \iffalse
 (%i1) integrate(3*x*(x+1),x,0,1/3);
@@ -1050,7 +1099,6 @@ $$
                                       27
 (%i13)
 
-
 % \frac{\partial}{\partial c} \Phi(\tilde\varphi) & = 0
 %radcan(
 %   integrate((3*x+3*e-2+1)^2/(12*e)*(-b*3/e+c*3/(2*e)), x, 1/3-e, 1/3+e) +
@@ -1068,12 +1116,52 @@ $$
 %   integrate((c*(3*x-3*e-2-1)^2/(12*e) + (1-(3*x-3)^2 - (3*e-1)^2)/(6*e))*(3/(2*e)), x, 1-e, 1+e)
 %);
 
-
-
 b*(integrate(3*x*(x+1),x,0,1/3) + integrate((2-3*x)*(x+1),x,1/3,2/3))+ c*(integrate((3*x-1)*(x+1),x,1/3,2/3) + integrate((3-3*x)*(x+1),x,2/3,1))+ integrate((4-3*x)*(x+1),x,2/3,1);
-
 \fi
-\TODO{Galerkin = Ritz is the same as minimization of quadratic function = linear system}
+
+\section{DIY PDE solution}
+All these FEM approaches are very fancy, let us cobble together a simpler solution.
+Let us represent the solution by $n+1$ samples; we sample the function uniformly over the domain at the points $\{x_i\}_{i=0}^n = \left\{\frac{i}{n}\right\}_{i=0}^n$.
+So, we want to compute $n+1$ samples $\begin{pmatrix}\tilde\varphi(0) & \tilde\varphi\left(\frac{1}{n}\right) & \tilde\varphi\left(\frac{2}{n}\right) & \dots &\tilde\varphi(1) \end{pmatrix}^\top$, where the first and the last one are fixed.
+Note that for the case of the hat functions basis, computing $\tilde\varphi(x_i)$ corresponds exactly to the computation of the weights in Equation~\eqref{eq:tildephi}.
+
+We can approximate the differential operator $\mathcal A$ by the second-order central finite difference:
+$$\frac{d^2}{dx^2}\tilde\varphi\left(\frac{i}{n}\right) \approx \frac{\tilde\varphi\left(\frac{i-1}{n}\right) -2\tilde\varphi\left(\frac{i}{n}\right)+\tilde\varphi\left(\frac{i+1}{n}\right)  }{\frac{1}{n^2}}.$$
+
+
+Since $\tilde\varphi(0)$ and $\tilde\varphi(1)$ are fixed, all this boils down to the following system of $n-1$ equations:
+$$
+\begin{pmatrix}
+-2 n^2 &   n^2 &       &      &      &       &        \\
+   n^2 & -2n^2 & n^2   &      &      &       &        \\
+       &       &       &\ddots&      &       &        \\
+       &       &       &      &  n^2 & -2n^2 &    n^2 \\
+       &       &       &      &      &   n^2 & -2 n^2
+\end{pmatrix}
+\begin{pmatrix}[1.5] \tilde\varphi\left(\frac{1}{n}\right) \\ \tilde\varphi\left(\frac{2}{n}\right) \\ \vdots \\\tilde\varphi\left(\frac{n-1}{n}\right) \end{pmatrix}
+=
+\begin{pmatrix}[1.5] f\left(\frac{1}{n}\right) - n^2 \tilde\varphi(0) \\ f\left(\frac{2}{n}\right) \\ \vdots \\\ f\left(\frac{n-1}{n}\right) - n^2\tilde\varphi(1) \end{pmatrix}
+$$
+
+Let us precompute the right-hand side $f\left(\frac{i}{n}\right) = \frac{i}{n} + 1$, and with minor simplifications our system can be transformed as follows:
+$$
+\underbrace{\begin{pmatrix}
+ 2     & -1    &       &      &      &       &        \\
+-1     &  2    &  -1   &      &      &       &        \\
+       &       &       &\ddots&      &       &        \\
+       &       &       &      &  -1  &  2    & -1     \\
+       &       &       &      &      &  -1   &  2
+\end{pmatrix}}_{:= A}
+\underbrace{\begin{pmatrix}[1.5] \tilde\varphi\left(\frac{1}{n}\right) \\ \tilde\varphi\left(\frac{2}{n}\right) \\ \vdots \\\tilde\varphi\left(\frac{n-1}{n}\right) \end{pmatrix}}_{:=x}
+=
+\underbrace{\begin{pmatrix}[1.5] -\frac{1+n}{n^3} + \tilde\varphi(0) \\ \-\frac{2+n}{n^3} \\ \vdots \\\ -\frac{n-1+n}{n^2} +\tilde\varphi(1) \end{pmatrix}}_{:=b}
+$$
+
+This is a simple linear system $Ax=b$\footnote{Note that we have redefined $b$, it is not a scalar anymore but the right-hand side vector.} with a symmetric positive definite matrix $A$.
+It is not very surprising to see that this system is again exactly the same as~\eqref{eq:galerkin:bc}.
+The Galerkin method corresponds to solving this system directly, whereas the Ritz method corresponds to minimization of the quadratic form $x^\top A x - 2b^\top x$.
+It turns out that in the case of a symmetric positive definite matrix $A$ both solving for $Ax=b$ and minimizing the quadratic form $x^\top A x - 2b^\top x$ are equivalent;
+the following chapter is dedicated to this remarkable fact.
 
 \authoredby{B}
 \chapter{Minimization of quadratic functions and linear systems}
@@ -2544,7 +2632,7 @@ Anyhow, let us start with the simplest unidimensional problem.
 The most simple, standard and yet quite common machine learning problem is binary classification.
 Many very interesting and important problems can be reduced to it.
 For example, we are given a set of data where $n$ vectors are each marked with a ``red'' or ``green'' label.
-This is the simplest example, but in practice the red/green dataset can be really useful: for example, spam/not spam  email classification,
+This is the simplest example, but in practice the red/green dataset can be really useful: for example, ``spam''/``not spam'' email classification,
 where the input vectors encode various characteristics of the content (e.g. the number of mentions of a certain magic carpet cleaning solution).
 
 Our goal in binary classification is to build a function that takes a vector as an input and predicts its label.
@@ -2659,7 +2747,7 @@ The idea is extremely simple: starting from the initial guess
 $b^{(0)} := \left(c^{(0)}, w_0^{(0)}, w^{(0)}\right)$
 that we have built by the ordinary least squares on the transformed model (or from three random values),
 we build a sequence $b^{(k+1)} = b^{(k)} + \Delta b^{(k)}$,
-where $\Delta b^{(k)}$ stands for the increment (it makes no sense to apply the Laplace operator to a vector).
+where $\Delta b^{(k)}$ stands for the increment.% (it makes no sense to apply the Laplace operator to a vector).
 To find the increment, we can linearize the function $\vec{r}$ at the point $b^{(k)}$:
 $$
 \vec{r}(b) \approx \vec{r}\left(b^{(k)}\right) + J\vec{r}\left(b^{(k)}\right) \left(b - b^{(k)}\right),
@@ -2726,7 +2814,7 @@ It turns out that we have just built and trained a neural network made of a sing
 
 
 While the example we have shown here is unidimensional, it is straightforward to generalize it: we can fit the $m$-dimensional logistic function
-$\frac{1}{1+e^{-w^\top x}}$ to the data, where $w$ is a $(m+1)$-parameter vector and the last element of $x$ is the constant 1.
+$\frac{1}{1+e^{-w^\top x}}$ to the data, where $w$ is a $(m+1)$-parameter vector, the last element of $x$ is the constant 1, and $w^\top x$ is the corresponding linear combination.
 Note that the decision boundary is always linear: it is a point in 1D, a straight line in 2D, a plane in 3D and so forth.
 Refer to Figure~\ref{fig:logistic2d} for an illustration, where the dashed line shows the decision boundary between two sets of 2D points.
 
@@ -2910,7 +2998,7 @@ For our particular example,
 The right image of Figure~\ref{fig:neural} is computed by the program given in Listing~\ref{listing:NN}.
 All the training data is correctly classified by a nonlinear decision boundary.
 
-Let us deconstrcut the network to understand how the nonlinearity of the boundary is obtained, Figure~\ref{fig:sigmoids} provides an illustration.
+Let us deconstruct the network to understand how the nonlinearity of the boundary is obtained, Figure~\ref{fig:sigmoids} provides an illustration.
 A perceptron with a hidden layer combines sigmoids from the hidden layer and applies a sigmoid over it.
 In our example the data is two-dimensional; for the sake of simplicity, imagine that the hidden layer neurons produce unit steps instead of sigmoids.
 Let us suppose that all the weights are equal to 1, then the sum of these steps separates the data plane into four quadrants where the sum is equal to 0, 1 and 2.
