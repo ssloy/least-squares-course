@@ -1,0 +1,706 @@
+% rubber: setlist arguments --shell-escape
+
+\documentclass[UKenglish,aspectratio=169]{beamer}
+\usetheme[NoLogo]{pixel}
+
+
+\usepackage[utf8]{inputenx} % For æ, ø, å
+\usepackage{amsmath,amssymb,amsthm}
+
+\makeatletter
+\def\beamerorig@set@color{%
+  \pdfliteral{\current@color}%
+  \aftergroup\reset@color
+}
+\def\beamerorig@reset@color{\pdfliteral{\current@color}}
+\makeatother
+
+
+%\usepackage{babel}          % Automatic translations
+%\usepackage{csquotes}       % Quotation marks
+%\usepackage{microtype}      % Improved typography
+%\usepackage{amssymb}        % Mathematical symbols
+%\usepackage{mathtools}      % Mathematical symbols
+%\usepackage[absolute, overlay]{textpos} % Arbitrary placement
+%\setlength{\TPHorizModule}{\paperwidth} % Textpos units
+%\setlength{\TPVertModule}{\paperheight} % Textpos units
+%\usepackage{tikz}
+%\usetikzlibrary{overlay-beamer-styles}  % Overlay effects for TikZ
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\proj}{proj}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Div}{div}
+
+\usepackage{fancyvrb}
+\usepackage{minted}
+
+
+\author{Dmitry Sokolov}
+\title{Least squares for programmers}
+\subtitle{--- with color plates ---}
+
+\AtBeginSection[]
+{
+    \begin{frame}
+        \frametitle{Table of Contents}
+        \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\begin{document}
+
+%\section{Overview}
+%% Use
+%%
+%%     \begin{frame}[allowframebreaks]{Title}
+%%
+%% if the TOC does not fit one frame.
+%\begin{frame}{Table of contents}
+%    \tableofcontents[currentsection]
+%\end{frame}
+
+\section{Maximum likelihood through examples}
+\begin{frame}{Coin toss experiment}
+We conduct $n$ experiments, two events can happen in each one (``success'' or ``failure''):
+one happens with probability $p$, the other one with probability $1-p$.
+
+\pause
+\begin{block}{The probability of getting exactly $k$ successes in these $n$ experiments}
+$$
+P(k;n,p) = C_n^k p^k (1-p)^{n-k}
+$$
+\end{block}
+
+\pause
+Toss a coin ten times ($n=10$), count the number of tails:
+\begin{minipage}{.45\linewidth}
+\centering
+\includegraphics[width=\columnwidth]{../manuscript/img/binomial-05.png}
+an ordinary coin ($p=1/2$)
+\end{minipage}
+\pause
+\begin{minipage}{.45\linewidth}
+\centering
+\includegraphics[width=\columnwidth]{../manuscript/img/binomial-07.png}
+a biased coin ($p=7/10$)
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Coin toss: the likelihood function}
+Suppose we have a real coin, but we do not know $p$.
+However, we can toss it ten times. For example, we have counted seven tails.
+Would it help us to evaluate $p$?
+
+\pause
+~\\
+Fix $n=10$ and $k=7$ in the Bernoulli's formula, leaving $p$ as a free parameter:
+$$\mathcal{L}(p) = C_{10}^7 p^7 (1-p)^3$$
+
+\pause
+\begin{center}
+\includegraphics[width=.5\columnwidth]{../manuscript/img/likehood-07.png}
+\end{center}
+\textbf{N.B.} the function is continuous!
+\end{frame}
+
+\begin{frame}{Coin toss: the maximum likelihood}
+Let us solve for $\argmin\limits_p \mathcal L(p) = \argmin\limits_p \log\mathcal{L}(p)$:
+\pause
+$$\log \mathcal{L}(p) = \log C_{10}^7 + 7 \log p + 3\log (1-p)$$
+\pause
+$$\frac{d \log \mathcal{L}}{dp} = \frac{7}{p} - \frac{3}{1-p} = 0$$
+
+\pause
+That is, the maximum likelihood (about 27\%) is reached at the point $p=7/10$.
+
+\pause
+Just in case, let us check the second derivative:
+$$\frac{d^2 \log \mathcal{L}}{dp^2} = -\frac{7}{p^2} - \frac{3}{(1-p)^2}$$
+
+At the point $p=7/10$ it is negative, therefore this point is indeed a maximum of the function $\mathcal{L}$:
+$$\frac{d^2 \log \mathcal{L}}{dp^2}(0.7)  \approx -48 < 0$$
+\end{frame}
+
+\begin{frame}{Least squares through maximum likelihood}
+Let us measure a constant value; all measurements are inherently noisy.
+
+~\\
+
+For example, if we measure the battery voltage $N$ times, we get $N$ different measurements:
+$$
+\{U_j\}_{j=1}^{N}
+$$
+
+Suppose that each measurement $U_j$ is i.i.d. and subject to a Gaussian noise, e.g. it is equal to the real value plus the Gaussian noise.
+%The noise is characterized by two parameters --- the center of the Gaussian bell and its ``width''.
+The probability density can be expressed as follows:
+$$
+p(U_j) = \frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{(U_j-U)^2}{2\sigma^2}\right),
+$$
+where $U$ is the (unknown) value and $\sigma$ is the noise amplitude (can be unknown).
+\end{frame}
+
+\begin{frame}{Least squares through maximum likelihood}
+$
+\begin{aligned}
+\log \mathcal{L}(U,\sigma) & = \log \left(\prod\limits_{j=1}^N  \frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{(U_j-U)^2}{2\sigma^2}\right)\right) \\ \pause
+& = \sum\limits_{j=1}^N \log \left(\frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{(U_j-U)^2}{2\sigma^2}\right)\right) =  \pause
+  \sum\limits_{j=1}^N \left(\log \left(\frac{1}{\sqrt{2\pi}\sigma}\right) -\frac{(U_j-U)^2}{2\sigma^2}\right)  \\ \pause
+& = \underbrace{-N \left(\log\sqrt{2\pi} + \log\sigma\right)}_{\text{does not depend on } \{U_j\}_{j=1}^{N}} - \frac{1}{2\sigma^2} \sum\limits_{j=1}^N (U_j-U)^2
+\end{aligned}
+$
+
+\begin{block}{Under Gaussian noise}
+$$
+\argmax\limits_{U} \log \mathcal{L} = \argmin\limits_U \sum\limits_{j=1}^N (U_j-U)^2
+$$
+\end{block}
+\end{frame}
+
+\begin{frame}{Least squares through maximum likelihood}
+$
+\frac{\partial\log\mathcal{L}}{\partial U}    =  \frac{1}{\sigma^2}\sum\limits_{j=1}^N (U_j-U) = 0 
+$\\ \pause
+The most plausible estimation of the unknown value $U$ is the simple average of all measurements:
+$$
+U = \frac{\sum\limits_{j=1}^N U_j}{N}
+$$
+
+\pause And the most plausible estimation of $\sigma$ turns out to be the standard deviation:
+\begin{minipage}{.45\linewidth}
+$$
+\frac{\partial\log\mathcal{L}}{\partial\sigma} =  -\frac{N}{\sigma} + \frac{1}{\sigma^3}\sum\limits_{j=1}^N (U_j-U)^2 = 0
+$$
+\end{minipage} \pause
+\begin{minipage}{.45\linewidth}
+$$
+\sigma = \sqrt{\frac{\sum\limits_{j=1}^N (U_j-U)^2}{N}}
+$$
+\end{minipage}
+
+\vspace{15pt}
+Such a convoluted way to obtain a simple average of all measurements\dots
+\end{frame}
+
+\begin{frame}{Linear regression}
+It is much harder for less trivial examples. Suppose we have $N$ measurements $\{x_j, y_j\}_{j=1}^{N}$,
+and we want to fit a straight line onto it.
+
+\pause
+\begin{align*}
+\log \mathcal{L}(a, b,\sigma) & = \log \left(\prod\limits_{j=1}^N  \frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{(y_j - a x_j - b)^2}{2\sigma^2}\right)\right) =\\
+& = \underbrace{-N \left(\log\sqrt{2\pi} + \log\sigma\right)}_{\text{does not depend on } a, b} - \frac{1}{2\sigma^2} \underbrace{\sum\limits_{j=1}^N (y_j- a x_j - b)^2}_{:=S(a,b)}
+\end{align*}
+
+\pause
+As before,
+$\argmax\limits_{a,b}\log\mathcal L = \argmin\limits_{a,b} S(a, b)$.
+\end{frame}
+
+\begin{frame}{Linear regression}
+\begin{minipage}{.45\linewidth}
+$S(a,b) := \sum\limits_{j=1}^N (y_j- a x_j - b)^2$
+\pause
+\begin{align*}
+\frac{\partial S}{\partial a} &= \sum\limits_{j=1}^N 2 x_j (a x_j + b - y_j) = 0 \\
+\frac{\partial S}{\partial b} &= \sum\limits_{j=1}^N 2 (a x_j + b - y_j) = 0
+\end{align*}
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+\centering
+\includegraphics[width=.5\columnwidth]{../manuscript/img/c5aa80f6a2e9575abfa7b3dfdabf5c5a.png}
+\end{minipage}
+
+\pause
+\begin{minipage}{.45\linewidth}
+$$
+a = \frac{N \sum\limits_{j=1}^N x_j y_j - \sum\limits_{j=1}^N x_j \sum\limits_{j=1}^N y_j}{N\sum\limits_{j=1}^N x_j^2 - \left(\sum\limits_{j=1}^N x_j\right)^2} \\
+$$
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+$$
+b = \frac{1}{N}\left(  \sum\limits_{j=1}^N y_j - a  \sum\limits_{j=1}^N x_j \right)
+$$
+\end{minipage}
+\end{frame}
+
+\begin{frame}{The takeaway message}
+\vspace{15pt}
+The least squares method is a particular case of maximizing likelihood in cases where the probability density is Gaussian.
+
+\vspace{15pt}
+
+The more we parameters we have, the more cumbersome the analytical solutions are.
+Fortunately, we are not living in XVIII century anymore, we have computers!
+
+\vspace{15pt}
+
+Next we will try to build a geometric intuition on least squares, and see how can least squares problems be efficiently implemented.
+\end{frame}
+
+
+\section{Introduction to systems of linear equations}
+
+\begin{frame}[fragile]{Smooth an array}
+\inputminted[frame=single,linenos=true]{python}{listings/example_3.1.py}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.1_0}.png}
+\pause
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.1_1}.png}
+\pause
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.1_2}.png}
+\pause
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.1_3}.png}
+\pause
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.1_4}.png}
+\pause
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.1_5}.png}
+\end{frame}
+
+\begin{frame}{The Jacobi iterative method}
+Given an ordinary system of linear equations:
+$$
+\left\{
+\begin{array}{cccccccc}
+a_{11}x_1 & + &  a_{12}x_2  &+      & \cdots & + & a_{1n}x_n &= b_1\\
+a_{21}x_1 & + &  a_{22}x_2  &+      & \cdots & + & a_{2n}x_n &= b_2\\
+          &   &             &\vdots &        &   &           &     \\
+a_{n1}x_1 & + &  a_{n2}x_2  &+      & \cdots & + & a_{nn}x_n &= b_n\\
+\end{array}
+\right.
+$$
+
+\pause
+Let us rewrite it as follows:
+\begin{align*}
+x_1 &= \frac{1}{a_{11}}(b_1 - a_{12}x_2 - a_{13}x_3 - \cdots - a_{1n}x_n)\\
+x_2 &= \frac{1}{a_{22}}(b_2 - a_{21}x_1 - a_{23}x_3 - \cdots - a_{2n}x_n)\\
+    & \qquad \vdots \\
+x_n &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots - a_{n,n-1}x_{n-1})
+\end{align*}
+\end{frame}
+
+\begin{frame}{The Jacobi iterative method}
+Let us start with an arbitrary vector $\vec{x}^{(0)}=\left(x_1^{(0)}, x_2^{(0)}, \dots, x_n^{(0)}\right)$,\\
+\pause
+we can define $\vec{x}^{(1)}$ as follows:
+\begin{align*}
+x_1^{(1)} &= \frac{1}{a_{11}}(b_1 - a_{12}x_2^{(0)} - a_{13}x_3^{(0)} - \cdots - a_{1n}x_n^{(0)})\\
+x_2^{(1)} &= \frac{1}{a_{22}}(b_2 - a_{21}x_1^{(0)} - a_{23}x_3^{(0)} - \cdots - a_{2n}x_n^{(0)})\\
+    & \qquad \vdots \\
+x_n^{(1)} &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1^{(0)} - a_{n2}x_2^{(0)} - \cdots - a_{n,n-1}x_{n-1}^{(0)})
+\end{align*}
+\pause
+Repeating the process $k$ times, the solution can be approximated by the vector $\vec{x}^{(k)}=\left(x_1^{(k)}, x_2^{(k)}, \dots, x_n^{(k)}\right)$.
+\end{frame}
+
+\begin{frame}{Back to the array smoothing}
+\inputminted[frame=single,linenos=true]{python}{listings/example_3.1.py}
+$$
+\left\{
+\begin{array}{rl}
+ x_0 &= 0 \\
+x_1-x_0 &= x_2-x_1 \\
+x_2-x_1 &= x_3-x_1 \\
+     &  \vdots \\
+x_{13}-x_{12}     &= x_{14}-x_{13} \\
+x_{14}-x_{13}     &= x_{15}-x_{14} \\
+x_{15} &= 1 \\
+\end{array}
+\right.
+$$
+\end{frame}
+
+\begin{frame}{The Gauß-Seidel iterative method}
+Jacobi:
+$$
+x_i^{(k)} = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=1,j\neq i}^n a_{ij}x_j^{(k-1)} \right), \quad \text{for } i=1,2,\dots,n
+$$
+\pause
+
+\vspace{47pt}
+Gauß-Seidel:
+$$
+x_i^{(k)} = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=1}^{i-1} a_{ij}x_j^{(k)} -  \sum\limits_{j=i+1}^n a_{ij}x_j^{(k-1)} \right), \quad \text{for } i=1,2,\dots,n
+$$
+\end{frame}
+
+\begin{frame}{The Gauß-Seidel iterative method}
+Jacobi:
+\inputminted[frame=single,linenos=true]{python}{listings/example_3.1.py}
+
+Gauß-Seidel:
+\inputminted[frame=single,linenos=true]{python}{listings/example_3.2.py}
+\end{frame}
+
+\begin{frame}[fragile]{Smooth an array : Gauß-Seidel}
+\inputminted[frame=single,linenos=true]{python}{listings/example_3.2.py}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.2_0}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.2_1}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.2_2}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.2_3}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.2_4}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.2_5}.png}
+\end{frame}
+
+
+\begin{frame}{Equality of derivatives vs zero curvature}
+\inputminted[frame=single,linenos=true]{python}{listings/example_3.2.py}
+\only<1>{
+$$
+\left\{
+\begin{array}{rl}
+ x_0 &= 0 \\
+x_1-x_0 &= x_2-x_1 \\
+x_2-x_1 &= x_3-x_1 \\
+     &  \vdots \\
+x_{13}-x_{12}     &= x_{14}-x_{13} \\
+x_{14}-x_{13}     &= x_{15}-x_{14} \\
+x_{15} &= 1 \\
+\end{array}
+\right.
+$$
+}
+\only<2>{
+$$
+\left\{
+\begin{array}{cccccccccccl}
+ x_0 &       &       &       &      &        &         &          &          &          &         &= 0 \\
+-x_0 & +2x_1 & -x_2  &       &      &        &         &          &          &          &         &= 0 \\
+     &       & -x_2  & +2x_3 & -x_4 &        &         &          &          &          &         &= 0 \\
+     &       &       &       &      & \ddots &         &          &          &          &         &  \vdots \\
+     &       &       &       &      &        &         & -x_{12}  & +2x_{13} & -x_{14}  &         &= 0 \\
+     &       &       &       &      &        &         &          & -x_{13}  & +2x_{14} & -x_{15} &= 0 \\
+     &       &       &       &      &        &         &          &          &          &  x_{15} &= 1 \\
+\end{array}
+\right.
+$$
+}
+\end{frame}
+
+\begin{frame}{It also works for 3d surfaces}
+\only<1>{
+\inputminted[frame=single,linenos=true]{cpp}{listings/example_3.3.cpp}
+}
+\only<2>{
+    \vspace{10pt}
+    \begin{centering}
+    \includegraphics[width=.2\linewidth]{../manuscript/img/{example_3.3_0}.jpg}
+    \includegraphics[width=.2\linewidth]{../manuscript/img/{example_3.3_1}.jpg}
+    \includegraphics[width=.2\linewidth]{../manuscript/img/{example_3.3_2}.jpg}\\
+    \hspace{.25\linewidth} input \hspace{.11\linewidth} 10 iterations \hspace{.05\linewidth} 1000 iterations
+    \end{centering}
+}
+\end{frame}
+
+\begin{frame}{Prescribe the right hand side}
+\inputminted[frame=single,linenos=true]{python}{listings/example_3.4.py}
+\pause
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.4_0}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.4_1}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.4_2}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.4_3}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.4_4}.png}
+\includegraphics[width=.32\linewidth]{../manuscript/img/{example_3.4_5}.png}
+\end{frame}
+
+\section{Minimization of quadratic functions}
+%\SectionPage
+
+\begin{frame}[fragile]{Matrices and numbers}
+~\\
+What is a number $a$?
+\begin{minted}[linenos=true]{cpp}
+float a;
+\end{minted}
+\pause
+
+~\\
+Is it a function $f(x)=ax : \mathbb R \rightarrow \mathbb R$?
+\pause
+\begin{minted}[linenos=true]{cpp}
+float f(float x) {
+    return a*x;
+}
+\end{minted}
+\pause
+
+~\\
+
+Or is it $f(x)=ax^2 : \mathbb R \rightarrow \mathbb R$?
+\pause
+\begin{minted}[linenos=true]{cpp}
+float f(float x) {
+    return x*a*x;
+}
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Matrices and numbers}
+The same goes for matrices, what is a matrix $A=\begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22}\end{bmatrix}$?
+\pause
+\begin{minted}{cpp}
+float A[m][n];
+\end{minted}
+
+\pause
+~\\
+Is it $f(x) = Ax : \mathbb R^2 \rightarrow \mathbb R^2$?
+\begin{minted}[linenos=true]{cpp}
+vector<float> f(vector<float> x) {
+  return vector<float>{a11*x[0] + a12*x[1],  a21*x[0] + a22*x[1]};
+}
+\end{minted}
+
+\pause
+~\\
+Or $f(x)= x^\top A x = \sum\limits_i\sum\limits_j a_{ij}x_i x_j  : \mathbb R^2 \rightarrow \mathbb R$?
+\begin{minted}[linenos=true]{cpp}
+float f(vector<float> x) {
+    return x[0]*a11*x[0] + x[0]*a12*x[1] +
+           x[1]*a21*x[0] + x[1]*a22*x[1];
+}
+\end{minted}
+\end{frame}
+
+\begin{frame}{What is a positive number?}
+We have a great tool called the predicate ``greater than'' $>$.
+\pause
+\begin{definition}
+The real number $a$ is positive if and only if for all non-zero real $x\in\mathbb R,\ x\neq 0$ the condition $ax^2>0$ is satisfied.
+\end{definition}
+\pause
+~\\
+This definition looks pretty awkward, but it applies perfectly to matrices:
+\begin{definition}
+The square matrix $A$ is called positive definite if for any non-zero $x$
+the condition $x^\top A x > 0$ is met, i.e. the corresponding quadratic form is strictly positive everywhere except at the origin.
+\end{definition}
+\end{frame}
+
+\begin{frame}{What is a positive number?}
+\includegraphics[width=\linewidth]{../manuscript/img/matrices}
+\end{frame}
+
+\begin{frame}{Minimizing a 1d quadratic function}
+Let us find the minimum of the function $f(x) = ax^2 - 2bx$ (with $a$ positive).
+$$\frac{d}{dx}f(x) = 2ax - 2b = 0$$
+\pause
+\begin{center}
+\includegraphics[width=.3\linewidth]{../manuscript/img/minpb1d}
+\end{center}
+In 1d, the solution $x^*$ of the equation $ax - b = 0$ solves the minimization problem $\argmin\limits_x(ax^2-2bx)$ as well.
+\end{frame}
+
+\begin{frame}{Differentiating matrix expressions}
+~\\
+The first theorem states that $1\times 1$ matrices are invariant w.r.t the transposition:
+\begin{theorem}
+$x\in \mathbb R \Rightarrow x^\top = x$
+\end{theorem}
+The proof is left as an exercise.
+\end{frame}
+
+\begin{frame}{Differentiating matrix expressions}
+~\\
+For a 1d function $bx$ we know that $\frac{d}{dx}(bx) = b$, but what happens in the case of a real function of $n$ variables?
+\begin{theorem}
+$\nabla b^\top x = \nabla x^\top b = b$
+\end{theorem}
+\pause
+$$\nabla(b^\top x) = \begin{bmatrix}\frac{\partial (b^\top x)}{\partial x_1} \\ \vdots \\ \frac{\partial (b^\top x)}{\partial x_n} \end{bmatrix} = \begin{bmatrix}\frac{\partial (b_1 x_1 + \dots + b_n x_n)}{\partial x_1} \\ \vdots \\ \frac{\partial (b_1 x_1 + \dots + b_n x_n)}{\partial x_n} \end{bmatrix} = \begin{bmatrix}b_1 \\ \vdots \\ b_n \end{bmatrix} = b$$
+\end{frame}
+
+\begin{frame}{Differentiating matrix expressions}
+~\\
+For a 1d function $ax^2$ we know that $\frac{d}{dx}(ax^2) = 2ax$, but what about quadratic forms?
+\begin{theorem}
+$\nabla (x^\top A x) = (A+A^\top)x$
+\end{theorem}
+Note that if $A$ is symmetric, then $\nabla (x^\top A x) = 2Ax$.
+
+~\\
+
+The proof is straightforward, let us express the quadratic form as a double sum:
+$$x^\top A x = \sum\limits_i\sum\limits_j a_{ij} x_i x_j$$
+\end{frame}
+
+\begin{frame}{Differentiating matrix expressions}
+\vspace{-10pt}
+\[
+  \begin{aligned}
+\frac{\partial (x^\top A x)}{\partial x_i}
+&= \frac{\partial}{\partial x_i}  \left(\sum\limits_{k_1}\sum\limits_{k_2} a_{k_1 k_2} x_{k_1} x_{k_2}\right) = \\ \pause
+&= \frac{\partial}{\partial x_i}  \left( 
+\underbrace{\sum\limits_{k_1\neq i}\sum\limits_{k_2\neq i} a_{ik_2}x_{k_1} x_{k_2}}_{k_1 \neq i, k_2 \neq i}+\underbrace{\sum\limits_{k_2\neq i} a_{ik_2}x_i x_{k_2}}_{k_1 = i, k_2\neq i}+
+\underbrace{\sum\limits_{k_1\neq i} a_{k_1 i} x_{k_1} x_i}_{k_1 \neq i, k_2 = i}+
+\underbrace{a_{ii}x_i^2}_{k_1 = i, k_2 = i}\right) = \\ \pause
+& = \sum\limits_{k_2\neq i} a_{ik_2}x_{k_2} + \sum\limits_{k_1\neq i} a_{k_1 i} x_{k_1} + 2 a_{ii} x_i = \\ \pause
+& = \sum\limits_{k_2} a_{ik_2}x_{k_2} + \sum\limits_{k_1} a_{k_1 i} x_{k_1} = \\ \pause
+& = \sum\limits_{j} (a_{ij} + a_{ji}) x_j \hspace{3cm} \Rightarrow \nabla(x^\top A x)  = (A+A^\top)x
+\end{aligned}
+\]
+\end{frame}
+
+
+\begin{frame}{Minimum of a quadratic form and the linear system}
+Recall that for $a>0$ solving the equation $ax=b$ is equivalent to the quadratic function $\argmin\limits_x(ax^2 - 2bx)$ minimization.
+\pause
+
+To minimize a quadratic form $\argmin\limits_{x\in\mathbb R^n} (x^\top A x - 2b^\top x)$ with  a symmetric positive definite matrix $A$,
+equate the derivative to zero: $$\nabla (x^\top A x - 2b^\top x) = \begin{bmatrix}0 & \dots & 0 \end{bmatrix}^\top.$$
+\pause
+The Hamilton operator is linear: $\nabla (x^\top A x) - 2\nabla(b^\top x) = \begin{bmatrix}0 & \dots & 0 \end{bmatrix}^\top$.
+
+\pause
+Apply the differentiation theorems:
+$$(A+A^\top)x - 2b = \begin{bmatrix}0 & \dots & 0 \end{bmatrix}^\top.$$
+
+\pause
+Recall that $A$ is symmetric: $Ax = b.$
+\end{frame}
+
+\begin{frame}{Back to the linear regression}
+Given two points $(x_1, y_1)$ and $(x_2, y_2)$, find the line that passes through: $y = \alpha x + \beta$.
+\pause
+\begin{minipage}{.45\linewidth}
+$$
+\left\{
+\begin{split}
+\alpha x_1 + \beta &= y_1\\
+\alpha x_2 + \beta &= y_2\\
+\end{split}
+\right.
+$$
+\end{minipage}
+\pause
+\begin{minipage}{.45\linewidth}
+$$
+\underbrace{\begin{bmatrix}x_1  & 1 \\ x_2 & 1 \end{bmatrix}}_{:=A}
+\underbrace{\begin{bmatrix} \alpha \\ \beta \end{bmatrix}}_{:=x} = \underbrace{\begin{bmatrix} y_1 \\ y_2 \end{bmatrix}}_{:=b}
+\qquad
+\Rightarrow x^* = A^{-1}b
+$$
+\end{minipage}
+
+\pause
+Now add a \textbf{third} point:\\
+\begin{minipage}{.45\linewidth}
+$$
+\left\{
+\begin{split}
+\alpha x_1 + \beta &= y_1\\
+\alpha x_2 + \beta &= y_2\\
+\alpha x_3 + \beta &= y_3\\
+\end{split}
+\right.
+$$
+\end{minipage}\pause
+\begin{minipage}{.45\linewidth}
+$$
+\underbrace{\begin{bmatrix}x_1  & 1 \\ x_2 & 1 \\x_3 & 1 \end{bmatrix} }_{:= A\,(3\times 2)}
+\underbrace{\begin{bmatrix} \alpha \\ \beta \end{bmatrix}}_{:=x\,(2\times 1)} = \underbrace{\begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix}}_{:=b\, (3\times 1)}
+$$
+\end{minipage}
+
+~\\
+
+$A$ is rectangular, and thus it is not invertible. Oops!
+\end{frame}
+
+\begin{frame}{Back to the linear regression}
+No biggie, let us rewrite the system:\\
+\begin{minipage}{.55\linewidth}
+$$
+\alpha \underbrace{\begin{bmatrix}x_1  & x_2 &x_3  \end{bmatrix}^\top }_{:=\vec{i}}
++\beta \underbrace{\begin{bmatrix}1 & 1 &1 \end{bmatrix}^\top }_{:=\vec{j}} =
+\begin{bmatrix}y_1 & y_2 & y_3\end{bmatrix}^\top
+$$
+\end{minipage}\pause
+\begin{minipage}{.35\linewidth}
+$$
+\alpha \vec{i} + \beta\vec{j} = \vec{b}.
+$$
+\end{minipage}
+
+\pause
+Solve for $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|$, where $\vec{e}(\alpha, \beta) :=  \alpha \vec{i} + \beta\vec{j} - \vec b$:
+\begin{center}
+\includegraphics[width=.6\linewidth]{../manuscript/img/error.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Back to the linear regression}
+\begin{minipage}{.5\linewidth}
+\includegraphics[width=\linewidth]{../manuscript/img/error.pdf}
+\end{minipage}
+\pause
+\quad
+\begin{minipage}{.45\linewidth}
+The $\|\vec{e}(\alpha, \beta)\|$ is minimized when $\vec{e}(\alpha, \beta) \perp \Span\{\vec i, \vec j\}$:
+$$
+\left\{
+\begin{split}\vec{i}^\top \vec{e}(\alpha, \beta) &= 0\\
+\vec{j}^\top \vec{e}(\alpha, \beta) &= 0
+\end{split}
+\right.
+$$
+\end{minipage}
+\pause
+$
+\begin{bmatrix}x_1 & x_2 & x_3 \\ 1 & 1 & 1 \end{bmatrix}
+\left(\alpha \begin{bmatrix}x_1  \\ x_2 \\x_3  \end{bmatrix}
++\beta \begin{bmatrix}1 \\ 1 \\1 \end{bmatrix} -
+\begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}\right) = \begin{bmatrix}0\\0\end{bmatrix}
+$
+\pause
+\quad \qquad \qquad
+$A^\top (Ax - b)= \begin{bmatrix}0\\0\end{bmatrix}$
+\pause
+\begin{block}{In a general case the matrix $A^\top A$ can be invertible!}
+$$
+A^\top Ax = A^\top b.
+$$
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Some nice properties of $A^\top A$}
+\begin{theorem}
+$A^\top A$ is symmetric.
+\end{theorem}
+\pause
+It is very easy to show:
+$$
+(A^\top A)^\top = A^\top (A^\top)^\top = A^\top A.
+$$
+
+\pause
+\begin{theorem}
+$A^\top A$ positive semidefinite: $\forall x\in \mathbb R^n\quad x^\top A^\top A x \geq 0.$
+\end{theorem}
+\pause
+It follows from the fact that $x^\top A^\top A x = (A x)^\top A x > 0$.
+Moreover, $A^\top A$ is positive definite in the case where $A$ has linearly independent columns (rank $A$ is equal to the number of the variables in the system).
+\end{frame}
+
+\begin{frame}{Least squares in more than two dimensions}
+The same reasoning applies, here is an algebraic way to show it:
+$$
+\begin{aligned}
+\argmin \| Ax - b \|^2 \pause &= \argmin (Ax-b)^\top (Ax-b) = \pause
+ \argmin(x^\top A^\top - b^\top)(Ax-b) = \\ \pause
+& = \argmin(x^\top A^\top A x - b^\top Ax - x^\top A^\top b + \underbrace{b^\top b}_{\rm const})=\\ \pause
+& = \argmin(x^\top A^\top A x - 2b^\top Ax) = \pause
+ \argmin(x^\top \underbrace{(A^\top A)}_{:=A'} x - 2\underbrace{(A^\top b)}_{:=b'}\phantom{}^\top x)
+\end{aligned}
+$$
+\pause
+\begin{block}{The takeaway message}
+The least squares problem $\argmin \| Ax - b \|^2$  is equivalent to minimizing the quadratic function $\argmin \left(x^\top A' x - 2b'^\top x\right)$
+with (in general) a symmetric positive definite matrix $A'$. This can be done by solving a linear system $A'x = b'$.
+\end{block}
+\end{frame}
+
+\end{document}

@@ -1,7 +1,7 @@
 #include "model.h"
 
 int main(void) {
-    Model m("../input.obj");
+    Model m("../input-face.obj");
 
     // smooth the surface through Gauss-Seidel iterations
     for (int it=0; it<1000; it++) {

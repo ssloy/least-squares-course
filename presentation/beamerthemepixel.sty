@@ -1,0 +1,713 @@
+\RequirePackage{calc}
+\RequirePackage{eso-pic}
+\RequirePackage{etoolbox}
+\RequirePackage[LGR, T1]{fontenc}
+\RequirePackage{thmtools}
+\RequirePackage{tikz}
+\hypersetup{colorlinks,
+            urlcolor  = uiolink,
+            linkcolor =,
+            citecolor =}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Standard headers:
+\DeclareOptionBeamer{american} { \def \MATHlang {eng} }
+\DeclareOptionBeamer{english}  { \def \MATHlang {eng} }
+\DeclareOptionBeamer{UKenglish}{ \def \MATHlang {eng} }
+\DeclareOptionBeamer{USenglish}{ \def \MATHlang {eng} }
+\DeclareOptionBeamer{norsk}
+{
+    \def \MATHlang {bm}
+    \pretolerance = 2000
+    \tolerance    = 6000
+    \hbadness     = 6000
+}
+\DeclareOptionBeamer{nynorsk}
+{
+    \def \MATHlang {nn}
+    \pretolerance = 2000
+    \tolerance    = 6000
+    \hbadness     = 6000
+}
+\urlstyle{sf}
+
+%% Vertical text alignment:
+\DeclareOptionBeamer{c}{ \beamer@centeredtrue  }
+\DeclareOptionBeamer{t}{ \beamer@centeredfalse }
+
+
+%% Theorem numbers:
+\DeclareOptionBeamer{unnumbered}{ \def \MATHtheorem {}          }
+\DeclareOptionBeamer{numbered}  { \def \MATHtheorem {numbered}  }
+\DeclareOptionBeamer{AMS}       { \def \MATHtheorem {ams style} }
+
+
+%% Font:
+\providebool{neohellenic}
+\providebool{latinmodern}
+\DeclareOptionBeamer{SansSerif}
+{
+    \def \MATHfont {default}
+    \setbool{neohellenic}{true}
+    \setbool{latinmodern}{false}
+    \AtBeginDocument{\sbox0{\(\mathsf{\xdef\mathsfgroup{\the\mathgroup}}\)}}
+    \def\operator@font{\mathgroup\mathsfgroup}
+}
+\DeclareOptionBeamer{MathSerif}
+{
+    \def \MATHfont {professionalfonts}
+    \setbool{neohellenic}{false}
+    \setbool{latinmodern}{false}
+    \AtBeginDocument{\sbox0{\(\mathrm{\xdef\mathrmgroup{\the\mathgroup}}\)}}
+    \def\operator@font{\mathgroup\mathrmgroup}
+}
+\DeclareOptionBeamer{Serif}
+{
+    \def \MATHfont {serif}
+    \setbool{neohellenic}{false}
+    \setbool{latinmodern}{true}
+    \AtBeginDocument{\sbox0{\(\mathrm{\xdef\mathrmgroup{\the\mathgroup}}\)}}
+    \def\operator@font{\mathgroup\mathrmgroup}
+}
+
+
+%% Logo on ordinary slides
+\providebool{logo}
+\DeclareOptionBeamer{Logo}  { \setbool{logo}{true} }
+\DeclareOptionBeamer{NoLogo}{ \setbool{logo}{false} }
+
+
+%% Automatic first and last frame:
+\DeclareOptionBeamer{TitlePage} { \def \MATHfirstframe {\TitlePage}  }
+\DeclareOptionBeamer{FinalFrame}{ \def \MATHlastframe  {\FinalFrame} }
+\DeclareOptionBeamer{NoTitlePage} { \def \MATHfirstframe {} }
+\DeclareOptionBeamer{NoFinalFrame}{ \def \MATHlastframe  {} }
+
+
+\ExecuteOptionsBeamer{english}
+\ExecuteOptionsBeamer{t}
+\ExecuteOptionsBeamer{unnumbered}
+\ExecuteOptionsBeamer{SansSerif}
+\ExecuteOptionsBeamer{Logo}
+\ExecuteOptionsBeamer{TitlePage}
+\ExecuteOptionsBeamer{FinalFrame}
+\ProcessOptionsBeamer
+
+
+\AtBeginDocument{ \MATHfirstframe }
+\AtEndDocument  { \MATHlastframe  }
+
+
+% Use a neohellenic font from the Greek Font Society
+% for small, greek letters. It is a sans serif that
+% matches Helvetica better in style and weight than
+% the standard Computer Modern.
+\ifbool{neohellenic}
+{
+    \DeclareSymbolFont{neomath}{OML}{neohellenic}{m}{n}
+    \DeclareMathSymbol{\alpha}\mathord{neomath}{"0B}
+    \DeclareMathSymbol{\beta}\mathord{neomath}{"0C}
+    \DeclareMathSymbol{\gamma}\mathord{neomath}{"0D}
+    \DeclareMathSymbol{\delta}\mathord{neomath}{"0E}
+    \DeclareMathSymbol{\epsilon}\mathord{neomath}{"0F}
+    \DeclareMathSymbol{\zeta}\mathord{neomath}{"10}
+    \DeclareMathSymbol{\eta}\mathord{neomath}{"11}
+    \DeclareMathSymbol{\theta}\mathord{neomath}{"12}
+    \DeclareMathSymbol{\theta}\mathord{neomath}{"12}
+    \DeclareMathSymbol{\iota}\mathord{neomath}{"13}
+    \DeclareMathSymbol{\kappa}\mathord{neomath}{"14}
+    \DeclareMathSymbol{\lambda}\mathord{neomath}{"15}
+    \DeclareMathSymbol{\mu}\mathord{neomath}{"16}
+    \DeclareMathSymbol{\nu}\mathord{neomath}{"17}
+    \DeclareMathSymbol{\xi}\mathord{neomath}{"18}
+    \DeclareMathSymbol{\pi}\mathord{neomath}{"19}
+    \DeclareMathSymbol{\rho}\mathord{neomath}{"1A}
+    \DeclareMathSymbol{\sigma}\mathord{neomath}{"1B}
+    \DeclareMathSymbol{\tau}\mathord{neomath}{"1C}
+    \DeclareMathSymbol{\upsilon}\mathord{neomath}{"1D}
+    \DeclareMathSymbol{\phi}\mathord{neomath}{"1E}
+    \DeclareMathSymbol{\chi}\mathord{neomath}{"1F}
+    \DeclareMathSymbol{\psi}\mathord{neomath}{"20}
+    \DeclareMathSymbol{\omega}\mathord{neomath}{"21}
+    \DeclareMathSymbol{\varepsilon}\mathord{neomath}{"22}
+    \DeclareMathSymbol{\vartheta}\mathord{neomath}{"23}
+    \DeclareMathSymbol{\varpi}\mathord{neomath}{"24}
+    \DeclareMathSymbol{\varrho}\mathord{neomath}{"25}
+    \DeclareMathSymbol{\varsigma}\mathord{neomath}{"26}
+    \DeclareMathSymbol{\varphi}\mathord{neomath}{"27}
+}
+{}
+
+\ifbool{latinmodern}
+{
+    \renewcommand{\rmdefault}{lmr} % Latin Modern Roman
+}
+{
+   \renewcommand{\rmdefault}{pbk}  % Bookman
+}
+
+\renewcommand{\sfdefault}{phv} % Helvetica
+\renewcommand{\ttdefault}{pcr} % Courier
+
+
+%% Allow more stretching
+\setlength{\emergencystretch}{3em}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Official colours:
+\definecolor{uiored}{cmyk}{0, 1, 1, 0.0}
+\definecolor{uiogrey1}{RGB}{243, 242, 240}
+\definecolor{uiogrey2}{RGB}{234, 231, 226}
+\definecolor{uiogrey3}{RGB}{222, 219, 214}
+\definecolor{uiogrey4}{RGB}{210, 205, 199}
+\definecolor{uiogrey5}{cmyk}{0, 0.05, 0.1, 0.29}
+\definecolor{uiolink}{HTML}{0B5A9D}
+\definecolor{matnat}{cmyk}{1, 0, 0.69, 0.3}
+
+
+%% Theme-specific colours:
+\definecolor{alertblock}{cmyk}{0, 1, 1, 0.2}
+\definecolor{blockbody} {cmyk}{0, 0, 0, 0.2}
+\definecolor{colortheme}{cmyk}{0, 0, 0, 0.7}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\mode<presentation>
+
+
+\useinnertheme{rectangles}
+\usefonttheme{\MATHfont}
+
+
+\setbeamertemplate{theorems}[\MATHtheorem]
+\setbeamertemplate{qed symbol}{\(\blacksquare\)}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{caption label separator}{: }
+\setbeamersize{text margin left  = 3.845mm,
+               text margin right = 3.845mm}
+
+
+%% Standard colours:
+\colorlet{alert}{uiored}
+\setbeamercolor{structure}{fg = colortheme}
+\setbeamercolor{block title}{fg = white,
+                             bg = structure}
+\setbeamercolor{block body} {bg = blockbody}
+\setbeamercolor{block title example}{fg = white,
+                                     bg = black}
+\setbeamercolor{block body example} {bg = blockbody}
+\setbeamercolor{block title alerted}{fg = white,
+                                     bg = alertblock}
+\setbeamercolor{block body alerted} {bg = blockbody}
+\setbeamercolor{alerted text} {fg = uiored}
+\setbeamercolor{footnote mark}{fg = uiored}
+\setbeamercolor{section in head/foot}{fg = white,
+                                      bg = black}
+\setbeamercolor{section in toc}{fg = black}
+\setbeamercolor{bibliography entry location}{fg = structure}
+
+
+%% Custom colours:
+\setbeamercolor{author in final frame}  {fg = white}
+\setbeamercolor{title in final frame}   {fg = white}
+\setbeamercolor{subtitle in final frame}{fg = white}
+\setbeamercolor*{section page}{fg = black, bg = blockbody}
+
+
+%% Standard fonts:
+\setbeamerfont{author}    {size   = \large,
+                           series = \normalfont\bfseries}
+\setbeamerfont{title}     {size   = \LARGE,
+                           series = \bfseries}
+\setbeamerfont{subtitle}  {size   = \large,
+                           series = \normalfont\rmfamily}
+\setbeamerfont{date}      {size   = \large,
+                           series = \bfseries}
+\setbeamerfont{frametitle}{size = \LARGE,
+                           series = \bfseries}
+\setbeamerfont{title in head/foot} {series = \bfseries}
+\setbeamerfont{author in head/foot}{series = \bfseries}
+\setbeamerfont{date in head/foot}  {series = \bfseries}
+\setbeamerfont{section in toc}     {series = \bfseries}
+
+
+%% Custom fonts:
+\setbeamerfont{author in final frame}  {size   = \LARGE,
+                                        series = \bfseries}
+\setbeamerfont{title in final frame}   {size   = \LARGE,
+                                        series = \bfseries}
+\setbeamerfont{subtitle in final frame}{  size = \Large,
+                                        series = \normalfont\rmfamily}
+\setbeamerfont*{section page}{size   = \Huge,
+                              series = \bfseries}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\setbeamertemplate{title page}
+{
+    \AddToShipoutPictureFG*
+    {
+        \AtPageUpperLeft
+        {
+            \hspace{1.7 mm}
+            \parbox[t][3.3cm][b]{\textwidth}
+            {
+                \includegraphics[width = \textwidth]
+                {img/pixel}
+            }
+        }
+    }
+
+    \vbox to \textheight
+    {
+        \vspace{52 mm}
+
+        \leftskip  = 1.2365 cm
+        \rightskip = 1.2365 cm plus 2 cm
+
+        \usebeamerfont{title}    \structure{\inserttitle}
+        \\[0.2ex]
+        \usebeamerfont{subtitle} \structure{\insertsubtitle}
+
+        \vfill
+
+        \usebeamerfont{author} \insertauthor
+        \hfill
+        \newlength{\datewidth}
+        \settowidth{\datewidth}{\insertdate}
+        \parbox{\datewidth}
+        {
+            \usebeamerfont{date} \insertdate
+        }
+    }
+}
+
+
+\newcommand{\TitlePage}
+{
+    \begin{frame}[plain, noframenumbering]
+        \titlepage
+    \end{frame}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newlength{\radius}
+\setlength{\radius}{0.05\paperwidth}
+
+\newcommand{\FinalFrame}
+{
+    {
+        \setbeamercolor{background canvas}{bg = black}
+
+        \begin{frame}[plain, noframenumbering]
+
+            \AddToShipoutPictureFG*
+            {
+
+                \AtPageUpperLeft
+                {
+                    \hspace{0.976\radius}
+                    \parbox[t][0.2\paperheight][b]{\textwidth}
+                    {
+                        \includegraphics[scale = 0.4]
+                        {img/bunny}
+                    }
+                }
+
+%               \AtPageLowerLeft
+%               {
+%                   \hspace{2\radius}
+%                   \parbox[b][4\radius][t]{2\radius}
+%                   {
+%                       \includegraphics[width = 2\radius]
+%                       {img/bunny}
+%                   }
+%               }
+
+%               \AtPageLowerLeft
+%               {
+%                   \hspace{2\radius}
+%                   \parbox[b][0.72\paperheight][t]{2\radius}
+%                   {
+%                       \begin{tikzpicture}
+%                       \fill[uiogrey5] (0, 0) circle (\radius);
+%                       \fill[uiogrey5] (0, 2.5\radius) circle (\radius);
+%                       \end{tikzpicture}
+%                   }
+%               }
+
+                \AtPageUpperLeft
+                {
+                    \hspace{4.5\radius}
+                    \parbox[t]
+                    [\dimexpr0.28\paperheight+2\radius\relax]
+                    [b]
+                    {\dimexpr\textwidth-5\radius\relax}
+                    {
+                        \vbox to 2\radius
+                        {
+                            \vfill
+                            \raggedright
+                            \usebeamerfont{author in final frame}
+                            \usebeamercolor[fg]{author in final frame}
+                            \insertauthor
+                            \vfill
+                        }
+                    }
+                }
+
+                \AtPageLowerLeft
+                {
+                    \hspace{4.5\radius}
+                    \parbox[b]
+                    [\dimexpr0.72\paperheight-3.1\radius\relax]
+                    [t]
+                    {\dimexpr\textwidth-5\radius\relax}
+                    {
+                        \raggedright
+                        \usebeamerfont{title in final frame}
+                        \usebeamercolor[fg]{title in final frame}
+                        \inserttitle
+                        \\
+                        \usebeamerfont{subtitle in final frame}
+                        \usebeamercolor{subtitle in final frame}
+                        \insertsubtitle
+                    }
+                }
+            }
+        \end{frame}
+    }
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\setbeamertemplate{frametitle}
+{
+    \vbox
+    {
+        \strut\insertframetitle\strut
+    }
+    \vskip-1.3ex
+}
+
+\renewcommand{\framesubtitle}[1]
+    {\par\smallskip\textbf{\large#1}\par\medskip}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\setbeamertemplate{headline}
+{
+    \ifbool{logo}
+    {
+        \AddToShipoutPictureFG*
+        {
+            \AtPageUpperLeft
+            {
+                \hspace{2.1 mm}
+                \parbox[t][0.9 cm][b]{\textwidth}
+                {
+                    \includegraphics[scale = 0.2] {MathDept-images/MathDept-logo-2-\MATHlang}
+                }
+            }
+        }
+        \vspace*{11mm}
+    }
+    { \vspace*{1.7 mm} }
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\setbeamertemplate{footline}
+{
+    \hbox to \paperwidth
+    {%
+        \begin{beamercolorbox}[wd = \paperwidth,
+                               ht = 2.25ex,
+                               dp = 1ex]
+                              {section in head/foot}
+
+                \hspace*{3.845mm}
+                \usebeamerfont{author in head/foot}
+                \insertshortauthor
+                \hfill
+                \usebeamerfont{title in head/foot}
+%                \insertshorttitle
+                \insertsection
+                \hfill
+                \usebeamerfont{date in head/foot}
+                \insertshortdate
+                \hspace*{2em}
+                \insertframenumber{} / \inserttotalframenumber
+                \hspace*{3.845mm}
+        \end{beamercolorbox}
+    }
+    \vskip0pt
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Increase indentation:
+\AtBeginEnvironment{itemize}  { \setlength{\leftmargini}{12.285mm} }
+\AtBeginEnvironment{enumerate}{ \setlength{\leftmargini}{13.582mm} }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Reference enumerate items
+\newcommand{\enumref}[1]
+{{%
+    \leavevmode\unskip
+    \def\insertenumlabel{\ref{#1}}
+    \usebeamertemplate*{enumerate item}%
+}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Redefine TOC with larger indentation.
+\setbeamertemplate{section in toc}
+{
+    \leavevmode
+    \leftskip = 13.55mm
+    \llap
+    {%
+        \usebeamerfont*{section number projected}
+        \usebeamercolor[bg]{section number projected}
+        \vrule width2.25ex height1.85ex depth.4ex
+        \hskip-2.25ex
+        \hbox to 2.25ex
+        {
+            \hfil\color{fg}\inserttocsectionnumber\hfil
+        }
+    }%
+    \kern1.25ex
+    \parbox[t]{\dimexpr\textwidth-27.1mm\relax}
+              {\inserttocsection}
+    \par
+}
+
+\setbeamertemplate{subsection in toc}
+{
+    \leavevmode
+    \leftskip  = \dimexpr13.55mm+3.75ex\relax
+    \llap
+    {%
+        \usebeamercolor[bg]{subsection number projected}
+        \vrule width1ex height1ex \kern1ex
+    }%
+    \parbox[t]{\dimexpr\textwidth-27.1mm-3.75ex\relax}
+              {\inserttocsubsection}
+    \par
+}
+
+\setbeamertemplate{subsubsection in toc}
+{
+    \leavevmode
+    \normalsize
+    \usebeamerfont{subsection in toc}
+    \leftskip  = \dimexpr13.55mm+5.25ex\relax
+    \usebeamerfont{subsubsection in toc}
+    \llap
+    {%
+        \usebeamercolor[bg]{subsubsection number projected}
+        \vrule width0.75ex height0.75ex \kern1ex
+    }%
+    \parbox[t]{\dimexpr\textwidth-27.1mm-5.25ex\relax}
+              {\inserttocsubsubsection}
+    \par
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Redefine blocks with larger indentations,
+%% and some environmental colours:
+\setbeamertemplate{block begin}
+{
+    \setbeamercolor{itemize item}      {fg = block title.bg}
+    \setbeamercolor{itemize subitem}   {fg = block title.bg}
+    \setbeamercolor{itemize subsubitem}{fg = block title.bg}
+    \setbeamercolor{item projected}{fg = block title.fg,
+                                    bg = block title.bg}
+    \setbeamercolor{description item}{fg = alert}
+    \setbeamercolor{caption name}    {fg = alert}
+
+    \unskip
+    \vskip1.3ex
+
+    \begin{beamercolorbox}[ht        = 2.4  ex,
+                           dp        = 1    ex,
+                           leftskip  = 0.75 ex,
+                           rightskip = 0.75 ex]
+                          {block title}
+
+        \usebeamerfont*{block title}
+        \insertblocktitle
+    \end{beamercolorbox}
+
+    \nointerlineskip
+
+    \usebeamerfont{block body}
+    \begin{beamercolorbox}[dp        = 1    ex,
+                           leftskip  = 0.75 ex,
+                           rightskip = 0.75 ex,
+                           vmode]
+                          {block body}
+        \vspace*{1ex}
+        \begin{minipage}{\textwidth - 1.5ex}
+}
+
+\setbeamertemplate{block end}
+{
+        \end{minipage}
+    \vskip0pt
+    \end{beamercolorbox}
+    \vskip1.3ex
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\setbeamertemplate{block example begin}
+{
+    \setbeamercolor{itemize item}      {fg = block title example.bg}
+    \setbeamercolor{itemize subitem}   {fg = block title example.bg}
+    \setbeamercolor{itemize subsubitem}{fg = block title example.bg}
+    \setbeamercolor{item projected}{fg = block title example.fg,
+                                    bg = block title example.bg}
+    \setbeamercolor{description item}{fg = alert}
+    \setbeamercolor{caption name}    {fg = alert}
+
+    \unskip
+    \vskip1.3ex
+
+    \begin{beamercolorbox}[ht        = 2.4  ex,
+                           dp        = 1    ex,
+                           leftskip  = 0.75 ex,
+                           rightskip = 0.75 ex]
+                          {block title example}
+
+        \usebeamerfont*{block title example}
+        \insertblocktitle
+    \end{beamercolorbox}
+
+    \nointerlineskip
+
+    \usebeamerfont{block body example}
+    \begin{beamercolorbox}[dp        = 1    ex,
+                           leftskip  = 0.75 ex,
+                           rightskip = 0.75 ex,
+                           vmode]
+                          {block body example}
+        \vspace*{1ex}
+        \begin{minipage}{\textwidth - 1.5ex}
+}
+
+\setbeamertemplate{block example end}
+{
+        \end{minipage}
+    \vskip0pt
+    \end{beamercolorbox}
+    \vskip1.3ex
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\setbeamertemplate{block alerted begin}
+{
+    \setbeamercolor{itemize item}      {fg = block title alerted.bg}
+    \setbeamercolor{itemize subitem}   {fg = block title alerted.bg}
+    \setbeamercolor{itemize subsubitem}{fg = block title alerted.bg}
+    \setbeamercolor{item projected}{fg = block title alerted.fg,
+                                    bg = block title alerted.bg}
+    \setbeamercolor{description item}{fg = alert}
+    \setbeamercolor{caption name}    {fg = alert}
+
+    \unskip
+    \vskip1.3ex
+
+    \begin{beamercolorbox}[ht        = 2.4  ex,
+                           dp        = 1    ex,
+                           leftskip  = 0.75 ex,
+                           rightskip = 0.75 ex]
+                          {block title alerted}
+
+        \usebeamerfont*{block title alerted}
+        \insertblocktitle
+    \end{beamercolorbox}
+
+    \nointerlineskip
+
+    \usebeamerfont{block body alerted}
+    \begin{beamercolorbox}[dp        = 1    ex,
+                           leftskip  = 0.75 ex,
+                           rightskip = 0.75 ex,
+                           vmode]
+                          {block body alerted}
+        \vspace*{1ex}
+        \begin{minipage}{\textwidth - 1.5ex}
+}
+
+\setbeamertemplate{block alerted end}
+{
+        \end{minipage}
+    \vskip0pt
+    \end{beamercolorbox}
+    \vskip1.3ex
+
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\setbeamertemplate{section page}
+{
+    \begin{center}
+        \vskip\baselineskip
+        \insertsection
+    \end{center}
+}
+
+\newcommand{\SectionPage}
+{{
+    \setbeamercolor{background canvas}{parent = section page}
+    \begin{frame}[c, plain, noframenumbering]
+        \sectionpage
+    \end{frame}
+}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\mode<all>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\endinput
