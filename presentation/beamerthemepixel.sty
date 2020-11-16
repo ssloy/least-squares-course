@@ -400,7 +400,7 @@
     {
         \strut\insertframetitle\strut
     }
-    \vskip-1.3ex
+    \vskip-0.5ex
 }
 
 \renewcommand{\framesubtitle}[1]
@@ -412,22 +412,22 @@
 
 \setbeamertemplate{headline}
 {
-    \ifbool{logo}
-    {
-        \AddToShipoutPictureFG*
-        {
-            \AtPageUpperLeft
-            {
-                \hspace{2.1 mm}
-                \parbox[t][0.9 cm][b]{\textwidth}
-                {
-                    \includegraphics[scale = 0.2] {MathDept-images/MathDept-logo-2-\MATHlang}
-                }
-            }
-        }
-        \vspace*{11mm}
-    }
-    { \vspace*{1.7 mm} }
+%   \ifbool{logo}
+%   {
+%       \AddToShipoutPictureFG*
+%       {
+%           \AtPageUpperLeft
+%           {
+%               \hspace{2.1 mm}
+%               \parbox[t][0.9 cm][b]{\textwidth}
+%               {
+%                   \includegraphics[scale = 0.2] {MathDept-images/MathDept-logo-2-\MATHlang}
+%               }
+%           }
+%       }
+%       \vspace*{11mm}
+%   }
+%    { \vspace*{1.7 mm} }
 }
 
 

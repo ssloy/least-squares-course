@@ -41,6 +41,9 @@
 \title{Least squares for programmers}
 \subtitle{--- with color plates ---}
 
+\newcommand{\highlight}[1]{\colorbox{green!50}{$\displaystyle#1$}}
+
+
 \AtBeginSection[]
 {
     \begin{frame}
@@ -153,9 +156,9 @@ $
 $
 
 \begin{block}{Under Gaussian noise}
-$$
+\centerline{$
 \argmax\limits_{U} \log \mathcal{L} = \argmin\limits_U \sum\limits_{j=1}^N (U_j-U)^2
-$$
+$}
 \end{block}
 \end{frame}
 
@@ -532,10 +535,10 @@ $$x^\top A x = \sum\limits_i\sum\limits_j a_{ij} x_i x_j$$
   \begin{aligned}
 \frac{\partial (x^\top A x)}{\partial x_i}
 &= \frac{\partial}{\partial x_i}  \left(\sum\limits_{k_1}\sum\limits_{k_2} a_{k_1 k_2} x_{k_1} x_{k_2}\right) = \\ \pause
-&= \frac{\partial}{\partial x_i}  \left( 
+&= \frac{\partial}{\partial x_i}  \Biggl( 
 \underbrace{\sum\limits_{k_1\neq i}\sum\limits_{k_2\neq i} a_{ik_2}x_{k_1} x_{k_2}}_{k_1 \neq i, k_2 \neq i}+\underbrace{\sum\limits_{k_2\neq i} a_{ik_2}x_i x_{k_2}}_{k_1 = i, k_2\neq i}+
 \underbrace{\sum\limits_{k_1\neq i} a_{k_1 i} x_{k_1} x_i}_{k_1 \neq i, k_2 = i}+
-\underbrace{a_{ii}x_i^2}_{k_1 = i, k_2 = i}\right) = \\ \pause
+\underbrace{a_{ii}x_i^2}_{k_1 = i, k_2 = i}\Biggr) = \\ \pause
 & = \sum\limits_{k_2\neq i} a_{ik_2}x_{k_2} + \sum\limits_{k_1\neq i} a_{k_1 i} x_{k_1} + 2 a_{ii} x_i = \\ \pause
 & = \sum\limits_{k_2} a_{ik_2}x_{k_2} + \sum\limits_{k_1} a_{k_1 i} x_{k_1} = \\ \pause
 & = \sum\limits_{j} (a_{ij} + a_{ji}) x_j \hspace{3cm} \Rightarrow \nabla(x^\top A x)  = (A+A^\top)x
@@ -704,22 +707,193 @@ with (in general) a symmetric positive definite matrix $A'$. This can be done by
 \end{frame}
 
 \section{Least squares through examples}
-\begin{frame}{Linear-quadratic regulator}
-Imagine that we have a car going at $0.5$m/s. The goal is to accelerate to $2.3$m/s.
-We can not control the speed directly, but we can act on the acceleration via the gas pedal:
-$$
-v_{k+1} = v_k + u_k,
-$$
-where the signals are sampled every 1 second, $v_k$ is the car speed and $u_k$ is the acceleration of the car.
 
-We have half a minute maximum to reach the goal, i.e, $v_0=0.5$m/s, $v_n=2.3$m/s, $n=30$s.
+\begin{frame}{Linear-quadratic regulator}
+Imagine a car going at $v_0=0.5$ m/s. The goal is to accelerate to $v_n=2.3$ m/s in $n=30$ s maximum.
+We can control the acceleration $u_i$ via the gas pedal:
+$$
+v_{i+1} = v_i + u_i
+$$
+
+\pause
 So, we need to find $\{u_i\}_{i=0}^{n-1}$ that optimizes some quality criterion $J(\vec{v}, \vec{u})$:
 $$
-\min J(\vec{v},\vec{u}) \quad s.t.~  v_{i+1} = v_i + u_i ~~ \forall i \in 0..n-1
+\min J(\vec{v},\vec{u}) \quad s.t.\quad  v_{i+1} = v_i + u_i = v_0 + \sum\limits_{j=0}^{i-1}u_j \quad \forall i \in 0..n-1
 $$
 
+\pause
+What happens if we ask for the car to reach the final speed as quickly as possible?\\
+It can be written as follows:
+$$
+J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2
+$$
+\end{frame}
 
 
+\begin{frame}{Linear-quadratic regulator}
+\begin{minipage}{.4\linewidth}
+$$
+J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2
+$$
+\end{minipage}
+\qquad
+\begin{minipage}{.45\linewidth}
+Solve in the least squares sense:\\
+$
+\left \{ \begin{array}{ccccl}
+u_0 &       &       &           & = v_n - v_0 \\
+u_0 & + u_1 &       &           & = v_n - v_0 \\
+    &       &       & \vdots    &             \\
+u_0 & + u_1 & \dots & + u_{n-1} & = v_n - v_0 \\
+\end{array} \right.
+$
+\end{minipage}
+\pause
+\vspace{10pt}
+\only<2>{\inputminted[fontsize=\footnotesize,frame=single,linenos=true]{python}{listings/example_6.1_a.py}}
+\only<3>{\centerline{\includegraphics[width=.55\linewidth]{{../manuscript/img/example_6.1_a}.png}} Ouch... Quite brutal accelerations!}
+\end{frame}
+
+\begin{frame}{Linear-quadratic regulator}
+\begin{minipage}{.4\linewidth}
+~\\
+Ok, no problem, let us penalize large accelerations:\\
+$
+J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2
+$
+\end{minipage}
+\qquad
+\begin{minipage}{.45\linewidth}
+Solve in the least squares sense:\\
+$
+\left \{ \begin{array}{rl}
+u_0     & = 0\\
+u_1     & = 0\\
+\vdots   &    \\
+u_{n-1} & = 0\\
+\end{array} \right.
+$
+\end{minipage}
+\pause
+\vspace{10pt}
+\centerline{\includegraphics[width=.55\linewidth]{{../manuscript/img/example_6.1_b}.png}} 
+Low acceleration, however the transient time becomes unacceptable.
+\end{frame}
+
+\begin{frame}{Linear-quadratic regulator}
+\begin{minipage}{.4\linewidth}
+Optimize for competing goals:\\
+$
+J(\vec{v},\vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 + \highlight{4}\sum\limits_{i=0}^{n-1} u_i^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2 + \highlight{4}\sum\limits_{i=0}^{n-1} u_i^2
+$
+\textbf{N.B.} Note the tradeoff \highlight{\text{coefficients}}!
+\end{minipage}
+\pause
+\qquad
+\begin{minipage}{.45\linewidth}
+\scalebox{0.85}{
+$
+\left \{ \begin{array}{ccccl}
+u_0 &       &       &           & = v_n - v_0 \\
+u_0 & + u_1 &       &           & = v_n - v_0 \\
+    &       &       & \vdots    &             \\
+u_0 & + u_1 & \dots & + u_{n-1} & = v_n - v_0 \\
+\highlight{2}u_0 &        &       &           & = 0 \\
+     &  \highlight{2}u_1  &       &           & = 0 \\
+     &        &       & \vdots    &     \\
+     &        &       &  \highlight{2}u_{n-1} & = 0 \\
+\end{array} \right.
+$
+}
+\end{minipage}
+\pause
+\vspace{10pt}
+\centerline{\includegraphics[width=.55\linewidth]{{../manuscript/img/example_6.1_c}.png}}
+Low acceleration, however the transient time becomes unacceptable.
+\end{frame}
+
+\begin{frame}{Poisson's equation}
+\begin{minipage}{.45\linewidth}
+Problem: find $f(x)$ defined on $x\in[0,2\pi]$ as close as possible to $g(x):=\sin x$, constrained to $f(0)=1$ and $f(2\pi) = 3$.
+
+\vspace{5pt}
+Formulate it as the Poisson's equation with Dirichlet boundary conditions:\\
+$
+\frac{d^2}{dx^2}f  = \frac{d^2}{dx^2} g \quad \text{s.t.~} f(0)=1,~f(2\pi) = 3
+$
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+\quad\includegraphics[width=\linewidth]{../manuscript/img/pie-1d.png}
+\end{minipage}
+\pause
+\begin{minipage}{.35\linewidth}
+Least squares formulation:
+$$
+\min\limits_{f} \int_0^{2\pi} \|f' - g'\|^2
+$$
+with $f(0)=1,~f(2\pi) = 3$
+\end{minipage}
+\pause
+\begin{minipage}{.55\linewidth}
+$
+\left \{ \begin{array}{ccccl}
+f_1 &       &       &           & =  g_1 - g_0 + f_0  \\
+-f_1 & + f_2 &       &           & = g_2 - g_1 \\
+    &       &       & \vdots    &             \\
+     &        &  -f_{n-3}     &  +f_{n-2}          & = g_{n-2} - g_{n-3} \\
+     &        &       & - f_{n-2} & =  g_{n-1}-g_{n-2} -f_{n-1}
+\end{array} \right.
+$
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Poisson image editing}
+%\begin{minipage}{.66\linewidth}
+\centerline{    \includegraphics[width=.36\linewidth]{../manuscript/img/pie_baseball.png}~\raisebox{6.5\height}{\LARGE{+}}~
+    \raisebox{0.65\height}{\includegraphics[width=.12\linewidth]{../manuscript/img/pie_football.png}}~\raisebox{8.5\height}{\LARGE{=}}~
+    \includegraphics[width=.36\linewidth]{../manuscript/img/pie_overlay.png}}
+%\end{minipage}
+\pause
+We can do better: solve a linear system par color channel.
+
+\vspace{10pt}
+
+\pause
+\begin{minipage}{.12\linewidth}
+Let $a$ be:\\
+    \includegraphics[width=\linewidth]{../manuscript/img/pie-baseball-red.png}
+\end{minipage}
+\pause
+\quad
+\begin{minipage}{.12\linewidth}
+Let $b$ be:\\
+    \includegraphics[width=\linewidth]{../manuscript/img/pie-football-red.png}
+\end{minipage}
+\qquad
+\pause
+\begin{minipage}{.6\linewidth}
+Solve for $f$ who takes its boundary conditions from $a$ and the gradients from $b$:
+$$
+\min\limits_{f} \int_\Omega \|\nabla f - \nabla b\|^2 \quad \text{with~} f|_{\partial\Omega} = a|_{\partial\Omega}
+$$
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Poisson image editing}
+Discretize the problem: having $w \times h$ pixels grayscale images $a$ and $b$,
+we compute a $w \times h$ pixels image $f$, solve in the least squares sense:
+$$
+\left \{ \begin{array}{rll}
+f_{i+1, j}-f_{i,j} & = b_{i+1, j}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
+f_{i, j+1}-f_{i,j} & = b_{i, j+1}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
+f_{i,j}            & = a_{i,j}            & \forall (i,j) \text{~s.t.~} i=0 \text{~or~} i=w-1 \text{~or~} j=0 \text{~or~} j=h-1
+\end{array} \right.
+$$
+\pause
+\centerline{    \includegraphics[width=.36\linewidth]{../manuscript/img/pie_baseball.png}~\raisebox{6.5\height}{\LARGE{+}}~
+    \raisebox{0.65\height}{\includegraphics[width=.12\linewidth]{../manuscript/img/pie_football.png}}~\raisebox{8.5\height}{\LARGE{=}}~
+    \includegraphics[width=.36\linewidth]{../manuscript/img/pie_poisson.png}}
 \end{frame}
 
 \end{document}
+
