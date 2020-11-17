@@ -36,12 +36,17 @@
 \usepackage{fancyvrb}
 \usepackage{minted}
 
+\definecolor{brickred}{rgb}{.79, 0.25, 0.32}
+\definecolor{grass}{rgb}{.25, 0.79, 0.32}
+
 
 \author{Dmitry Sokolov}
 \title{Least squares for programmers}
 \subtitle{--- with color plates ---}
 
 \newcommand{\highlight}[1]{\colorbox{green!50}{$\displaystyle#1$}}
+\newcommand\unknown[1]{\textcolor{brickred}{#1}}
+\newcommand\known[1]{\textcolor{grass}{#1}}
 
 
 \AtBeginSection[]
@@ -247,7 +252,7 @@ Next we will try to build a geometric intuition on least squares, and see how ca
 \section{Introduction to systems of linear equations}
 
 \begin{frame}[fragile]{Smooth an array}
-\inputminted[frame=single,linenos=true]{python}{listings/example_3.1.py}
+\inputminted[frame=single]{python}{listings/example_3.1.py}
 \includegraphics[width=.32\linewidth]{{../manuscript/img/example_3.1_0}.png}
 \pause
 \includegraphics[width=.32\linewidth]{{../manuscript/img/example_3.1_1}.png}
@@ -299,7 +304,18 @@ Repeating the process $k$ times, the solution can be approximated by the vector 
 \end{frame}
 
 \begin{frame}{Back to the array smoothing}
-\inputminted[frame=single,linenos=true]{python}{listings/example_3.1.py}
+\inputminted[frame=single]{python}{listings/example_3.1.py}
+\pause
+\begin{minipage}{.45\linewidth}
+$$x_i = \frac{x_{i-1}+x_{i+1}}{2}$$
+\pause 
+$$\Updownarrow$$ $$ x_i-x_{i-1} = x_{i+1} - x_i$$
+%\begin{minted}[linenos=false]{python}
+%x[i] = (x[i-1] + x[i+1]) / 2
+%\end{minted}
+\end{minipage}
+\pause
+\begin{minipage}{.45\linewidth}
 $$
 \left\{
 \begin{array}{rl}
@@ -313,6 +329,7 @@ x_{15} &= 1 \\
 \end{array}
 \right.
 $$
+\end{minipage}
 \end{frame}
 
 \begin{frame}{The Gauß-Seidel iterative method}
@@ -331,14 +348,14 @@ $$
 
 \begin{frame}{The Gauß-Seidel iterative method}
 Jacobi:
-\inputminted[frame=single,linenos=true]{python}{listings/example_3.1.py}
+\inputminted[frame=single]{python}{listings/example_3.1.py}
 
 Gauß-Seidel:
-\inputminted[frame=single,linenos=true]{python}{listings/example_3.2.py}
+\inputminted[frame=single]{python}{listings/example_3.2.py}
 \end{frame}
 
 \begin{frame}[fragile]{Smooth an array : Gauß-Seidel}
-\inputminted[frame=single,linenos=true]{python}{listings/example_3.2.py}
+\inputminted[frame=single]{python}{listings/example_3.2.py}
 \includegraphics[width=.32\linewidth]{{../manuscript/img/example_3.2_0}.png}
 \includegraphics[width=.32\linewidth]{{../manuscript/img/example_3.2_1}.png}
 \includegraphics[width=.32\linewidth]{{../manuscript/img/example_3.2_2}.png}
@@ -349,7 +366,7 @@ Gauß-Seidel:
 
 
 \begin{frame}{Equality of derivatives vs zero curvature}
-\inputminted[frame=single,linenos=true]{python}{listings/example_3.2.py}
+\inputminted[frame=single]{python}{listings/example_3.2.py}
 \only<1>{
 $$
 \left\{
@@ -384,7 +401,7 @@ $$
 
 \begin{frame}{It also works for 3d surfaces}
 \only<1>{
-\inputminted[frame=single,linenos=true]{cpp}{listings/example_3.3.cpp}
+\inputminted[frame=single]{cpp}{listings/example_3.3.cpp}
 }
 \only<2>{
     \vspace{10pt}
@@ -398,7 +415,7 @@ $$
 \end{frame}
 
 \begin{frame}{Prescribe the right hand side}
-\inputminted[frame=single,linenos=true]{python}{listings/example_3.4.py}
+\inputminted[frame=single]{python}{listings/example_3.4.py}
 \pause
 \includegraphics[width=.32\linewidth]{{../manuscript/img/example_3.4_0}.png}
 \includegraphics[width=.32\linewidth]{{../manuscript/img/example_3.4_1}.png}
@@ -533,15 +550,15 @@ $$x^\top A x = \sum\limits_i\sum\limits_j a_{ij} x_i x_j$$
 \vspace{-10pt}
 \[
   \begin{aligned}
-\frac{\partial (x^\top A x)}{\partial x_i}
-&= \frac{\partial}{\partial x_i}  \left(\sum\limits_{k_1}\sum\limits_{k_2} a_{k_1 k_2} x_{k_1} x_{k_2}\right) = \\ \pause
-&= \frac{\partial}{\partial x_i}  \Biggl( 
-\underbrace{\sum\limits_{k_1\neq i}\sum\limits_{k_2\neq i} a_{ik_2}x_{k_1} x_{k_2}}_{k_1 \neq i, k_2 \neq i}+\underbrace{\sum\limits_{k_2\neq i} a_{ik_2}x_i x_{k_2}}_{k_1 = i, k_2\neq i}+
-\underbrace{\sum\limits_{k_1\neq i} a_{k_1 i} x_{k_1} x_i}_{k_1 \neq i, k_2 = i}+
-\underbrace{a_{ii}x_i^2}_{k_1 = i, k_2 = i}\Biggr) = \\ \pause
-& = \sum\limits_{k_2\neq i} a_{ik_2}x_{k_2} + \sum\limits_{k_1\neq i} a_{k_1 i} x_{k_1} + 2 a_{ii} x_i = \\ \pause
-& = \sum\limits_{k_2} a_{ik_2}x_{k_2} + \sum\limits_{k_1} a_{k_1 i} x_{k_1} = \\ \pause
-& = \sum\limits_{j} (a_{ij} + a_{ji}) x_j \hspace{3cm} \Rightarrow \nabla(x^\top A x)  = (A+A^\top)x
+\frac{\partial (x^\top A x)}{\partial x_{\textcolor{brickred}{i}}}
+&= \frac{\partial}{\partial x_{\textcolor{brickred}{i}}}  \left(\sum\limits_{k_1}\sum\limits_{k_2} a_{k_1 k_2} x_{k_1} x_{k_2}\right) = \\ \pause
+&= \frac{\partial}{\partial x_{\textcolor{brickred}{i}}}  \Biggl( 
+\underbrace{\sum\limits_{k_1\neq {\textcolor{brickred}{i}}}\sum\limits_{k_2\neq {\textcolor{brickred}{i}}} a_{k_1 k_2}x_{k_1} x_{k_2}}_{k_1 \neq {\textcolor{brickred}{i}}, k_2 \neq {\textcolor{brickred}{i}}}+\underbrace{\sum\limits_{k_2\neq {\textcolor{brickred}{i}}} a_{{\textcolor{brickred}{i}}k_2}x_{\textcolor{brickred}{i}} x_{k_2}}_{k_1 = {\textcolor{brickred}{i}}, k_2\neq {\textcolor{brickred}{i}}}+
+\underbrace{\sum\limits_{k_1\neq {\textcolor{brickred}{i}}} a_{k_1 {\textcolor{brickred}{i}}} x_{k_1} x_{\textcolor{brickred}{i}}}_{k_1 \neq {\textcolor{brickred}{i}}, k_2 = {\textcolor{brickred}{i}}}+
+\underbrace{a_{{\textcolor{brickred}{ii}}}x_{\textcolor{brickred}{i}}^2}_{k_1 = {\textcolor{brickred}{i}}, k_2 = {\textcolor{brickred}{i}}}\Biggr) = \\ \pause
+& = \sum\limits_{k_2\neq {\textcolor{brickred}{i}}} a_{{\textcolor{brickred}{i}}k_2}x_{k_2} + \sum\limits_{k_1\neq {\textcolor{brickred}{i}}} a_{k_1 {\textcolor{brickred}{i}}} x_{k_1} + 2 a_{{\textcolor{brickred}{ii}}} x_{\textcolor{brickred}{i}} = \\ \pause
+& = \sum\limits_{k_2} a_{{\textcolor{brickred}{i}}k_2}x_{k_2} + \sum\limits_{k_1} a_{k_1 {\textcolor{brickred}{i}}} x_{k_1} = \\ \pause
+& = \sum\limits_{j} (a_{{\textcolor{brickred}{i}}j} + a_{j{\textcolor{brickred}{i}}}) x_j \hspace{3cm} \Rightarrow \nabla(x^\top A x)  = (A+A^\top)x
 \end{aligned}
 \]
 \end{frame}
@@ -565,14 +582,14 @@ Recall that $A$ is symmetric: $Ax = b.$
 \end{frame}
 
 \begin{frame}{Back to the linear regression}
-Given two points $(x_1, y_1)$ and $(x_2, y_2)$, find the line that passes through: $y = \alpha x + \beta$.
+Given two points $(\known{x_1}, \known{y_1})$ and $(\known{x_2}, \known{y_2})$, find the line that passes through: $y = \unknown{\alpha} x + \unknown{\beta}$.
 \pause
 \begin{minipage}{.45\linewidth}
 $$
 \left\{
 \begin{split}
-\alpha x_1 + \beta &= y_1\\
-\alpha x_2 + \beta &= y_2\\
+\unknown{\alpha}\known{x_1} + \unknown{\beta} &= \known{y_1}\\
+\unknown{\alpha}\known{x_2} + \unknown{\beta} &= \known{y_2}\\
 \end{split}
 \right.
 $$
@@ -580,55 +597,55 @@ $$
 \pause
 \begin{minipage}{.45\linewidth}
 $$
-\underbrace{\begin{bmatrix}x_1  & 1 \\ x_2 & 1 \end{bmatrix}}_{:=A}
-\underbrace{\begin{bmatrix} \alpha \\ \beta \end{bmatrix}}_{:=x} = \underbrace{\begin{bmatrix} y_1 \\ y_2 \end{bmatrix}}_{:=b}
+\underbrace{\begin{bmatrix}\known{x_1}  & 1 \\ \known{x_2} & 1 \end{bmatrix}}_{:=\known{A}}
+\underbrace{\begin{bmatrix} \unknown{\alpha} \\ \unknown{\beta} \end{bmatrix}}_{:=\unknown{x}} = \underbrace{\begin{bmatrix} \known{y_1} \\ \known{y_2} \end{bmatrix}}_{:=\known{b}}
 \qquad
-\Rightarrow x^* = A^{-1}b
+\Rightarrow x^* = \known{A^{-1}b}
 $$
 \end{minipage}
 
 \pause
-Now add a \textbf{third} point:\\
+Now add a \textbf{third} point $(\known{x_3}, \known{y_3})$:\\
 \begin{minipage}{.45\linewidth}
 $$
 \left\{
 \begin{split}
-\alpha x_1 + \beta &= y_1\\
-\alpha x_2 + \beta &= y_2\\
-\alpha x_3 + \beta &= y_3\\
+\unknown{\alpha} \known{x_1} + \unknown{\beta} &= \known{y_1}\\
+\unknown{\alpha} \known{x_2} + \unknown{\beta} &= \known{y_2}\\
+\unknown{\alpha} \known{x_3} + \unknown{\beta} &= \known{y_3}\\
 \end{split}
 \right.
 $$
 \end{minipage}\pause
 \begin{minipage}{.45\linewidth}
 $$
-\underbrace{\begin{bmatrix}x_1  & 1 \\ x_2 & 1 \\x_3 & 1 \end{bmatrix} }_{:= A\,(3\times 2)}
-\underbrace{\begin{bmatrix} \alpha \\ \beta \end{bmatrix}}_{:=x\,(2\times 1)} = \underbrace{\begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix}}_{:=b\, (3\times 1)}
+\underbrace{\begin{bmatrix}\known{x_1}  & 1 \\ \known{x_2} & 1 \\\known{x_3} & 1 \end{bmatrix} }_{:= \known{A}\,(3\times 2)}
+\underbrace{\unknown{\begin{bmatrix} \alpha \\ \beta \end{bmatrix}}}_{:=\unknown{x}\,(2\times 1)} = \underbrace{\begin{bmatrix} \known{y_1} \\ \known{y_2} \\ \known{y_3} \end{bmatrix}}_{:=\known{b}\, (3\times 1)}
 $$
 \end{minipage}
 
 ~\\
 
-$A$ is rectangular, and thus it is not invertible. Oops!
+$\known{A}$ is rectangular, and thus it is not invertible. Oops!
 \end{frame}
 
 \begin{frame}{Back to the linear regression}
 No biggie, let us rewrite the system:\\
 \begin{minipage}{.55\linewidth}
 $$
-\alpha \underbrace{\begin{bmatrix}x_1  & x_2 &x_3  \end{bmatrix}^\top }_{:=\vec{i}}
-+\beta \underbrace{\begin{bmatrix}1 & 1 &1 \end{bmatrix}^\top }_{:=\vec{j}} =
-\begin{bmatrix}y_1 & y_2 & y_3\end{bmatrix}^\top
+\unknown{\alpha} \underbrace{\begin{bmatrix}\known{x_1}  & \known{x_2} &\known{x_3}  \end{bmatrix}^\top }_{:=\known{\vec{i}}}
++\unknown{\beta} \underbrace{\begin{bmatrix}1 & 1 &1 \end{bmatrix}^\top }_{:=\known{\vec{j}}} =
+\begin{bmatrix}\known{y_1} & \known{y_2} & \known{y_3}\end{bmatrix}^\top
 $$
 \end{minipage}\pause
 \begin{minipage}{.35\linewidth}
 $$
-\alpha \vec{i} + \beta\vec{j} = \vec{b}.
+\unknown{\alpha} \known{\vec{i}} + \unknown{\beta}\known{\vec{j}} = \known{\vec{b}}
 $$
 \end{minipage}
 
 \pause
-Solve for $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|$, where $\vec{e}(\alpha, \beta) :=  \alpha \vec{i} + \beta\vec{j} - \vec b$:
+Solve for $\argmin\limits_{\unknown{\alpha}, \unknown{\beta}} \|\vec{e}(\unknown{\alpha}, \unknown{\beta})\|$, where $\vec{e}(\unknown{\alpha}, \unknown{\beta}) :=  \unknown{\alpha} \known{\vec{i}} + \unknown{\beta}\known{\vec{j}} - \known{\vec b}$:
 \begin{center}
 \includegraphics[width=.6\linewidth]{../manuscript/img/error.pdf}
 \end{center}
@@ -641,25 +658,25 @@ Solve for $\argmin\limits_{\alpha, \beta} \|\vec{e}(\alpha, \beta)\|$, where $\v
 \pause
 \quad
 \begin{minipage}{.45\linewidth}
-The $\|\vec{e}(\alpha, \beta)\|$ is minimized when $\vec{e}(\alpha, \beta) \perp \Span\{\vec i, \vec j\}$:
+The $\|\vec{e}(\unknown{\alpha}, \unknown{\beta})\|$ is minimized when $\vec{e}(\unknown{\alpha}, \unknown{\beta}) \perp \Span\{\known{\vec i}, \known{\vec j}\}$:
 $$
 \left\{
-\begin{split}\vec{i}^\top \vec{e}(\alpha, \beta) &= 0\\
-\vec{j}^\top \vec{e}(\alpha, \beta) &= 0
+\begin{split}\known{\vec{i}}^{\,\top} \vec{e}(\unknown{\alpha}, \unknown{\beta}) &= 0\\
+\known{\vec{j}}^{\,\top} \vec{e}(\unknown{\alpha}, \unknown{\beta}) &= 0
 \end{split}
 \right.
 $$
 \end{minipage}
 \pause
 $
-\begin{bmatrix}x_1 & x_2 & x_3 \\ 1 & 1 & 1 \end{bmatrix}
-\left(\alpha \begin{bmatrix}x_1  \\ x_2 \\x_3  \end{bmatrix}
-+\beta \begin{bmatrix}1 \\ 1 \\1 \end{bmatrix} -
-\begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}\right) = \begin{bmatrix}0\\0\end{bmatrix}
+\begin{bmatrix}\known{x_1} & \known{x_2} & \known{x_3} \\ 1 & 1 & 1 \end{bmatrix}
+\left(\unknown{\alpha} \begin{bmatrix}\known{x_1}  \\ \known{x_2} \\ \known{x_3}  \end{bmatrix}
++\unknown{\beta} \begin{bmatrix}1 \\ 1 \\1 \end{bmatrix} -
+\begin{bmatrix}\known{y_1}\\\known{y_2}\\\known{y_3}\end{bmatrix}\right) = \begin{bmatrix}0\\0\end{bmatrix}
 $
 \pause
 \quad \qquad \qquad
-$A^\top (Ax - b)= \begin{bmatrix}0\\0\end{bmatrix}$
+$\known{A}^\top (\known{A}\unknown{x} - \known{b})= \begin{bmatrix}0\\0\end{bmatrix}$
 \pause
 \begin{block}{In a general case the matrix $A^\top A$ can be invertible!}
 $$
@@ -709,23 +726,23 @@ with (in general) a symmetric positive definite matrix $A'$. This can be done by
 \section{Least squares through examples}
 
 \begin{frame}{Linear-quadratic regulator}
-Imagine a car going at $v_0=0.5$ m/s. The goal is to accelerate to $v_n=2.3$ m/s in $n=30$ s maximum.
-We can control the acceleration $u_i$ via the gas pedal:
+Imagine a car going at $\known{v_0}=0.5$ m/s. The goal is to accelerate to $\known{v_n}=2.3$ m/s in $n=30$ s maximum.
+We can control the acceleration $\unknown{u_i}$ via the gas pedal:
 $$
-v_{i+1} = v_i + u_i
+\unknown{v_{i+1}} = \unknown{v_i} + \unknown{u_i}
 $$
 
 \pause
-So, we need to find $\{u_i\}_{i=0}^{n-1}$ that optimizes some quality criterion $J(\vec{v}, \vec{u})$:
+So, we need to find $\{\unknown{u_i}\}_{i=0}^{n-1}$ that optimizes some quality criterion $J(\unknown{\vec{v}}, \unknown{\vec{u}})$:
 $$
-\min J(\vec{v},\vec{u}) \quad s.t.\quad  v_{i+1} = v_i + u_i = v_0 + \sum\limits_{j=0}^{i-1}u_j \quad \forall i \in 0..n-1
+\min J(\unknown{\vec{v}},\unknown{\vec{u}}) \quad s.t.\quad  \unknown{v_{i+1}} = \unknown{v_i} + \unknown{u_i} = \known{v_0} + \sum\limits_{j=0}^{i-1}\unknown{u_j} \quad \forall i \in 0..n-1
 $$
 
 \pause
 What happens if we ask for the car to reach the final speed as quickly as possible?\\
 It can be written as follows:
 $$
-J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2
+J(\unknown{\vec{v}}, \unknown{\vec{u}}) := \sum\limits_{i=1}^n (\unknown{v_i}-\known{v_n})^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}\unknown{u_j}-\known{v_n}+\known{v_0}\right)^2
 $$
 \end{frame}
 
@@ -733,7 +750,7 @@ $$
 \begin{frame}{Linear-quadratic regulator}
 \begin{minipage}{.4\linewidth}
 $$
-J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2
+J(\unknown{\vec{v}}, \unknown{\vec{u}}) := \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}\unknown{u_j}-\known{v_n}+\known{v_0}\right)^2
 $$
 \end{minipage}
 \qquad
@@ -741,16 +758,16 @@ $$
 Solve in the least squares sense:\\
 $
 \left \{ \begin{array}{ccccl}
-u_0 &       &       &           & = v_n - v_0 \\
-u_0 & + u_1 &       &           & = v_n - v_0 \\
+\unknown{u_0} &       &       &           & = \known{v_n} - \known{v_0} \\
+\unknown{u_0} & + \unknown{u_1} &       &           & = \known{v_n} - \known{v_0} \\
     &       &       & \vdots    &             \\
-u_0 & + u_1 & \dots & + u_{n-1} & = v_n - v_0 \\
+\unknown{u_0} & + \unknown{u_1} & \dots & + \unknown{u_{n-1}} & = \known{v_n} - \known{v_0} \\
 \end{array} \right.
 $
 \end{minipage}
 \pause
 \vspace{10pt}
-\only<2>{\inputminted[fontsize=\footnotesize,frame=single,linenos=true]{python}{listings/example_6.1_a.py}}
+\only<2>{\inputminted[fontsize=\footnotesize,frame=single]{python}{listings/example_6.1_a.py}}
 \only<3>{\centerline{\includegraphics[width=.55\linewidth]{{../manuscript/img/example_6.1_a}.png}} Ouch... Quite brutal accelerations!}
 \end{frame}
 
@@ -759,7 +776,7 @@ $
 ~\\
 Ok, no problem, let us penalize large accelerations:\\
 $
-J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2
+J(\unknown{\vec{v}}, \unknown{\vec{u}}) := \sum\limits_{i=0}^{n-1} \unknown{u_i}^2
 $
 \end{minipage}
 \qquad
@@ -767,10 +784,10 @@ $
 Solve in the least squares sense:\\
 $
 \left \{ \begin{array}{rl}
-u_0     & = 0\\
-u_1     & = 0\\
+\unknown{u_0}     & = 0\\
+\unknown{u_1}     & = 0\\
 \vdots   &    \\
-u_{n-1} & = 0\\
+\unknown{u_{n-1}} & = 0\\
 \end{array} \right.
 $
 \end{minipage}
@@ -784,7 +801,7 @@ Low acceleration, however the transient time becomes unacceptable.
 \begin{minipage}{.4\linewidth}
 Optimize for competing goals:\\
 $
-J(\vec{v},\vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 + \highlight{4}\sum\limits_{i=0}^{n-1} u_i^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}u_j-v_n+v_0\right)^2 + \highlight{4}\sum\limits_{i=0}^{n-1} u_i^2
+J(\unknown{\vec{v}},\unknown{\vec{u}}) := \sum\limits_{i=1}^n (\unknown{v_i}-\known{v_n})^2 + \highlight{4}\sum\limits_{i=0}^{n-1} \unknown{u_i}^2 \pause = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}\unknown{u_j}-\known{v_n}+\known{v_0}\right)^2 + \highlight{4}\sum\limits_{i=0}^{n-1} \unknown{u_i}^2
 $
 \textbf{N.B.} Note the tradeoff \highlight{\text{coefficients}}!
 \end{minipage}
@@ -794,14 +811,14 @@ $
 \scalebox{0.85}{
 $
 \left \{ \begin{array}{ccccl}
-u_0 &       &       &           & = v_n - v_0 \\
-u_0 & + u_1 &       &           & = v_n - v_0 \\
+\unknown{u_0} &       &       &           & = \known{v_n} - \known{v_0} \\
+\unknown{u_0} & + \unknown{u_1} &       &           & = \known{v_n} - \known{v_0} \\
     &       &       & \vdots    &             \\
-u_0 & + u_1 & \dots & + u_{n-1} & = v_n - v_0 \\
-\highlight{2}u_0 &        &       &           & = 0 \\
-     &  \highlight{2}u_1  &       &           & = 0 \\
+\unknown{u_0} & + \unknown{u_1} & \dots & + \unknown{u_{n-1}} & = \known{v_n} - \known{v_0} \\
+\highlight{2}\unknown{u_0} &        &       &           & = 0 \\
+     &  \highlight{2}\unknown{u_1}  &       &           & = 0 \\
      &        &       & \vdots    &     \\
-     &        &       &  \highlight{2}u_{n-1} & = 0 \\
+     &        &       &  \highlight{2}\unknown{u_{n-1}} & = 0 \\
 \end{array} \right.
 $
 }
@@ -814,36 +831,41 @@ Low acceleration, however the transient time becomes unacceptable.
 
 \begin{frame}{Poisson's equation}
 \begin{minipage}{.45\linewidth}
-Problem: find $f(x)$ defined on $x\in[0,2\pi]$ as close as possible to $g(x):=\sin x$, constrained to $f(0)=1$ and $f(2\pi) = 3$.
+Problem: find $\unknown{f(x)}$ defined on $x\in[0,2\pi]$ as close as possible to $g(x):=\sin x$, constrained to $\known{f(0)}=1$ and $\known{f(2\pi)} = 3$.
 
 \vspace{5pt}
 Formulate it as the Poisson's equation with Dirichlet boundary conditions:\\
 $
-\frac{d^2}{dx^2}f  = \frac{d^2}{dx^2} g \quad \text{s.t.~} f(0)=1,~f(2\pi) = 3
+\frac{d^2}{dx^2}\unknown{f}  = \frac{d^2}{dx^2} g \quad \text{s.t.~} \known{f(0)}=1,~\known{f(2\pi)} = 3
 $
 \end{minipage}
-\begin{minipage}{.45\linewidth}
-\quad\includegraphics[width=\linewidth]{../manuscript/img/pie-1d.png}
+\qquad
+\begin{minipage}{.4\linewidth}
+\centerline{\includegraphics[width=\linewidth]{../manuscript/img/pie-1d.png}}
 \end{minipage}
 \pause
-\begin{minipage}{.35\linewidth}
-Least squares formulation:
+\begin{minipage}[t]{.35\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+\textbf{Least squares formulation:}
 $$
-\min\limits_{f} \int_0^{2\pi} \|f' - g'\|^2
+\min\limits_{\unknown{f}} \int_0^{2\pi} \|\unknown{f}' - g'\|^2
 $$
-with $f(0)=1,~f(2\pi) = 3$
+with $\known{f(0)}=1,~\known{f(2\pi)} = 3$
 \end{minipage}
 \pause
-\begin{minipage}{.55\linewidth}
-$
+\qquad
+\begin{minipage}[t]{.55\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+\textbf{Discretization:}
+$$
 \left \{ \begin{array}{ccccl}
-f_1 &       &       &           & =  g_1 - g_0 + f_0  \\
--f_1 & + f_2 &       &           & = g_2 - g_1 \\
+\unknown{f_1} &       &       &           & =  g_1 - g_0 + \known{f_0}  \\
+-\unknown{f_1} & + \unknown{f_2} &       &           & = g_2 - g_1 \\
     &       &       & \vdots    &             \\
-     &        &  -f_{n-3}     &  +f_{n-2}          & = g_{n-2} - g_{n-3} \\
-     &        &       & - f_{n-2} & =  g_{n-1}-g_{n-2} -f_{n-1}
+     &        &  -\unknown{f_{n-3}}     &  +\unknown{f_{n-2}}          & = g_{n-2} - g_{n-3} \\
+     &        &       & - \unknown{f_{n-2}} & =  g_{n-1}-g_{n-2} -\known{f_{n-1}}
 \end{array} \right.
-$
+$$
 \end{minipage}
 \end{frame}
 
@@ -872,28 +894,120 @@ Let $b$ be:\\
 \qquad
 \pause
 \begin{minipage}{.6\linewidth}
-Solve for $f$ who takes its boundary conditions from $a$ and the gradients from $b$:
+Solve for $\unknown{f}$ who takes its boundary conditions from $a$ and the gradients from $b$:
 $$
-\min\limits_{f} \int_\Omega \|\nabla f - \nabla b\|^2 \quad \text{with~} f|_{\partial\Omega} = a|_{\partial\Omega}
+\min\limits_{\unknown{f}} \int_\Omega \|\nabla \unknown{f} - \nabla b\|^2 \quad \text{with~} \unknown{f}|_{\partial\Omega} = a|_{\partial\Omega}
 $$
 \end{minipage}
 \end{frame}
 
 \begin{frame}{Poisson image editing}
 Discretize the problem: having $w \times h$ pixels grayscale images $a$ and $b$,
-we compute a $w \times h$ pixels image $f$, solve in the least squares sense:
+we compute a $w \times h$ pixels image $\unknown{f}$, solve in the least squares sense:
 $$
 \left \{ \begin{array}{rll}
-f_{i+1, j}-f_{i,j} & = b_{i+1, j}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
-f_{i, j+1}-f_{i,j} & = b_{i, j+1}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
-f_{i,j}            & = a_{i,j}            & \forall (i,j) \text{~s.t.~} i=0 \text{~or~} i=w-1 \text{~or~} j=0 \text{~or~} j=h-1
+\unknown{f_{i+1, j}}-\unknown{f_{i,j}} & = b_{i+1, j}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
+\unknown{f_{i, j+1}}-\unknown{f_{i,j}} & = b_{i, j+1}-b_{i,j} & \forall (i,j) \in [0 \dots w-2] \times [0\dots h-2]\\
+\unknown{f_{i,j}}            & = a_{i,j}            & \forall (i,j) \text{~s.t.~} i=0 \text{~or~} i=w-1 \text{~or~} j=0 \text{~or~} j=h-1
 \end{array} \right.
 $$
-\pause
+\only<1>{\textbf{N.B: sparse system solver!}}
+\only<2>{
 \centerline{    \includegraphics[width=.36\linewidth]{../manuscript/img/pie_baseball.png}~\raisebox{6.5\height}{\LARGE{+}}~
     \raisebox{0.65\height}{\includegraphics[width=.12\linewidth]{../manuscript/img/pie_football.png}}~\raisebox{8.5\height}{\LARGE{=}}~
-    \includegraphics[width=.36\linewidth]{../manuscript/img/pie_poisson.png}}
+    \includegraphics[width=.36\linewidth]{../manuscript/img/pie_poisson.png}}}
 \end{frame}
 
+\begin{frame}{Caricature}
+\inputminted[fontsize=\footnotesize,frame=single]{python}{listings/caricature.py}
+\begin{minipage}{.55\linewidth}
+    \includegraphics[height=.39\linewidth]{{../manuscript/img/example_6.3_a}.png}
+\pause
+    \includegraphics[height=.39\linewidth]{{../manuscript/img/example_6.3_b}.png}
+\pause
+    \includegraphics[height=.39\linewidth]{{../manuscript/img/example_6.3_d}.png}
+\end{minipage}
+\begin{minipage}{.44\linewidth}
+Almost, but no :(
+\pause
+~\\
+
+\textbf{Least squares equivalent:}\\
+$\min \sum\limits_{\forall \text{~edge~} (i,j)} \left(\unknown{x'_j} - \unknown{x'_i} -  c\cdot\left(x_j - x_i\right)  \right)^2$\\
+$x_i$ are the input coordinates and $\unknown{x_i'}$ are the unknowns (separable in x and y)
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Caricature}
+A quick fix:\\
+$\min \sum\limits_{\forall \text{~edge~} (i,j)} \left(\unknown{x'_j} - \unknown{x'_i} -  c_0\cdot\left(x_j - x_i\right)  \right)^2 \pause \highlight{ + \sum\limits_{\forall \text{~vertex~} i} c_1^2 \left( \unknown{x'_i} - x_i \right)^2}$
+\only<3>{
+$$
+\left \{ \begin{array}{ccccl}
+-\unknown{x'_0} & + \unknown{x'_1}      &       &               & =  c_0\cdot \left( x_1 - x_0\right)  \\
+     & - \unknown{x'_1}      & +\unknown{x'_2}      &           & =  c_0 \cdot \left(x_2 - x_1\right)  \\
+    &       &       & \vdots    &             \\
+    &            & \unknown{x'_{n-2}}   &    +\unknown{x'_{n-1}}       & =  c_0 \cdot \left(x_{n-2} - x_{n-1}\right)  \\
+\unknown{x'_0} &            &    &    -\unknown{x'_{n-1}}       & =  c_0 \cdot \left(x_{n-1} - x_0\right)  \\
+c_1\cdot \unknown{x'_0} &            &       &               & =  c_1\cdot x_0  \\
+& c_1\cdot \unknown{x'_1}            &       &               & =  c_1\cdot x_1  \\
+    &       &       & \vdots    &             \\
+&             &       &    c_1\cdot \unknown{x'_{n-1}}           & =  c_1\cdot x_{n-1}  \\
+\end{array} \right.
+$$
+}
+\begin{center}
+\only<4>{\includegraphics[width=.33\linewidth]{{../manuscript/img/example_6.3_e}.png}}
+\only<5>{\includegraphics[width=.5\linewidth]{../manuscript/img/caricature.jpg} \\ And it works out of the box for 3d surfaces as well!}
+\end{center}
+\end{frame}
+
+\begin{frame}{Cubify it!}
+\begin{minipage}[t]{.4\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+$\vec{a}_{ijk} := \argmax\limits_{\vec{a}\in \{(1,0,0), (0,1,0), (0,0,1)\}} \left|\vec{a} \cdot \vec{N}_{ijk}\right|$
+
+\includegraphics[width=\linewidth]{../manuscript/img/cubify-flagging.jpg}
+\pause
+\only<3>{
+\centering
+\includegraphics[width=.5\linewidth]{../manuscript/img/cubify-proj.pdf}
+\\
+$\text{proj}_{\vec{a}} \vec{v} := \vec{v} - \frac{\vec{v}\cdot\vec{v}}{\vec{a}\cdot\vec{a}}\vec{a}$
+}
+\end{minipage}
+\quad
+\begin{minipage}[t]{.5\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+Let $\vec{e}_{ij}$ be the input geometry, \\ and $\unknown{\vec{e'}_{ij}}$ the unknowns.
+
+\only<2>{
+\begin{block}{Quick test}
+What would be the result? \\
+$\min \sum\limits_{\forall \text{~edge~} ij}\left\|\unknown{\vec{e'}_{ij}} - \vec{e}_{ij}\right\|^2$
+\end{block}
+}
+\pause
+$
+\arraycolsep=0pt\def\arraystretch{2.2}
+\begin{array}{rll}
+\min~~ &\multicolumn{2}{l}{\highlight{c_0}\cdot\sum\limits_{\forall \text{~edge~} ij}\left\|\unknown{\vec{e'}_{ij}} - \vec{e}_{ij}\right\|^2 +}\\
+&\highlight{c_1}\cdot \sum\limits_{\forall \text{~triangle~} ijk}\biggl(& \left\|\unknown{\vec{e'}_{ij}} -  \text{proj}_{\vec{a}_{ijk}}  \vec{e}_{ij} \right\|^2 +\\
+&&\left\|\unknown{\vec{e'}_{jk}} - \text{proj}_{\vec{a}_{ijk}}  \vec{e}_{jk} \right\|^2 +\\
+&&\left\|\unknown{\vec{e'}_{ki}} - \text{proj}_{\vec{a}_{ijk}}  \vec{e}_{ki} \right\|^2\biggr)
+\end{array}
+$
+
+~\\
+
+\textbf{N.B:} still a separable problem
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Mix the coordinates: least squares conformal maps}
+\begin{minipage}{.3\linewidth}
+\includegraphics[width=\linewidth]{../manuscript/img/peirce-conformal-map.png}
+\end{minipage}
+\end{frame}
 \end{document}
 
