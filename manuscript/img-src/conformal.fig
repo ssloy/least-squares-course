@@ -1,0 +1,18 @@
+#FIG 3.2  Produced by xfig version 3.2.7a
+Landscape
+Center
+Metric
+A4
+100.00
+Single
+-2
+1200 2
+2 5 0 1 0 -1 50 -1 -1 0.000 0 0 -1 0 0 5
+	0 /home/ssloy/+/least-squares-course/manuscript/img/peirce-conformal-map.png
+	 0 0 1800 0 1800 1800 0 1800 0 0
+2 1 0 2 0 7 50 -1 -1 0.000 0 0 -1 1 1 3
+	2 1 1.00 60.00 120.00
+	2 1 1.00 60.00 120.00
+	 -90 1125 -90 1890 675 1890
+4 0 0 50 -1 0 16 0.0000 6 135 270 -270 1260 $v$\001
+4 0 0 50 -1 0 16 0.0000 6 135 270 540 2070 $u$\001
