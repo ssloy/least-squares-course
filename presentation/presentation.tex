@@ -735,7 +735,7 @@ $$
 \pause
 So, we need to find $\{\unknown{u_i}\}_{i=0}^{n-1}$ that optimizes some quality criterion $J(\unknown{\vec{v}}, \unknown{\vec{u}})$:
 $$
-\min J(\unknown{\vec{v}},\unknown{\vec{u}}) \quad s.t.\quad  \unknown{v_{i+1}} = \unknown{v_i} + \unknown{u_i} = \known{v_0} + \sum\limits_{j=0}^{i-1}\unknown{u_j} \quad \forall i \in 0..n-1
+\argmin J(\unknown{\vec{v}},\unknown{\vec{u}}) \quad s.t.\quad  \unknown{v_{i+1}} = \unknown{v_i} + \unknown{u_i} = \known{v_0} + \sum\limits_{j=0}^{i-1}\unknown{u_j} \quad \forall i \in 0..n-1
 $$
 
 \pause
@@ -848,7 +848,7 @@ $
 \strut\vspace*{-\baselineskip}\newline
 \textbf{Least squares formulation:}
 $$
-\min\limits_{\unknown{f}} \int_0^{2\pi} \|\unknown{f}' - g'\|^2
+\argmin\limits_{\unknown{f}} \int_0^{2\pi} \|\unknown{f}' - g'\|^2
 $$
 with $\known{f(0)}=1,~\known{f(2\pi)} = 3$
 \end{minipage}
@@ -896,7 +896,7 @@ Let $b$ be:\\
 \begin{minipage}{.6\linewidth}
 Solve for $\unknown{f}$ who takes its boundary conditions from $a$ and the gradients from $b$:
 $$
-\min\limits_{\unknown{f}} \int_\Omega \|\nabla \unknown{f} - \nabla b\|^2 \quad \text{with~} \unknown{f}|_{\partial\Omega} = a|_{\partial\Omega}
+\argmin\limits_{\unknown{f}} \int_\Omega \|\nabla \unknown{f} - \nabla b\|^2 \quad \text{with~} \unknown{f}|_{\partial\Omega} = a|_{\partial\Omega}
 $$
 \end{minipage}
 \end{frame}
@@ -933,14 +933,14 @@ Almost, but no :(
 ~\\
 
 \textbf{Least squares equivalent:}\\
-$\min \sum\limits_{\forall \text{~edge~} (i,j)} \left(\unknown{x'_j} - \unknown{x'_i} -  c\cdot\left(x_j - x_i\right)  \right)^2$\\
+$\argmin\limits_{\{\unknown{x'_i}\}_{i=0}^{n-1}} \sum\limits_{\forall \text{~edge~} (i,j)} \left(\unknown{x'_j} - \unknown{x'_i} -  c\cdot\left(x_j - x_i\right)  \right)^2$\\
 $x_i$ are the input coordinates and $\unknown{x_i'}$ are the unknowns (separable in x and y)
 \end{minipage}
 \end{frame}
 
 \begin{frame}{Caricature}
 A quick fix:\\
-$\min \sum\limits_{\forall \text{~edge~} (i,j)} \left(\unknown{x'_j} - \unknown{x'_i} -  c_0\cdot\left(x_j - x_i\right)  \right)^2 \pause \highlight{ + \sum\limits_{\forall \text{~vertex~} i} c_1^2 \left( \unknown{x'_i} - x_i \right)^2}$
+$\argmin\limits_{\{\unknown{x'_i}\}_{i=0}^{n-1}} ~~\sum\limits_{\forall \text{~edge~} (i,j)} \left(\unknown{x'_j} - \unknown{x'_i} -  c_0\cdot\left(x_j - x_i\right)  \right)^2 \pause \highlight{ + \sum\limits_{\forall \text{~vertex~} i} c_1^2 \left( \unknown{x'_i} - x_i \right)^2}$
 \only<3>{
 $$
 \left \{ \begin{array}{ccccl}
@@ -979,22 +979,22 @@ $\text{proj}_{\vec{a}} \vec{v} := \vec{v} - \frac{\vec{v}\cdot\vec{v}}{\vec{a}\c
 \quad
 \begin{minipage}[t]{.5\linewidth}
 \strut\vspace*{-\baselineskip}\newline
-Let $\vec{e}_{ij}$ be the input geometry, \\ and $\unknown{\vec{e'}_{ij}}$ the unknowns.
+Let $\vec{e}_{ij}:=\vec{x}_j - \vec{x}_i$ be the input geometry, \\ and $\unknown{\vec{e}_{ij}'}:=\unknown{\vec{x}_j'} - \unknown{\vec{x}_i'}$ the unknowns.
 
 \only<2>{
 \begin{block}{Quick test}
 What would be the result? \\
-$\min \sum\limits_{\forall \text{~edge~} ij}\left\|\unknown{\vec{e'}_{ij}} - \vec{e}_{ij}\right\|^2$
+$\argmin\limits_{\{\unknown{\vec{x}'_i}\}_{i=0}^{n-1}} \sum\limits_{\forall \text{~edge~} ij}\left\|\unknown{\vec{e}_{ij}'} - \vec{e}_{ij}\right\|^2$
 \end{block}
 }
 \pause
 $
 \arraycolsep=0pt\def\arraystretch{2.2}
 \begin{array}{rll}
-\min~~ &\multicolumn{2}{l}{\highlight{c_0}\cdot\sum\limits_{\forall \text{~edge~} ij}\left\|\unknown{\vec{e'}_{ij}} - \vec{e}_{ij}\right\|^2 +}\\
-&\highlight{c_1}\cdot \sum\limits_{\forall \text{~triangle~} ijk}\biggl(& \left\|\unknown{\vec{e'}_{ij}} -  \text{proj}_{\vec{a}_{ijk}}  \vec{e}_{ij} \right\|^2 +\\
-&&\left\|\unknown{\vec{e'}_{jk}} - \text{proj}_{\vec{a}_{ijk}}  \vec{e}_{jk} \right\|^2 +\\
-&&\left\|\unknown{\vec{e'}_{ki}} - \text{proj}_{\vec{a}_{ijk}}  \vec{e}_{ki} \right\|^2\biggr)
+\argmin\limits_{\{\unknown{\vec{x}'_i}\}_{i=0}^{n-1}}~~ &\multicolumn{2}{l}{\highlight{c_0}\cdot\sum\limits_{\forall \text{~edge~} ij}\left\|\unknown{\vec{e}_{ij}'} - \vec{e}_{ij}\right\|^2 +}\\
+&\highlight{c_1}\cdot \sum\limits_{\forall \text{~triangle~} ijk}\biggl(& \left\|\unknown{\vec{e}_{ij}'} -  \text{proj}_{\vec{a}_{ijk}}  \vec{e}_{ij} \right\|^2 +\\
+&&\left\|\unknown{\vec{e}_{jk}'} - \text{proj}_{\vec{a}_{ijk}}  \vec{e}_{jk} \right\|^2 +\\
+&&\left\|\unknown{\vec{e}_{ki}'} - \text{proj}_{\vec{a}_{ijk}}  \vec{e}_{ki} \right\|^2\biggr)
 \end{array}
 $
 
@@ -1003,6 +1003,60 @@ $
 \textbf{N.B:} still a separable problem
 \end{minipage}
 \end{frame}
+
+
+\begin{frame}{As-rigid-as-possible deformation}
+\alt<1-2>{
+Problem: compute a deformation of a mesh with several constrained vertex positions.
+\centerline{ \includegraphics[width=.6\linewidth]{../manuscript/img/ARAP.jpg}}
+}{}
+\pause
+
+Let $\vec{e}_{ij}:=\vec{x}_j - \vec{x}_i$ be the input geometry, and $\unknown{\vec{e}_{ij}'}:=\unknown{\vec{x}_j'} - \unknown{\vec{x}_i'}$ the unknowns.\\
+Choose a subset of vertices $\mathcal I\subset [0\dots n-1]$, to have final position $\{\vec{p}_k\}_{k\in\mathcal I}$
+\pause
+\begin{block}{Naive solution}
+$\argmin\limits_{\{\unknown{\vec{x}'_i}\}_{i=0}^{n-1}} ~\sum\limits_{\forall \text{~edge~} ij}\left\|\unknown{\vec{e}_{ij}'} - \vec{e}_{ij}\right\|^2$
+subject to the constraints~ $\unknown{\vec{x}_k'} = p_k ~~ \forall k\in\mathcal I$
+\end{block}
+
+\pause
+\textbf{Problem:} huge stretching near the constraints
+\centerline{\includegraphics[width=0.45\linewidth]{../manuscript/img/arap-lap-a.jpg}}
+
+\end{frame}
+
+\begin{frame}{As-rigid-as-possible deformation}
+\begin{block}{Penalize stretching: make the deformation be a rotation locally}
+Introduce new variables: a rotation matrix $\unknown{R_i}$ per vertex
+
+$\argmin\limits_{\{\unknown{\vec{x}'_i}, \unknown{R_i}\}_{i=0}^{n-1}} ~\sum\limits_{\forall \text{~edge~} ij}\left\|\unknown{\vec{e}_{ij}'} - \unknown{R_i}\times \vec{e}_{ij}\right\|^2$
+\end{block}
+\pause
+
+\alt<2-5>{
+\textbf{N.B:} it is a non-linear problem!
+
+~\\
+
+\pause
+Solve alternatively for the vertex positions $\{\unknown{\vec{x}'_i}\}_{i=0}^{n-1}$ and rotations $\{\unknown{R_i}\}_{i=0}^{n-1}$:
+\pause
+\begin{itemize}
+\item Solving for $\{\unknown{\vec{x}'_i}\}_{i=0}^{n-1}$ having $\{\unknown{R_i}\}_{i=0}^{n-1}$ fixed is a \textbf{separable} linear problem:\\
+ 3 conjugate gradients calls
+\pause
+\item Solving for $\{\unknown{R_i}\}_{i=0}^{n-1}$ is the \textit{orthogonal Procrustes problem} (closed form solution):
+let $U_i\Sigma_i V_i^\top$ be the s.v.d. of the $3\times 3$ matrix $\sum\limits_{j \text{~neighbor of } i} \unknown{\vec{e}'_{ij}} \vec{e}_{ij}^\top$,
+then $R_i\leftarrow U_i V_i^\top$
+\end{itemize}
+\pause
+}{
+\centerline{\includegraphics[width=0.45\linewidth]{../manuscript/img/arap-lap-a.jpg} \includegraphics[width=0.45\linewidth]{../manuscript/img/arap-lap-b.jpg}}
+}
+\end{frame}
+
+
 
 \begin{frame}{Mix the coordinates: least squares conformal maps}
 \includegraphics[width=\linewidth]{../manuscript/img/tex-mapping.pdf}
@@ -1013,7 +1067,7 @@ How to create such a map?
 
 \includegraphics[width=.1\linewidth]{../manuscript/img/idea.png}
 
-Let us try to compute a conformal map!
+Let us compute a conformal map!
 \end{center}
 \end{frame}
 
@@ -1023,7 +1077,8 @@ Let us try to compute a conformal map!
 Maps that preserve angles (but not distances or areas):
 
 \includegraphics[width=.8\linewidth]{../manuscript/img/conformal.pdf}
-Cauchy-Riemann equations:\\
+\pause
+Cauchy--Riemann condition:\\
 $
 \arraycolsep=0pt
  \begin{array}{rcl}
@@ -1032,7 +1087,56 @@ $
 \end{array}
 $
 \end{minipage}
-\includegraphics[width=.5\linewidth]{../manuscript/img/gradient-bg.png}
+\pause
+\quad
+\begin{minipage}{.6\linewidth}
+\begin{minipage}{.4\linewidth}
+\includegraphics[width=\linewidth]{../manuscript/img/gradient-bg.png}
+\end{minipage}
+\begin{minipage}{.58\linewidth}
+Sample tex coords at vertices: $(\unknown{u_i}, \unknown{v_i})$,
+interpolate linearly inside triangles.\\
+$\Rightarrow$
+The gradient is \textbf{constant} across each triangle
+\end{minipage}
+
+\pause
+\vspace{10pt}
+Very simple formula for a gradient over a triangle:\\
+\centerline{$\vec{N}_{ijk} \times (\nabla \unknown{u})_{ijk} = -\frac{1}{2 A_{ijk}} (\unknown{u_i} \vec{e}_{jk} + \unknown{u_j} \vec{e}_{ki} + \unknown{u_k} \vec{e}_{ij})$}
+
+\pause
+
+\vspace{10pt}
+Sum failure of Cauchy--Riemann condition to hold:\\
+\centerline{$
+\argmin\limits_{\unknown{u}, \unknown{v}} \sum\limits_{\forall \text{~triangle~} ijk} A_{ijk} \biggl( 
+(\nabla \unknown{u})_{ijk} - \vec{N}_{ijk} \times (\nabla \unknown{v})_{ijk}
+\biggr)^2
+$}
+
+\vspace{10pt}
+\textbf{N.B:} Beware of the zero solution!
+\end{minipage}
 \end{frame}
+
+\begin{frame}{Mix the coordinates: least squares conformal maps}
+\vspace{5pt}
+Quick hack: pin two arbitrary vertices.
+
+~\\
+
+\centerline{
+    \includegraphics[width=.2\linewidth]{../manuscript/img/lscm-head-mesh.jpg}
+    \quad
+    \includegraphics[width=.3\linewidth]{../manuscript/img/lscm-head-uv.jpg}
+    \quad
+    \includegraphics[width=.2\linewidth]{../manuscript/img/lscm-head-textured.jpg}
+}
+\end{frame}
+
+
+
+
 \end{document}
 
