@@ -858,6 +858,22 @@ $
 \only<5>{\centerline{\includegraphics[width=.55\linewidth]{{../manuscript/img/example_6.1_c}.png}}}
 \end{frame}
 
+\begin{frame}{Linear-quadratic regulator}
+\vspace{10ex}
+\begin{block}{The takeaway message}
+For the same problem, the same choice of variables, tweaking the objective function produces very different results. Use it!
+\end{block}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
 \begin{frame}{Poisson's equation}
 \begin{minipage}{.45\linewidth}
 Problem: find $\unknown{f(x)}$ defined on $x\in[0,2\pi]$ as close as possible to $g(x):=\sin x$, constrained to $\known{f(0)}=1$ and $\known{f(2\pi)} = 3$.
@@ -967,6 +983,19 @@ $$
     \includegraphics[width=.36\linewidth]{../manuscript/img/pie_poisson.png}}}
 \end{frame}
 
+
+
+\begin{frame}{Poisson's equation}
+\vspace{10ex}
+\begin{block}{The takeaway message}
+Poisson's problem is one of the most used tools in geometry processing.\\
+Know your friends!
+\end{block}
+\end{frame}
+
+
+
+
 \begin{frame}{Caricature}
 \inputminted[fontsize=\footnotesize,frame=single]{python}{listings/caricature.py}
 \begin{minipage}{.55\linewidth}
@@ -1008,8 +1037,17 @@ $$
 \begin{center}
 \only<4>{\includegraphics[width=.33\linewidth]{{../manuscript/img/example_6.3_e}.png}}
 \only<5>{\includegraphics[width=.5\linewidth]{../manuscript/img/caricature.jpg} \\ And it works out of the box for 3d surfaces as well!}
+\only<6>{
+\vspace{3ex}
+\begin{block}{The takeaway message}
+Reformulating as a least squares problem allows for much easier tweaking.
+\end{block}
+}
 \end{center}
 \end{frame}
+
+
+
 
 \begin{frame}{Cubify it!}
 \begin{minipage}[t]{.4\linewidth}
@@ -1023,6 +1061,12 @@ $\vec{a}_{ijk} := \argmax\limits_{\vec{a}\in \{(1,0,0), (0,1,0), (0,0,1)\}} \lef
 \includegraphics[width=.5\linewidth]{../manuscript/img/cubify-proj.pdf}
 \\
 $\text{proj}_{\vec{a}} \vec{v} := \vec{v} - \frac{\vec{v}\cdot\vec{v}}{\vec{a}\cdot\vec{a}}\vec{a}$
+}
+\only<4>{
+\vspace{-2ex}
+\begin{block}{The takeaway message}
+And again, the same variables,\\ but different tweaking\\ $\Rightarrow$ completely different results.
+\end{block}
 }
 \end{minipage}
 \quad
@@ -1051,7 +1095,13 @@ $
 
 \textbf{N.B:} still a separable problem
 \end{minipage}
+\pause
 \end{frame}
+
+
+
+
+
 
 
 \begin{frame}{As-rigid-as-possible deformation}
@@ -1101,7 +1151,13 @@ then $\unknown{R_i}\leftarrow U_i V_i^\top$
 \end{itemize}
 \pause
 }{
-\centerline{\includegraphics[width=0.45\linewidth]{../manuscript/img/arap-lap-a.jpg} \includegraphics[width=0.45\linewidth]{../manuscript/img/arap-lap-b.jpg}}
+\only<6>{\centerline{\includegraphics[width=0.45\linewidth]{../manuscript/img/arap-lap-a.jpg} \includegraphics[width=0.45\linewidth]{../manuscript/img/arap-lap-b.jpg}}}
+\only<7>{
+\vspace{4ex}
+\begin{block}{The takeaway message}
+Many nonlinear problems can be solved as a series of linear ones.
+\end{block}
+}
 }
 \end{frame}
 
@@ -1182,6 +1238,178 @@ Quick hack: pin two arbitrary vertices.
     \quad
     \includegraphics[width=.2\linewidth]{../manuscript/img/lscm-head-textured.jpg}
 }
+\end{frame}
+
+
+
+\section{From least squares to neural networks}
+
+\begin{frame}{Binary classification: a naive approach}
+Learning database: $n$ real numbers and the corresponding colors (red and green).\\
+\textbf{Problem:} build a classifying function $\mathbb R\rightarrow \{\text{red}, \text{green}\}$.
+
+\pause
+\centerline{\includegraphics[width=.5\linewidth]{../manuscript/img/binary-classification-problem.png}}
+\pause
+\includegraphics[width=.04\linewidth]{../manuscript/img/idea.png}
+%\quad\raisebox{.5\height}{ 
+Encode red as 0 and green as 1, compute the regression line over $\{(x_i, y_i)\}_{i=1}^n$,
+$x_i\in\mathbb R$ and $y_i\in \{0,1\}$. The decision rule: if $y(x)>1/2$ then $x$ is green, otherwise it is red.
+%}
+\alt<3>{
+\centerline{\includegraphics[width=.5\linewidth]{../manuscript/img/linear-1d-a.png}}
+\pause
+}{
+\centerline{    \includegraphics[width=\linewidth]{../manuscript/img/linear-1d-b.png}}
+}
+\end{frame}
+
+\begin{frame}{Logistic growth}
+\textbf{Limited ressources model:} a colony of the bacteria \textit{B. dendroides} is growing in a Petri dish.
+The colony's area $a$ can be modeled as a function of time $t$:
+$$a(t) = \frac{c}{1+e^{-wt - w_0}},$$
+where $c$ is the carrying capacity, $w_0$ is the initial population size and $w$ is the growth rate.
+
+\pause
+\vspace{1ex}
+\textbf{Problem:} recover the parameters $\unknown{c},\unknown{w_0},\unknown{w}$ of the model from an experiment:
+\begin{minipage}{.45\linewidth}
+\centerline{\includegraphics[width=\linewidth]{{../manuscript/img/example_8.1_a}.png}}
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+A series of $n$ measurements $\{(a_i, t_i)\}_{i=1}^n$.
+
+\pause
+$$
+\argmin\limits_{\unknown{c},\unknown{w_0},\unknown{w}} \sum\limits_{i=1}^n (a(t_i) - a_i)^2
+$$
+
+\qquad\textbf{N.B:} nonlinear problem!
+\end{minipage}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Solve a nonlinear problem}
+\begin{minipage}{.4\linewidth}
+\includegraphics[width=10pt]{../manuscript/img/idea.png} \textbf{Transform the model!}
+
+\vspace{1ex}
+$\begin{aligned}
+a(t) &= \frac{c}{1+e^{-wt - w_0}} \\ \pause
+\frac{c}{a(t)-1} & = e^{-wt-w_0}  \\ \pause
+\log\left(\frac{c-a(t)}{a(t)}\right) & = -wt-w_0
+\end{aligned}
+$
+\end{minipage}
+\qquad
+\begin{minipage}{.5\linewidth}
+\only<6>{\centerline{\includegraphics[width=.9\linewidth]{{../manuscript/img/example_8.1_b}.png}}}
+\end{minipage}
+
+\pause
+\vspace{1ex}
+Ordinary linear regression provided that we have an estimation for $\unknown{c}$.\\
+Ugly hack: $\known{c}:=\max\limits_{i\in 1\dots n} a_i + \varepsilon$
+
+\pause
+$$
+\begin{pmatrix}
+1 & t_1 \\
+1 & t_2 \\
+\vdots & \\
+1 & t_n
+\end{pmatrix}
+\begin{pmatrix}
+\unknown{w_0}\\
+\unknown{w}
+\end{pmatrix}
+=
+\begin{pmatrix}
+\log\frac{a_1}{\known{c} - a_1}\\
+\log\frac{a_2}{\known{c} - a_2}\\
+\vdots \\
+\log\frac{a_n}{\known{c} - a_n}
+\end{pmatrix}
+$$
+\pause
+\end{frame}
+
+
+
+\begin{frame}{Solve a nonlinear problem: linearization}
+Denote by $\vec{r}(\unknown{c},\unknown{w_0},\unknown{w})$ the residual between the input labels and the predictions:\\
+\centerline{$\vec{r}(\unknown{c},\unknown{w_0},\unknown{w}) := (\unknown{a(\known{t_1})}-\known{a_1}, \dots ~\unknown{a(\known{t_n})}-\known{a_n})$}
+
+\pause
+\vspace{1ex}
+\textbf{Our problem:} $\argmin\limits_{\unknown{c},\unknown{w_0},\unknown{w}} \|\vec{r}(\unknown{c},\unknown{w_0},\unknown{w})\|^2$
+\qquad
+\includegraphics[width=10pt]{../manuscript/img/idea.png} \textbf{Iterative optimization!} (Gauß–Newton)
+
+\pause
+\vspace{1ex}
+Denote by $\unknown{\vec{b}}:=(\unknown{c},\unknown{w_0},\unknown{w})$ the vector of unknown parameters.\\
+Start from an initial guess $\vec{b}^{(0)}$, build a sequence of approximations
+$\vec{b}^{(k+1)} = \vec{b}^{(k)} + \unknown{\vec{\Delta}^{(k)}}$
+
+\pause
+\begin{minipage}{.5\linewidth}
+Linearize the function $\vec{r}$ at the point $\vec{b}^{(k)}$:\\
+\centerline{$\vec{r}(\vec{b}) \approx \vec{r}\left(\vec{b}^{(k)} \right) + J\vec{r}\left( \vec{b}^{(k)} \right) \cdot \left(\vec b - \vec{b}^{(k)}\right)$}
+
+\pause
+$\known{\Delta^{(k)}} \leftarrow \argmin\limits_{\unknown{\Delta^{(k)}}} \left\| J\vec{r}\left(\vec{b}^{(k)}\right) \unknown{\Delta^{(k)}} - \vec{r}\left(\vec{b}^{(k)}\right) \right\|^2$
+
+\textbf{Good news:} ordinary linear regression
+\end{minipage}
+\pause
+\begin{minipage}{.45\linewidth}
+~\\
+
+\centerline{\includegraphics[width=\linewidth]{{../manuscript/img/example_8.1_c}.png}}
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Back to the classification: quadratic loss function}
+\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/linear-1d-b.png}}
+
+\pause
+\vspace{1ex}
+\includegraphics[width=10pt]{../manuscript/img/idea.png} \textbf{Fit a sigmoid!} $1/(1+e^{-\unknown{w}x - \unknown{w_0}})$\\
+Leave the same decision rule: $y(x)>1/2$ then $x$ is green, red otherwise.
+
+\pause
+\vspace{1ex}
+Two parameters only, call Gauß–Newton:
+\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/logistic-1d-b.png}}
+
+\textbf{N.B:} attention to overfitting! May need to regularize the objective function.
+\end{frame}
+
+\begin{frame}{Good news, bad news}
+\begin{minipage}[t]{.45\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+\textbf{Good news:}\\ we have just trained a neural network
+
+~\\
+
+\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/neuron.png}}
+\end{minipage}
+\pause
+\qquad
+\begin{minipage}[t]{.45\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+\textbf{Bad news:}\\ the energy is not convex :(
+
+~\\
+\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/ls-classification-energy.jpg}}
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Cross-entropy loss function}
 \end{frame}
 
 
