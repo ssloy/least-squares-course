@@ -37,7 +37,7 @@
 \usepackage{minted}
 
 \definecolor{brickred}{rgb}{.79, 0.25, 0.32}
-\definecolor{grass}{rgb}{.25, 0.79, 0.32}
+\definecolor{grass}{rgb}{.15, 0.60, 0.22}
 
 
 \author{Dmitry Sokolov}
@@ -104,7 +104,7 @@ Would it help us to evaluate $p$?
 \pause
 ~\\
 Fix $n=10$ and $k=7$ in the Bernoulli's formula, leaving $p$ as a free parameter:
-$$\mathcal{L}(p) = C_{10}^7 p^7 (1-p)^3$$
+$$\mathcal{L}(\unknown{p}) = C_{\known{10}}^{\known{7}} \unknown{p}^{\known{7}} (1-\unknown{p})^{\known{3}}$$
 
 \pause
 \begin{center}
@@ -114,11 +114,11 @@ $$\mathcal{L}(p) = C_{10}^7 p^7 (1-p)^3$$
 \end{frame}
 
 \begin{frame}{Coin toss: the maximum likelihood}
-Let us solve for $\argmax\limits_p \mathcal L(p) = \argmax\limits_p \log\mathcal{L}(p)$:
+Let us solve for $\argmax\limits_{\unknown{p}} \mathcal L(\unknown{p}) = \argmax\limits_{\unknown{p}} \log\mathcal{L}(\unknown{p})$:
 \pause
-$$\log \mathcal{L}(p) = \log C_{10}^7 + 7 \log p + 3\log (1-p)$$
+$$\log \mathcal{L}(\unknown{p}) = \log C_{10}^7 + 7 \log \unknown{p} + 3\log (1-\unknown{p})$$
 \pause
-$$\frac{d \log \mathcal{L}}{dp} = \frac{7}{p} - \frac{3}{1-p} = 0$$
+$$\frac{d \log \mathcal{L}}{d\unknown{p}} = \frac{7}{\unknown{p}} - \frac{3}{1-\unknown{p}} = 0$$
 
 \pause
 That is, the maximum likelihood (about 27\%) is reached at the point $p=7/10$.
@@ -145,7 +145,7 @@ Suppose that each measurement $U_j$ is i.i.d. and subject to a Gaussian noise, e
 %The noise is characterized by two parameters --- the center of the Gaussian bell and its ``width''.
 The probability density can be expressed as follows:
 $$
-p(U_j) = \frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{(U_j-U)^2}{2\sigma^2}\right),
+p(U_j) = \frac{1}{\sqrt{2\pi}\unknown{\sigma}} \exp\left(-\frac{(\known{U_j}-\unknown{U})^2}{2\unknown{\sigma}^2}\right),
 $$
 where $U$ is the (unknown) value and $\sigma$ is the noise amplitude (can be unknown).
 \end{frame}
@@ -153,23 +153,23 @@ where $U$ is the (unknown) value and $\sigma$ is the noise amplitude (can be unk
 \begin{frame}{Least squares through maximum likelihood}
 $
 \begin{aligned}
-\log \mathcal{L}(U,\sigma) & = \log \left(\prod\limits_{j=1}^N  \frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{(U_j-U)^2}{2\sigma^2}\right)\right) \\ \pause
-& = \sum\limits_{j=1}^N \log \left(\frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{(U_j-U)^2}{2\sigma^2}\right)\right) =  \pause
-  \sum\limits_{j=1}^N \left(\log \left(\frac{1}{\sqrt{2\pi}\sigma}\right) -\frac{(U_j-U)^2}{2\sigma^2}\right)  \\ \pause
-& = \underbrace{-N \left(\log\sqrt{2\pi} + \log\sigma\right)}_{\text{does not depend on } \{U_j\}_{j=1}^{N}} - \frac{1}{2\sigma^2} \sum\limits_{j=1}^N (U_j-U)^2
+\log \mathcal{L}(\unknown{U},\unknown{\sigma}) & = \log \left(\prod\limits_{j=1}^N  \frac{1}{\sqrt{2\pi}\unknown{\sigma}} \exp\left(-\frac{(\known{U_j}-\unknown{U})^2}{2\unknown{\sigma}^2}\right)\right) \\ \pause
+& = \sum\limits_{j=1}^N \log \left(\frac{1}{\sqrt{2\pi}\unknown{\sigma}} \exp\left(-\frac{(\known{U_j}-\unknown{U})^2}{2\unknown{\sigma}^2}\right)\right) =  \pause
+  \sum\limits_{j=1}^N \left(\log \left(\frac{1}{\sqrt{2\pi}\unknown{\sigma}}\right) -\frac{(\known{U_j}-\unknown{U})^2}{2\unknown{\sigma}^2}\right)  \\ \pause
+& = \underbrace{-N \left(\log\sqrt{2\pi} + \log\unknown{\sigma}\right)}_{\text{does not depend on } \{U_j\}_{j=1}^{N}} - \frac{1}{2\unknown{\sigma}^2} \sum\limits_{j=1}^N (\known{U_j}-\unknown{U})^2
 \end{aligned}
 $
 
 \begin{block}{Under Gaussian noise}
 \centerline{$
-\argmax\limits_{U} \log \mathcal{L} = \argmin\limits_U \sum\limits_{j=1}^N (U_j-U)^2
+\argmax\limits_{\unknown{U}} \log \mathcal{L} = \argmin\limits_{\unknown{U}} \sum\limits_{j=1}^N (\known{U_j}-\unknown{U})^2
 $}
 \end{block}
 \end{frame}
 
 \begin{frame}{Least squares through maximum likelihood}
 $
-\frac{\partial\log\mathcal{L}}{\partial U}    = - \frac{1}{\sigma^2}\sum\limits_{j=1}^N (U_j-U) = 0 
+\frac{\partial\log\mathcal{L}}{\partial \unknown{U}}    = - \frac{1}{\unknown{\sigma}^2}\sum\limits_{j=1}^N (\known{U_j}-\unknown{U}) = 0 
 $\\ \pause
 The most plausible estimation of the unknown value $U$ is the simple average of all measurements:
 $$
@@ -179,7 +179,7 @@ $$
 \pause And the most plausible estimation of $\sigma$ turns out to be the standard deviation:
 \begin{minipage}{.45\linewidth}
 $$
-\frac{\partial\log\mathcal{L}}{\partial\sigma} =  -\frac{N}{\sigma} + \frac{1}{\sigma^3}\sum\limits_{j=1}^N (U_j-U)^2 = 0
+\frac{\partial\log\mathcal{L}}{\partial\unknown{\sigma}} =  -\frac{N}{\unknown{\sigma}} + \frac{1}{\unknown{\sigma}^3}\sum\limits_{j=1}^N (\known{U_j}-\unknown{U})^2 = 0
 $$
 \end{minipage} \pause
 \begin{minipage}{.45\linewidth}
@@ -198,22 +198,22 @@ and we want to fit a straight line onto it.
 
 \pause
 \begin{align*}
-\log \mathcal{L}(a, b,\sigma) & = \log \left(\prod\limits_{j=1}^N  \frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{(y_j - a x_j - b)^2}{2\sigma^2}\right)\right) =\\
-& = \underbrace{-N \left(\log\sqrt{2\pi} + \log\sigma\right)}_{\text{does not depend on } a, b} - \frac{1}{2\sigma^2} \underbrace{\sum\limits_{j=1}^N (y_j- a x_j - b)^2}_{:=S(a,b)}
+\log \mathcal{L}(\unknown{a}, \unknown{b},\unknown{\sigma}) & = \log \left(\prod\limits_{j=1}^N  \frac{1}{\sqrt{2\pi}\unknown{\sigma}} \exp\left(-\frac{(\known{y_j} - \unknown{a}\known{ x_j} - \unknown{b})^2}{2\sigma^2}\right)\right) =\\
+& = \underbrace{-N \left(\log\sqrt{2\pi} + \log\unknown{\sigma}\right)}_{\text{does not depend on } \unknown{a}, \unknown{b}} - \frac{1}{2\unknown{\sigma}^2} \underbrace{\sum\limits_{j=1}^N (\known{y_j}- \unknown{a}\known{ x_j} - \unknown{b})^2}_{:=S(\unknown{a},\unknown{b})}
 \end{align*}
 
 \pause
 As before,
-$\argmax\limits_{a,b}\log\mathcal L = \argmin\limits_{a,b} S(a, b)$.
+$\argmax\limits_{\unknown{a},\unknown{b}}\log\mathcal L = \argmin\limits_{\unknown{a},\unknown{b}} S(\unknown{a}, \unknown{b})$.
 \end{frame}
 
 \begin{frame}{Linear regression}
 \begin{minipage}{.45\linewidth}
-$S(a,b) := \sum\limits_{j=1}^N (y_j- a x_j - b)^2$
+$S(\unknown{a},\unknown{b}) := \sum\limits_{j=1}^N (\known{y_j}- \unknown{a}\known{ x_j} - \unknown{b})^2$
 \pause
 \begin{align*}
-\frac{\partial S}{\partial a} &= \sum\limits_{j=1}^N 2 x_j (a x_j + b - y_j) = 0 \\
-\frac{\partial S}{\partial b} &= \sum\limits_{j=1}^N 2 (a x_j + b - y_j) = 0
+\frac{\partial S}{\partial\unknown{a}} &= \sum\limits_{j=1}^N 2 \known{x_j} (\unknown{a} \known{x_j} + \unknown{b} - \known{y_j}) = 0 \\
+\frac{\partial S}{\partial\unknown{b}} &= \sum\limits_{j=1}^N 2 (\unknown{a}\known{ x_j} + \unknown{b} - \known{y_j}) = 0
 \end{align*}
 \end{minipage}
 \begin{minipage}{.45\linewidth}
@@ -451,14 +451,13 @@ While it is extremely cool, it raises questions:
 %\SectionPage
 
 \begin{frame}[fragile]{Matrices and numbers}
-~\\
 What is a number $a$?
 \begin{minted}[linenos=true]{cpp}
-float a;
+float a = 2.7;
 \end{minted}
 \pause
 
-~\\
+\begin{minipage}{.5\linewidth}
 Is it a function $f(x)=ax : \mathbb R \rightarrow \mathbb R$?
 \pause
 \begin{minted}[linenos=true]{cpp}
@@ -466,10 +465,15 @@ float f(float x) {
     return a*x;
 }
 \end{minted}
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+\includegraphics[width=.35\linewidth]{{../manuscript/img/2_7x}.png}
+\end{minipage}
 \pause
 
 ~\\
 
+\begin{minipage}{.5\linewidth}
 Or is it $f(x)=ax^2 : \mathbb R \rightarrow \mathbb R$?
 \pause
 \begin{minted}[linenos=true]{cpp}
@@ -477,26 +481,37 @@ float f(float x) {
     return x*a*x;
 }
 \end{minted}
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+\includegraphics[width=.35\linewidth]{{../manuscript/img/2_7x2}.png}
+\end{minipage}
 \end{frame}
 
 \begin{frame}[fragile]{Matrices and numbers}
 The same goes for matrices, what is a matrix $A=\begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22}\end{bmatrix}$?
 \pause
 \begin{minted}{cpp}
-float A[m][n];
+float A[2][2] = {{1., .5}, {.5, 1.}};
 \end{minted}
 
 \pause
 ~\\
+\begin{minipage}{.7\linewidth}
 Is it $f(x) = Ax : \mathbb R^2 \rightarrow \mathbb R^2$?
 \begin{minted}[linenos=true]{cpp}
 vector<float> f(vector<float> x) {
-  return vector<float>{a11*x[0] + a12*x[1],  a21*x[0] + a22*x[1]};
+  return vector<float>{a11*x[0] + a12*x[1],
+                       a21*x[0] + a22*x[1]};
 }
 \end{minted}
+\end{minipage}
+\begin{minipage}{.28\linewidth}
+\includegraphics[width=\linewidth]{{../manuscript/img/matrix-linear}.png}
+\end{minipage}
 
 \pause
-~\\
+\begin{minipage}{.7\linewidth}
+\vspace{2ex}
 Or $f(x)= x^\top A x = \sum\limits_i\sum\limits_j a_{ij}x_i x_j  : \mathbb R^2 \rightarrow \mathbb R$?
 \begin{minted}[linenos=true]{cpp}
 float f(vector<float> x) {
@@ -504,6 +519,10 @@ float f(vector<float> x) {
            x[1]*a21*x[0] + x[1]*a22*x[1];
 }
 \end{minted}
+\end{minipage}
+\begin{minipage}{.28\linewidth}
+\centering\includegraphics[width=.7\linewidth]{{../manuscript/img/matrix-quadratic-form}.png}
+\end{minipage}
 \end{frame}
 
 \begin{frame}{What is a positive number?}
@@ -1281,7 +1300,7 @@ A series of $n$ measurements $\{(a_i, t_i)\}_{i=1}^n$.
 
 \pause
 $$
-\argmin\limits_{\unknown{c},\unknown{w_0},\unknown{w}} \sum\limits_{i=1}^n (a(t_i) - a_i)^2
+\argmin\limits_{\unknown{c},\unknown{w_0},\unknown{w}} \sum\limits_{i=1}^n (\unknown{a(\known{t_i})} - \known{a_i})^2
 $$
 
 \qquad\textbf{N.B:} nonlinear problem!
