@@ -59,6 +59,7 @@
 
 \begin{document}
 
+\iffalse 
 %\section{Overview}
 %% Use
 %%
@@ -1428,7 +1429,49 @@ Two parameters only, call Gauß–Newton:
 \end{minipage}
 \end{frame}
 
+\fi
+
 \begin{frame}{Cross-entropy loss function}
+As before, let two possible classes encoded as $y \in \{0,1\}$ and assume
+$$
+p(y=1|x,w) := \frac{1}{1+e^{-w^\top x}},
+$$
+where $w$ is a $(m+1)$-parameter vector and the last element of $x$ is the constant 1.\\
+
+\pause
+Fit the parameters of the sigmoid to match the data.
+Up to this point nothing has changed!
+\pause
+
+\vspace{1ex}
+\begin{block}{The game changer: Bernoulli's scheme}
+$\log \mathcal{L}(w) = \log \prod_{i=1}^n p_i(w)^{y_i}  (1-p_i(w))^{1-y_i}$,
+\quad where $p_i(w):=p(y_i=1|x_i, w)$.
+
+\vspace{1ex}
+
+\textbf{Problem:} $\argmax\limits_{\unknown{w}} \log\mathcal{L}(\unknown{w})$
+\end{block}
+Refer to the course notes for all details of the derivation.
+\end{frame}
+
+
+\begin{frame}{Cross-entropy loss function}
+\textbf{Problem:} $\argmax\limits_{\unknown{w}} \log\mathcal{L}(\unknown{w}) \pause \quad \Leftrightarrow \quad \frac{\partial\log\mathcal L}{\partial \unknown{w}}(\unknown{w}) = \known{X}^\top (\known{y}-\unknown{p}) = 0,$
+where $\known{X}:=\begin{bmatrix}\known{x_1} & \dots & \known{x_n}\end{bmatrix}^\top$, $\known{y}:=\begin{bmatrix}\known{y_1} & \dots & \known{y_n}\end{bmatrix}^\top$ and $\unknown{p}:=\begin{bmatrix}p_1(\unknown{w}) & \dots & p_n(\unknown{w})\end{bmatrix}^\top$.
+
+\pause
+
+\textbf{N.B:} Non-linear problem, but the Hessian matrix $\frac{\partial^2 \log \mathcal L}{\partial \unknown{w} \partial \unknown{w}^\top}$ is definite positive, \\ so the problem is \textbf{convex}!
+
+\begin{minipage}{.45\linewidth}
+\centerline{\includegraphics[width=.7\linewidth]{../manuscript/img/ls-vs-crossentropy-energies2.jpg}}
+\end{minipage}
+\pause
+\begin{minipage}{.45\linewidth}
+\centerline{\includegraphics[width=.7\linewidth]{../manuscript/img/logistic-regression-2d.png}}
+\end{minipage}
+
 \end{frame}
 
 
