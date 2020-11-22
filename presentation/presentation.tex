@@ -59,7 +59,8 @@
 
 \begin{document}
 
-\iffalse 
+%\iffalse 
+
 %\section{Overview}
 %% Use
 %%
@@ -459,10 +460,10 @@ float a = 2.7;
 \pause
 
 \begin{minipage}{.5\linewidth}
-Is it a function $f(x)=ax : \mathbb R \rightarrow \mathbb R$?
+Is it a function $y(x)=ax : \mathbb R \rightarrow \mathbb R$?
 \pause
 \begin{minted}[linenos=true]{cpp}
-float f(float x) {
+float y(float x) {
     return a*x;
 }
 \end{minted}
@@ -475,10 +476,10 @@ float f(float x) {
 ~\\
 
 \begin{minipage}{.5\linewidth}
-Or is it $f(x)=ax^2 : \mathbb R \rightarrow \mathbb R$?
+Or is it $y(x)=ax^2 : \mathbb R \rightarrow \mathbb R$?
 \pause
 \begin{minted}[linenos=true]{cpp}
-float f(float x) {
+float y(float x) {
     return x*a*x;
 }
 \end{minted}
@@ -1416,7 +1417,7 @@ Two parameters only, call Gauß–Newton:
 
 ~\\
 
-\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/neuron.png}}
+\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/neuron.pdf}}
 \end{minipage}
 \pause
 \qquad
@@ -1429,7 +1430,7 @@ Two parameters only, call Gauß–Newton:
 \end{minipage}
 \end{frame}
 
-\fi
+%\fi
 
 \begin{frame}{Cross-entropy loss function}
 As before, let two possible classes encoded as $y \in \{0,1\}$ and assume
@@ -1475,7 +1476,64 @@ where $\known{X}:=\begin{bmatrix}\known{x_1} & \dots & \known{x_n}\end{bmatrix}^
 \end{frame}
 
 
+\begin{frame}{Nonlinear decision boundary: logistic regression}
+\vspace{2ex}
+\begin{minipage}[t]{.45\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+\centering
+%\textbf{Good news:}\\ we have just trained a neural network
+%
+%~\\
+\centerline{\includegraphics[width=.5\linewidth]{../manuscript/img/linearly-separable-dataset.png}}
+Linear decision boundary:
+$$\frac{1}{1+e^{-\unknown{w}^\top x}} = \frac{1}{2}$$
+\end{minipage}
+\pause
+%\qquad
+\begin{minipage}[t]{.45\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+\centering
+\centerline{\includegraphics[width=.5\linewidth]{../manuscript/img/linearly-unseparable-dataset.png}}
+Quadratic decision boundary:
+$$\frac{1}{1+e^{-x^\top \unknown{A} x}} = \frac{1}{2} $$
 
+But where is the fun in that...
+%\textbf{Bad news:}\\ the energy is not convex :(
+%
+%~\\
+%\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/ls-classification-energy.jpg}}
+\end{minipage}
+\end{frame}
+
+
+\begin{frame}{Nonlinear decision boundary: 3 neurons}
+\begin{minipage}[t]{.4\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+Linear decision boundary:\\
+\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/neuron2.pdf}}
+$$
+\argmin\limits_{\unknown{w}} \sum_{i=1}^{n} \left(\sigma\left(\unknown{w}^\top x_i\right) - y_i\right)^2,
+$$
+where $\sigma(x,w) := \frac{1}{1+e^{-w^\top x}}$
+\end{minipage}
+\hspace{.05\linewidth}
+\pause
+\begin{minipage}[t]{.5\linewidth}
+\strut\vspace*{-\baselineskip}\newline
+Nonlinear decision boundary:\\
+\centerline{\includegraphics[width=\linewidth]{../manuscript/img/3neurons.pdf}}
+$$
+\argmin\limits_{\unknown{u}, \unknown{v}, \unknown{w}} \sum_{i=1}^{n} \left(\sigma\left(\unknown{w}^\top \unknown{x'_i}\right) - y_i\right)^2,
+$$
+where $x'_i :=  \begin{pmatrix} \sigma(\unknown{u}^\top x_i) &  \sigma(\unknown{v}^\top x_i) & 1\end{pmatrix}^\top$
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Nonlinear decision boundary: 3 neurons}
+\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/3n.jpg}}
+\pause
+\centerline{\includegraphics[width=.38\linewidth]{../manuscript/img/neural.png}}
+\end{frame}
 
 \end{document}
 
