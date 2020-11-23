@@ -38,6 +38,7 @@
 
 \definecolor{brickred}{rgb}{.79, 0.25, 0.32}
 \definecolor{grass}{rgb}{.15, 0.60, 0.22}
+\definecolor{postit}{rgb}{.35, 0.80, 0.99}
 
 
 \author{Dmitry Sokolov}
@@ -70,6 +71,23 @@
 %\begin{frame}{Table of contents}
 %    \tableofcontents[currentsection]
 %\end{frame}
+
+\begin{frame}{The goal}
+
+This course is intended for students/engineers/researchers who know how to program in the traditional way:
+by breaking down complex tasks into a sequence of elementary operations over data structures.
+
+\vspace{2ex}
+
+\begin{block}{An alternative}
+We can describe what a good result looks like, and let numerical optimization algorithms find it for us.
+\end{block}
+
+\vspace{2ex}
+
+This course does not require an advanced mathematical background: basic calculus knowledge suffices. A solid programming basis would be of a great aid.
+\end{frame}
+
 
 \section{Maximum likelihood through examples}
 \begin{frame}{Coin toss experiment}
@@ -1533,6 +1551,44 @@ where $x'_i :=  \begin{pmatrix} \sigma(\unknown{u}^\top x_i) &  \sigma(\unknown{
 \centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/3n.jpg}}
 \pause
 \centerline{\includegraphics[width=.38\linewidth]{../manuscript/img/neural.png}}
+\end{frame}
+
+\begin{frame}{The takeaway message}
+\vspace{2ex}
+
+Surprisingly, there are two irreconcilable camps: those for whom neural networks are the \textit{answer to everything}, and those who \textit{despise} neural networks.
+
+
+\vspace{2ex}
+I do not advocate for either party, two main points of this chapters are:
+
+\vspace{2ex}
+\begin{itemize}
+\item neural networks are not the only machine learning tool;
+\item there is no clear boundary between least squares methods and neural networks.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Concluding remarks}
+Linear regression is often underestimated being considered only as a sub-domain of statistics, but it is much more than that.
+
+\vspace{2ex}
+
+It offers a different view on programming:
+\begin{itemize}
+\item Traditionally, we break down complex tasks into a sequence of elementary operations that manipulate combinatorial structures (trees, graphs, meshes\dots).
+\item Instead, we can describe what a good result looks like, and let numerical optimization algorithms find it for us.
+\end{itemize}
+
+\vspace{4ex}
+
+
+\setbeamercolor{postit}{fg=black,bg=postit}
+\begin{beamercolorbox}[sep=1em,wd=\linewidth]{postit}
+\centering
+\textbf{For any questions/remarks/corrections you are very welcome to contact me: dmitry.sokolov@univ-lorraine.fr}
+\end{beamercolorbox}
+
 \end{frame}
 
 \end{document}
