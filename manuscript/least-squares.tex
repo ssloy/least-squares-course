@@ -602,12 +602,12 @@ other images show the evolution of the data.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.32\linewidth]{{img/example_3.1_0}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.1_1}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.1_2}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.1_3}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.1_4}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.1_5}.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.1_0.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.1_1.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.1_2.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.1_3.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.1_4.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.1_5.png}
 \caption{Smoothing an array: first 500 iterations of the program from \S~\ref{sec:arraysmooth}.}
     \label{fig:linsys_smooth}
 \end{figure}
@@ -688,12 +688,12 @@ Figure~\ref{fig:arraysmooth_gs} shows the behaviour of this program.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.32\linewidth]{{img/example_3.2_0}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.2_1}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.2_2}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.2_3}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.2_4}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.2_5}.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.2_0.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.2_1.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.2_2.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.2_3.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.2_4.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.2_5.png}
     \caption{Linear function via Gauß-Seidel iteration (\S\ref{sec:gauss-seidel}).}
     \label{fig:arraysmooth_gs}
 \end{figure}
@@ -701,7 +701,7 @@ Figure~\ref{fig:arraysmooth_gs} shows the behaviour of this program.
 \section{Smoothing a 3D surface}
 \label{sec:3dsmooth}
 There is no much fun in studying small 1D arrays, let us play with a triangulated surface! The following listing is a direct equivalent of the previous one:
-\inputminted[frame=single,linenos=true]{cpp}{listings/example_3.3.cpp}
+\inputminted[frame=single,linenos=true]{python}{listings/example_3.3.py}
 All boundary vertices are fixed, and all the interiour vertices are iteratively placed in the barycenter of their immediate neighbors.
 Can you predict the result?
 
@@ -732,9 +732,9 @@ In other words, make a loop from a rigid wire, soak it in a liqud soap, the soap
 Figure~\ref{fig:minsurface} provides an illutration.
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.2\linewidth]{{img/example_3.3_0}.jpg}
-    \includegraphics[width=.2\linewidth]{{img/example_3.3_1}.jpg}
-    \includegraphics[width=.2\linewidth]{{img/example_3.3_2}.jpg}
+    \includegraphics[width=.2\linewidth]{img/example_3.3_0.jpg}
+    \includegraphics[width=.2\linewidth]{img/example_3.3_1.jpg}
+    \includegraphics[width=.2\linewidth]{img/example_3.3_2.jpg}
     \caption{Smoothing a 3D surface (\S\ref{sec:3dsmooth}). \textbf{Left:} the input surface; \textbf{middle:} 10 iterations; \textbf{right:} 1000 iterations.}
     \label{fig:minsurface}
 \end{figure}
@@ -751,12 +751,12 @@ therefore the solution must be a cubic polynomial. Figure~\ref{fig:linsys-cubic}
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.32\linewidth]{{img/example_3.4_0}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.4_1}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.4_2}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.4_3}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.4_4}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_3.4_5}.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.4_0.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.4_1.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.4_2.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.4_3.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.4_4.png}
+    \includegraphics[width=.32\linewidth]{img/example_3.4_5.png}
     \caption{Reconstructing a cubic function (\S\ref{sec:rhs}); the ground truth is shown in green.}
     \label{fig:linsys-cubic}
 \end{figure}
@@ -1602,9 +1602,9 @@ It can be seen that in this case the system reaches the final state in one times
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=.32\linewidth]{{img/example_6.1_a}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_6.1_b}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_6.1_c}.png}
+    \includegraphics[width=.32\linewidth]{img/example_6.1_a.png}
+    \includegraphics[width=.32\linewidth]{img/example_6.1_b.png}
+    \includegraphics[width=.32\linewidth]{img/example_6.1_c.png}
     \caption{1D optimal control problem. \textbf{Left:} lowest settling time goal; \textbf{middle:} lowest control signal goal; \textbf{right:} a trade-off between the control signal amplitude and the settling time.}
     \label{fig:lqr}
 \end{figure}
@@ -1764,9 +1764,9 @@ It would much be better if the result was at the true minimum of our optimizatio
 \begin{figure}[h]
 \begin{minipage}{.66\linewidth}
     \centering
-    \includegraphics[height=.33\linewidth]{{img/example_6.3_a}.png}
-    \includegraphics[height=.33\linewidth]{{img/example_6.3_b}.png}
-    \includegraphics[height=.33\linewidth]{{img/example_6.3_d}.png}
+    \includegraphics[height=.33\linewidth]{img/example_6.3_a.png}
+    \includegraphics[height=.33\linewidth]{img/example_6.3_b.png}
+    \includegraphics[height=.33\linewidth]{img/example_6.3_d.png}
     \begin{flushleft}
     {\hspace{.18\linewidth}\textbf{(a)\hspace{.17\linewidth}(b)\hspace{.30\linewidth}(c)}}
     \end{flushleft}
@@ -1775,7 +1775,7 @@ It would much be better if the result was at the true minimum of our optimizatio
 \end{minipage}
 \qquad
 \begin{minipage}{.25\linewidth}
-    \includegraphics[width=\linewidth]{{img/example_6.3_e}.png}
+    \includegraphics[width=\linewidth]{img/example_6.3_e.png}
     \caption{A trade-off between the desirable curvature and data attachment produces the expected effect.}
     \label{fig:lenin}
 \end{minipage}
@@ -2688,9 +2688,9 @@ This model was proposed in 1840s by a belgian mathematician Pierre François Ver
 Let us say that we want to recover the parameters of the model from an experiment: we have a series of $n$ measurements $(a_i, t_i)$, refer to the left image of Figure~\ref{fig:logistic-growth} for the scatter plot of the data.
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=.32\linewidth]{{img/example_8.1_a}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_8.1_b}.png}
-    \includegraphics[width=.32\linewidth]{{img/example_8.1_c}.png}
+    \includegraphics[width=.32\linewidth]{img/example_8.1_a.png}
+    \includegraphics[width=.32\linewidth]{img/example_8.1_b.png}
+    \includegraphics[width=.32\linewidth]{img/example_8.1_c.png}
     \caption{Logistic growth least squares fitting. \textbf{Left:} experimental data, \textbf{middle: } ordinary least squares initial guess, \textbf{right:} final fit after a series of least squares problems.}
     \label{fig:logistic-growth}
 \end{figure}
@@ -3046,14 +3046,14 @@ We can negate all the weights without affecting the decision boundary\dots
 \end{listing}
 
 \begin{listing}[p]
-\setminted{fontsize=\footnotesize}
+%\setminted{fontsize=\footnotesize}
 \caption{1D Poisson image editing (\S\ref{sec:poisson}). This program solves Equation~\eqref{eq:pie1d}.}
 \inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing-1d.py}
 \label{listing:pie1d}
 \end{listing}
 
 \begin{listing}[p]
-\setminted{fontsize=\footnotesize}
+%\setminted{fontsize=\footnotesize}
 \caption{Poisson image editing (\S\ref{sec:poisson}). This program solves Equation~\eqref{eq:pie}.}
 \inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing.py}
 \label{listing:pie}
@@ -3082,16 +3082,16 @@ We can negate all the weights without affecting the decision boundary\dots
 
 
 \begin{listing}[p]
-\setminted{fontsize=\footnotesize}
+%\setminted{fontsize=\footnotesize}
 \caption{Least squares conformal mapping (\S\ref{sec:lscm}).}
-\inputminted[frame=single,linenos=true]{python}{listings/lscm.cpp}
+\inputminted[frame=single,linenos=true]{python}{listings/lscm.py}
 \label{listing:lscm}
 \end{listing}
 
 \begin{listing}[p]
-\setminted{fontsize=\footnotesize}
+%\setminted{fontsize=\footnotesize}
 \caption{As-rigid-as possible deformations (\S\ref{sec:arap}).}
-\inputminted[frame=single,linenos=true]{matlab}{listings/arap.m}
+\inputminted[frame=single,linenos=true]{python}{listings/arap.py}
 \label{listing:arap}
 \end{listing}
 
