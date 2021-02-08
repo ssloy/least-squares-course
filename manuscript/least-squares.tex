@@ -80,6 +80,7 @@ linkbordercolor=lightgray
 \usepackage{colortbl}
 \newcommand\TODO[1]{\textcolor{red}{{\bf TODO :} \it #1}}
 
+\newcommand{\highlight}[1]{\colorbox{cyan!50}{$\displaystyle#1$}}
 
 \makeatletter
 \newcommand*{\toccontents}{\@starttoc{toc}}
@@ -88,12 +89,12 @@ linkbordercolor=lightgray
 \setcounter{tocdepth}{0}% Allow only \chapter in ToC
 
 \title{{\Huge Least squares for programmers}\\
-{\large with illustrations}\\
+{\large with color plates}\\
 \vspace{5mm}
 {\large \url{https://github.com/ssloy/least-squares-course/}}
 \vspace{5mm}
 }
-\author{Dmitry Sokolov, Nicolas Ray and Étienne Corman}
+\author{Dmitry Sokolov}%, Nicolas Ray and Étienne Corman}
 \date{Université de Lorraine, CNRS, Inria, LORIA, F-54000 Nancy, France}
 
 \begin{document}
@@ -117,7 +118,7 @@ linkbordercolor=lightgray
 \end{center}
 
 \setcounter{chapter}{-1}
-\chapter{The reading guide}
+\chapter{Reading guide}
 %\addcontentsline{toc}{chapter}{Preface}
 
 %Intended Audience (50 words => 46)
@@ -155,7 +156,7 @@ in the contrast with other algorithms sharing this paradigm (numerical simulatio
 \vspace{3mm}
 
 % Pedagogic Intentions and Methods
-Linear regression is often underestimated being considered only as a sub-domain of statistics / data analysis, but it is much more than that.
+The importance of linear regression (LR) cannot be overstated. The most apparent usage of LR is in statistics / data analysis, but LR is much more than that.
 We propose to discover how the same method (least squares) applies to the manipulation of geometric objects.
 This first step into the numerical optimization world can be done without strong applied mathematics background;
 while being simple, this step suffices for many applications, and is a good starting point for learning more advanced algorithms.
@@ -175,7 +176,9 @@ Here we present a different paradigm, in which we describe what a good result lo
 \vspace{3mm}
 
 You have probably noticed two different text colors of in the table of contents; there are chapters marked as \textcolor{ao(english)}{core text} and there are chapters marked as \textcolor{blue}{optional}.
-This should not surprise those who are familiar with mipmaps: if you are eager to master a new tool, jump right to chapter~\ref{ch:linsyst}.
+Feel free to go and skip chapters depending on the level of granularity you are interested in.
+%This should not surprise those who are familiar with mipmaps:
+For example, if you are eager to see the core, jump right to chapter~\ref{ch:linsyst}.
 If, however, you want to zoom in and discover connections to adjacent domains, optional chapters might be of interest.
 
 \iffalse
@@ -220,7 +223,7 @@ In which case is it equivalent to a FEM formulation? Is there any connection to 
 
 \authoredby{A}
 \chapter{Do you believe in the probability theory?}
-\fancyhead[R]{\textcolor{blue}{optional for reading}}
+\fancyhead[R]{\textcolor{blue}{optional reading}}
 
 This short section is not mandatory for the understanding of the main course; the idea behind is to warm up before attacking code and formulae.
 We approach least squares methods through the maximum likelihood estimation; this requires some (at least superficial) knowledge of probability theory.
@@ -303,7 +306,7 @@ Let us illustrate it:
 \vspace{2mm}
 
 The player makes three bets, and independently of the outcome, he always wins. 
-Please note that in this case we do not even take into account whether Uruguay or Germany were favorits or outsiders, 
+Please note that in this case we do not even take into account whether Uruguay or Germany were favorites or outsiders, 
 the loss of the bookmaker is guaranteed! 
 This unfortunate (for the bookmaker) situation happened because he did not respect the third axiom of Kolmogorov, let us list all three of them:
 \begin{itemize}
@@ -349,11 +352,11 @@ Now let us proceed to maximum likelihood estimation, thus motivating the least s
 \chapter{Maximum likelihood through examples}
 \section{First example: coin toss}
 \label{sec:cointoss}
-Let us consider a simple example of coin flipping, also known as the Bernoulli's scheme. 
+Let us consider a simple example of coin flipping, also known as Bernoulli's scheme. 
 We conduct $n$ experiments, two events can happen in each one (``success'' or ``failure''): 
 one happens with probability $p$, the other one with probability $1-p$. 
 Our goal is to find the probability of getting exactly $k$ successes in these $n$ experiments. 
-This probability is given by the Bernoulli's formula:
+This probability is given by Bernoulli's formula:
 $$
 P(k;n,p) = C_n^k p^k (1-p)^{n-k}
 $$
@@ -366,7 +369,7 @@ Figure~\ref{fig:binomial}, left shows what a probability density graph looks lik
 \centering
 \includegraphics[width=.48\columnwidth]{img/binomial-05.png}
 \includegraphics[width=.48\columnwidth]{img/binomial-07.png}
-\caption{\textbf{Left:} probability density graph for the Bernoulli's scheme with $p=1/2$. \textbf{Right:} probability density graph for the Bernoulli's scheme with $p=7/10$.}
+\caption{\textbf{Left:} probability density graph for Bernoulli's scheme with $p=1/2$. \textbf{Right:} probability density graph for Bernoulli's scheme with $p=7/10$.}
 \label{fig:binomial}
 \end{figure}
 
@@ -380,10 +383,10 @@ However, we can toss it ten times and count the number of ``successes''.
 For example, we have counted seven tails.
 Would it help us to evaluate $p$?
 
-We can try to fix $n=10$ and $k=7$ in the Bernoulli's formula, leaving $p$ as a free parameter:
+We can try to fix $n=10$ and $k=7$ in Bernoulli's formula, leaving $p$ as a free parameter:
 $$\mathcal{L}(p) = C_{10}^7 p^7 (1-p)^3$$
 
-Then the Bernoulli's formula can be interpreted as the plausibility of the parameter being evaluated (in this case $p$).
+Then Bernoulli's formula can be interpreted as the plausibility of the parameter being evaluated (in this case $p$).
 I have even changed the function notation, now it is denoted as $\mathcal L$ (likelihood).
 That is being said, the likelihood is the probability to generate the observation data (7 tails out of 10 experiments) for the given value of the parameter(s).
 For example, the likelihood of a balanced coin ($p=1/2$) with seven tails out of ten tosses is approximately 12\%. 
@@ -417,7 +420,7 @@ $$\frac{d^2 \log \mathcal{L}}{dp^2} = -\frac{7}{p^2} - \frac{3}{(1-p)^2}$$
 In the point $p=7/10$ it is negative, therefore this point is indeed a maximum of the function $\mathcal{L}$:
 $$\frac{d^2 \log \mathcal{L}}{dp^2}(0.7)  \approx -48 < 0$$
 
-Figure~\ref{fig:binomial} shows the probability density graph for the Bernoulli's scheme with $p=7/10$.
+Figure~\ref{fig:binomial} shows the probability density graph for Bernoulli's scheme with $p=7/10$.
 
 
 \section{Second example: analog-to-digital converter (ADC)}
@@ -439,7 +442,7 @@ $$
 \{U_j\}_{j=1}^{N}
 $$
 
-Let us suppose that each measurement $U_j$ is equal to the real value plus the Gaussian noise. 
+Let us suppose that each measurement $U_j$ is equal to the real value plus a Gaussian noise. 
 The noise is characterized by two parameters --- the center of the Gaussian bell and its ``width''. 
 In this case, the probability density can be expressed as follows:
 $$
@@ -580,7 +583,7 @@ The least squares method is a particular case of maximizing likelihood in cases 
 If the density is not Gaussian, the least squares approach can produce an estimate different from the MLE (maximum likelihood estimation).
 By the way, Gauß conjectured that the type of noise is of no importance, and the only thing that matters is the independence of trials.
 
-As you have already noticed, the more we parameters we have, the more cumbersome the analytical solutions are.
+As you have already noticed, the more parameters we have, the more cumbersome the analytical solutions are.
 Fortunately, we are not living in XVIII century anymore, we have computers!
 Next we will try to build a geometric intuition on least squares, and see how can least squares problems be efficiently implemented.
 
@@ -592,7 +595,7 @@ Next we will try to build a geometric intuition on least squares, and see how ca
 
 \section{Smooth an array}
 \label{sec:arraysmooth}
-The time has come to write some code. Let us examine the following program:
+The time has come to write some code. Let us examine the following Python program:
 \inputminted[frame=single,linenos=true]{python}{listings/example_3.1.py}
 We start from a 16 elements array, and we iterate over and over a simple procedure: we replace each element with a barycenter of its neighbours;
 the first and the last element are fixed. What should we get at the end? Does it converge or would it oscillate infinitely?
@@ -729,7 +732,7 @@ It is all the same for our 3D surface, the above code solves the Laplace's equat
 Again, do not trust me, grab a pencil and write down the corresponding matrix for a mesh with one interior vertex.
 So, the result must be the minimal surface respecting the boundary conditions.
 In other words, make a loop from a rigid wire, soak it in a liqud soap, the soap film on this loop is the solution.
-Figure~\ref{fig:minsurface} provides an illutration.
+Figure~\ref{fig:minsurface} provides an illustration.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.2\linewidth]{img/example_3_3_0.jpg}
@@ -783,7 +786,7 @@ Congratulations, you have just solved a Poisson's equation!
 
 \authoredby{A}
 \chapter{Finite elements example}
-\fancyhead[R]{\textcolor{blue}{optional for reading}}
+\fancyhead[R]{\textcolor{blue}{optional reading}}
 
 In the previous section we saw that mere 3 lines of code can be sufficient to solve a linear system, and this linear system corresponds to a differential equation.
 While it is extremely cool, what are the practical consequences for a programmer?  How do we build these systems? Where do we use them?
@@ -840,7 +843,7 @@ Here $f(x)$ is known, $\varphi(x)$ is unknown, but we have specified its values 
 
 In general, finite elements method searches for an \textit{approximated} solution of the problem.
 The finite element method does not operate directly on the differential equations; instead the boundary problem is put into equivalent variational form.
-The solution apperas in the integral over a quantity over the domain. The integral of a function over an arbitrary domain can be broken up into the sum of integrals over an arbitrary collection 
+The solution appears in the integral over a quantity over the domain. The integral of a function over an arbitrary domain can be broken up into the sum of integrals over an arbitrary collection 
 of subdomains called finite elements. As long as the subdomains are sufficiently small, polynomial functions can adequately represent the local behaviour of the solution.
 
 Let us split the interval in $n$ parts, these subsegments are the \textit{elements}.
@@ -912,15 +915,15 @@ The left integral is a dot product between the basis functions and the different
 it depends on the choice of the basis and can be precomputed.
 As our problem is very simple, we will find the solution analytically.
 
-Attention! The next step will be done on a slippery ground.
+Warning! The next step will be done on a slippery ground.
 Our weighting functions are not differentiable everywhere, and caution must be taken.
 Anyhow, let us integrate by parts the first integral:
 \begin{align*}
 \int\limits_{x_{i-1}}^{x_{i+1}} w_i \cdot \frac{d^2\tilde{\varphi}}{dx^2}\,dx &= 
 \int\limits_{x_{i-1}}^{x_{i}} w_i \cdot \frac{d^2\tilde{\varphi}}{dx^2}\,dx + 
 \int\limits_{x_{i}}^{x_{i+1}} w_i \cdot \frac{d^2\tilde{\varphi}}{dx^2}\,dx = \\
-& =\underbrace{\lim\limits_{\varepsilon\rightarrow 0}w_i\cdot \frac{d\tilde{\varphi}}{dx}\Big|_{x_{i-1}+\varepsilon}^{x_{i}-\varepsilon} +
-\lim\limits_{\varepsilon\rightarrow 0}w_i\cdot \frac{d\tilde{\varphi}}{dx}\Big|_{x_{i}+\varepsilon}^{x_{i+1}-\varepsilon}}_{= 0} - \int\limits_{x_{i-1}}^{x_{i+1}} \frac{dw_i}{dx}\cdot \frac{d\tilde{\varphi}}{dx}\,dx  = \\
+& =\underbrace{\lim\limits_{\varepsilon\rightarrow 0}\left[w_i\cdot \frac{d\tilde{\varphi}}{dx}\right]\Big|_{x_{i-1}+\varepsilon}^{x_{i}-\varepsilon} +
+\lim\limits_{\varepsilon\rightarrow 0}\left[w_i\cdot \frac{d\tilde{\varphi}}{dx}\right]\Big|_{x_{i}+\varepsilon}^{x_{i+1}-\varepsilon}}_{= 0} - \int\limits_{x_{i-1}}^{x_{i+1}} \frac{dw_i}{dx}\cdot \frac{d\tilde{\varphi}}{dx}\,dx  = \\
 & = - \int\limits_{x_{i-1}}^{x_{i+1}} \frac{dw_i}{dx}\cdot \frac{d\tilde{\varphi}}{dx}\,dx \\
 \end{align*}
 
@@ -1401,7 +1404,7 @@ So, we want to find the minimum quadratic function
 $$\argmin\limits_{x\in\mathbb R^n} (x^\top A x - 2b^\top x).$$
 As before, let us equate the derivative to zero:
 $$\nabla (x^\top A x - 2b^\top x) = \begin{bmatrix}0 \\ \vdots \\ 0 \end{bmatrix}.$$
-The Hamilton operator is linear, so we can rewrite our equation as follows:
+The gradient operator is linear, so we can rewrite our equation as follows:
 $$\nabla (x^\top A x) - 2\nabla(b^\top x) = \begin{bmatrix}0 \\ \vdots \\ 0 \end{bmatrix}.$$
 Now let us apply the second and third differentiation theorems:
 $$(A+A^\top)x - 2b = \begin{bmatrix}0 \\ \vdots \\ 0 \end{bmatrix}.$$
@@ -1595,10 +1598,12 @@ $$
 \end{array} \right.
 $$
 
-Listing~\ref{listing:lqr1} (refer to the appendices) solves the system.
-%\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
+
+Following listing solves the system:
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
 The resulting arrays $\{u_i\}_{i=0}^{n-1}$ and $\{v_i\}_{i=0}^{n}$ are shown in the leftmost image of Figure~\ref{fig:lqr}.
-It can be seen that in this case the system reaches the final state in one timestep; clearly it is physically impossible for a car to produce such an acceleration.
+The solution is obvious: $u_0 = v_n-v_0$, $u_i=0~\forall i>0$, so
+in this case the system reaches the final state in one timestep, and it is clearly physically impossible for a car to produce such an acceleration.
 
 \begin{figure}[htb]
     \centering
@@ -1623,10 +1628,11 @@ $$
 {u_0} & + {u_1} & \dots & + {u_{n-1}} & = {v_n} - {v_0} \\
 \end{array} \right.
 $$
-Listing~\ref{listing:lqr2} solves this system, and the resulting arrays are shown in the middle image of Figure~\ref{fig:lqr}.
+Following listing solves this system, and the resulting arrays are shown in the middle image of Figure~\ref{fig:lqr}.
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
 This criterion indeed produces low acceleration, however the transient time becomes unacceptable.
 
-%\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
+\vspace{2mm}
 
 Minimization of the transient time and low acceleration are competing goals, but we can find a trade-off by mixing both goals:
 $$
@@ -1647,9 +1653,9 @@ $$
 $$
 Note the coefficient 2 in the equations $2 u_i = 0$ and recall that we solve the system in the least squares sense.
 By changing this coefficient, we can attach more importance to one of the competing goals.
-Listing~\ref{listing:lqr3} solves this system, and the resulting arrays are shown in the right image of Figure~\ref{fig:lqr}.
+Following listing solves this system, and the resulting arrays are shown in the right image of Figure~\ref{fig:lqr}.
 
-%\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
+\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
 
 Note that the signal $u(t)$ is equal to the signal $v(t)$ up to a multiplication by a constant gain:
 $$
@@ -1661,9 +1667,6 @@ engineers try different combinations of competing goals until they obtain a sati
 
 
 
-
-
-
 \section{Poisson image editing}
 \label{sec:poisson}
 The next problem is motivated by image editing.
@@ -1671,7 +1674,7 @@ Figure~\ref{fig:pie} provides an illustration:
 we want to replace the baseball from the image \textbf{(a)} with the football \textbf{(b)}. A direct overlay leads to a unsatisfactory result \textbf{(c)}.
 How to swap the content seamlessly?
 
-\begin{figure}[tb]
+\begin{figure}[!b]
     \centering
     \includegraphics[width=.34\linewidth]{img/pie-1d.png}
     \caption{1D Poisson's equation: the function $f(x)$ is constrained at the extremities and it has the same second derivative as $g(x)$.}
@@ -1680,11 +1683,12 @@ How to swap the content seamlessly?
 
 Poisson's equation can be of help here. Let us start with a 1D example from Figure~\ref{fig:pie1d}: we are looking for a unknown function $f(x)$ defined on $x\in[0,2\pi]$ that is as close as possible to $g(x):=\sin x$, but is constrained to have $f(0)=1$ and $f(2\pi) = 3$.
 We can formulate it as the Poisson's equation with Dirichlet boundary conditions:
-$$
+\begin{equation}
 \frac{d^2}{dx^2}f  = \frac{d^2}{dx^2} g \quad \text{s.t.~} f(0)=1,~f(2\pi) = 3
-$$
+\label{eq:poisson}
+\end{equation}
 
-Two decades ago people used Gauß-Seidel to solve these linear systems~\cite{10.1145/882262.882269},
+Two decades ago people used Gauß-Seidel to solve these linear systems~\cite{10.1145/882262.882269} (refer to Listing~\ref{listing:pie1d-neanderthal}),
 however with modern conjugate gradients-based solvers~\cite{OpenNL} it is much easier to reformulate it as a minimization problem.
 Poisson's equation with Dirichlet boundary conditions corresponds to the following least squares formulation:
 $$
@@ -1695,11 +1699,11 @@ Let us say that we represent the functions $f$ and $g$ by $n$ samples, then we c
 \begin{equation}
 \label{eq:pie1d}
 \left \{ \begin{array}{ccccl}
-f_1 &       &       &           & =  g_1 - g_0 + f_0  \\
--f_1 & + f_2 &       &           & = g_2 - g_1 \\
-    &       &       & \vdots    &             \\
-     &        &  -f_{n-3}     &  +f_{n-2}          & = g_{n-2} - g_{n-3} \\
-     &        &       & - f_{n-2} & =  g_{n-1}-g_{n-2} -f_{n-1}
+{f_1} &       &       &           & =  g_1 - g_0 + {f_0}  \\
+-{f_1} & + {f_2} &       &           & = g_2 - g_1 \\
+    &  \ddots     & \ddots      &     &       \vdots      \\
+     &        &  -{f_{n-3}}     &  +{f_{n-2}}          & = g_{n-2} - g_{n-3} \\
+     &        &       & - {f_{n-2}} & =  g_{n-1}-g_{n-2} -{f_{n-1}}
 \end{array} \right.
 \end{equation}
 Here we approximate the derivative by finite differences;
@@ -1714,7 +1718,7 @@ $$
 \min\limits_{f} \int_\Omega \|\nabla f - \nabla b\|^2 \quad \text{with~} f|_{\partial\Omega} = a|_{\partial\Omega}
 $$
 
-\begin{figure}[b]
+\begin{figure}[t]
     \centering
     \includegraphics[width=.24\linewidth]{img/pie_baseball.png}~
     \raisebox{0.65\height}{\includegraphics[width=.08\linewidth]{img/pie_football.png}}~
@@ -1800,16 +1804,16 @@ The result is shown in Figure~\ref{fig:lenin}.
 To minimize the energy (Equation~\eqref{eq:caricature}), we can solve the following system in the least squares sense:
 \begin{equation}
 \label{eq:carsyst}
-\left \{ \begin{array}{ccccl}
--x'_0 & + x'_1      &       &               & =  c_0\cdot \left( x_1 - x_0\right)  \\
-     & - x'_1      & +x'_2      &           & =  c_0 \cdot \left(x_2 - x_1\right)  \\
-    &       &       & \vdots    &             \\
-    &            & x'_{n-2}   &    +x'_{n-1}       & =  c_0 \cdot \left(x_{n-2} - x_{n-1}\right)  \\
-x'_0 &            &    &    -x'_{n-1}       & =  c_0 \cdot \left(x_{n-1} - x_0\right)  \\
-c_1\cdot x'_0 &            &       &               & =  c_1\cdot x_0  \\
-& c_1\cdot x'_1            &       &               & =  c_1\cdot x_1  \\
-    &       &       & \vdots    &             \\
-&             &       &    c_1\cdot x'_{n-1}           & =  c_1\cdot x_{n-1}  \\
+\left \{ \begin{array}{rrrrrl}
+-{x'_0}         & + {x'_1}        &                       &                           &                           & =  c_0\cdot \left( x_1 - x_0\right)  \\
+                        & - {x'_1}        & +{x'_2}       &                           &                           & =  c_0 \cdot \left(x_2 - x_1\right)  \\
+                        &                         &    \ddots             & \ddots                    &                           &    \vdots         \\
+                        &                         &                       &   -{x'_{n-2}}     & +{x'_{n-1}}       & =  c_0 \cdot \left(x_{n-2} - x_{n-1}\right)  \\
+ {x'_0}         &                         &                       &                           & -{x'_{n-1}}       & =  c_0 \cdot \left(x_{n-1} - x_0\right)  \\
+c_1\cdot {x'_0} &                         &                       &                           &                           & =  c_1\cdot x_0  \\
+                        & c_1\cdot {x'_1} &                       &                           &                           & =  c_1\cdot x_1  \\
+                        &                         &  \multicolumn{2}{c}{                      \ddots}                    &                           & \vdots   \\
+                        &                         &                       &                           &    c_1\cdot {x'_{n-1}}           & =  c_1\cdot x_{n-1}  \\
 \end{array} \right.
 \end{equation}
 Refer to Listing~\ref{listing:silhouette} for the corresponding source code. Note that we can solve Equation\eqref{eq:caricature} for 3D surfaces as well, an example is shown in Figure~\ref{fig:caricature},
@@ -1817,7 +1821,7 @@ refer to Listing~\ref{listing:caricature} for the source code.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\linewidth]{img/caricature.jpg}
+    \includegraphics[width=.75\linewidth]{img/caricature.jpg}
     \caption{We can solve Equation\eqref{eq:caricature} for 3D surfaces as well (Listing~\ref{listing:caricature}).}
     \label{fig:caricature}
 \end{figure}
@@ -1826,11 +1830,11 @@ refer to Listing~\ref{listing:caricature} for the source code.
 \section{Cubify it!}
 \label{sec:cubify}
 Let us compute another deformation of a 3D surface, refer to Figure~\ref{fig:moai} for an illustration.
-The idea is to deform the surface by aligning triangles with one of the global coordinate planes, thus obtaining a moaï statue effect.
+The idea is to deform the surface by aligning triangles with one of the global coordinate planes, thus obtaining a moai statue effect.
 \begin{figure}[!h]
 	\centering
 	\includegraphics[width=.75\linewidth]{img/cubify-flagging.jpg}
-	\caption{If we flatten an input surface in one of three coordinates (flagging shown in color), we can obtain a moaï statue effect.}
+	\caption{If we flatten an input surface in one of three coordinates (flagging shown in color), we can obtain a moai statue effect.}
 	\label{fig:moai}
 \end{figure}
 
@@ -1930,7 +1934,7 @@ Of course, we can not do better than $u(x,y)=v(x,y)=0$, and such a map is unsati
 Pinning one vertex determines translation in the plane of the texture, whereas the other determines rotation and scale.
 This energy is very easy to minimize, just as before we need to solve a linear system.
 Refer to Listing~\ref{listing:lscm} for the source code.
-This is a very simple program: for each triangle we compute its coordinates in a local 2D basis, compute the expression of $(\nabla u)_{ijk}$ and $(\nabla v)_{ijk}$ in this bais
+This is a very simple program: for each triangle we compute its coordinates in a local 2D basis, compute the expression of $(\nabla u)_{ijk}$ and $(\nabla v)_{ijk}$ in this basis
 and create two rows in the matrix (one row per the Cauchy-Riemann equation).
 Figure~\ref{fig:lscm} shows the result of the execution of the program.
 
@@ -1979,7 +1983,7 @@ Refer to Listing~\ref{listing:arap} for the source code.
 
 \authoredby{A}
 \chapter{Under the hood of the conjugate gradient method}
-\fancyhead[R]{\textcolor{blue}{optional for reading}}
+\fancyhead[R]{\textcolor{blue}{optional reading}}
 
 
 The resolution of linear systems is the keystone of a large number of numerical optimization algorithms encountered in many application contexts.
@@ -2733,7 +2737,7 @@ w^{(0)}
 \end{pmatrix}
 \end{equation}
 
-How can we estimate $c^{(0)}$? Knowing that it corresponds to the carrying capacity, we can do a quick-n-ugly estimation $c^{(0)}:=\max\limits_{i\in 1\dots n} a_i + \varepsilon$, where a small constant $\varepsilon$ is added in order to avoid division by
+How can we estimate $c^{(0)}$? Knowing that it corresponds to the carrying capacity, we can do a quick and dirty estimation $c^{(0)}:=\max\limits_{i\in 1\dots n} a_i + \varepsilon$, where a small constant $\varepsilon$ is added in order to avoid division by
 zero in the equation~\eqref{eq:logistic-initial-guess}.
 Refer to Listing~\ref{listing:logistic-growth} for the source code; left image of Figure~\ref{fig:logistic-growth} shows the logistic curve fitted to our data.
 Of course, the fitting is far from being ideal: we have estimated the distance from the points $a_i$ to the curve $a(t_i)$ in a very indirect and distoring way.
@@ -2769,7 +2773,7 @@ by solving a series of least squares problems.
 \section{Back to the binary classification: the 2nd attempt}
 \label{sec:logistic1d}
 
-Surely, you have already guessed where all this is coming: we will put the logistic function inside the binary classification example from \S\ref{sec:binarylinear}.
+Surely, you have already guessed where all this is going: we will put the logistic function inside the binary classification example from \S\ref{sec:binarylinear}.
 So, we have a sequence $\{(x_i, y_i)\}_{i=1}^n$ as the input, where $x_i\in\mathbb R$ and $y_i\in \{0,1\}$.
 We saw that ordinary linear regression is not an ideal choice for the classifying function,
 probably the logistic curve would do better.
@@ -3028,73 +3032,82 @@ We can negate all the weights without affecting the decision boundary\dots
 \chapter{Program listings}
 \fancyhead[R]{\textcolor{ao(english)}{core text}}
 
+%\begin{listing}[p]
+%\caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2$.}
+%\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
+%\label{listing:lqr1}
+%\end{listing}
+
+%\begin{listing}[p]
+%\caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2$.}
+%\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
+%\label{listing:lqr2}
+%\end{listing}
+
+%\begin{listing}[p]
+%\caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v},\vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2$.}
+%\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
+%\label{listing:lqr3}
+%\end{listing}
+
 \begin{listing}[p]
-\caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2$.}
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_a.py}
-\label{listing:lqr1}
+\setminted{fontsize=\footnotesize}
+\caption{1D Poisson image editing (\S\ref{sec:poisson}). This program solves Equation~\eqref{eq:poisson}.}
+\inputminted[frame=single,linenos=true]{python}{listings/poisson-1d-gauss-seidel.py}
+\label{listing:pie1d-neanderthal}
 \end{listing}
 
 \begin{listing}[p]
-\caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v}, \vec{u}) := \sum\limits_{i=0}^{n-1} u_i^2$.}
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_b.py}
-\label{listing:lqr2}
-\end{listing}
-
-\begin{listing}[p]
-\caption{LQR example (\S\ref{sec:lqr}). This program minimizes the criterion $J(\vec{v},\vec{u}) := \sum\limits_{i=1}^n (v_i-v_n)^2 + 4\sum\limits_{i=0}^{n-1} u_i^2$.}
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.1_c.py}
-\label{listing:lqr3}
-\end{listing}
-
-\begin{listing}[p]
-%\setminted{fontsize=\footnotesize}
+\setminted{fontsize=\footnotesize}
 \caption{1D Poisson image editing (\S\ref{sec:poisson}). This program solves Equation~\eqref{eq:pie1d}.}
 \inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing-1d.py}
 \label{listing:pie1d}
 \end{listing}
 
 \begin{listing}[p]
-%\setminted{fontsize=\footnotesize}
+\setminted{fontsize=\footnotesize}
 \caption{Poisson image editing (\S\ref{sec:poisson}). This program solves Equation~\eqref{eq:pie}.}
 \inputminted[frame=single,linenos=true]{python}{listings/poisson-image-editing.py}
 \label{listing:pie}
 \end{listing}
 
 \begin{listing}[p]
-\setminted{fontsize=\scriptsize}
+\setminted{fontsize=\footnotesize}
 \caption{A caricature on a 2D silhouette (\S\ref{sec:caricature}). This program solves Equation~\eqref{eq:carsyst}.}
 \inputminted[frame=single,linenos=true]{python}{listings/example_6.2_b.py}
 \label{listing:silhouette}
 \end{listing}
 
 \begin{listing}[p]
-\setminted{fontsize=\scriptsize}
+\setminted{fontsize=\footnotesize}
 \caption{3D surface caricature (\S\ref{sec:caricature}). Refer to Equation~\eqref{eq:caricature} for the problem definition.}
-\inputminted[frame=single,linenos=true]{python}{listings/example_6.2_c.cpp}
+\inputminted[frame=single,linenos=true]{python}{listings/caricature3d.py}
 \label{listing:caricature}
 \end{listing}
 
 \begin{listing}[p]
 \setminted{fontsize=\footnotesize}
 \caption{``Cubification'' of a 3d surface (\S\ref{sec:cubify}).}
-\inputminted[frame=single,linenos=true]{python}{listings/cubify.cpp}
+\inputminted[frame=single,linenos=true]{python}{listings/cubify.py}
 \label{listing:cubify}
 \end{listing}
 
 
 \begin{listing}[p]
-%\setminted{fontsize=\footnotesize}
+\setminted{fontsize=\footnotesize}
 \caption{Least squares conformal mapping (\S\ref{sec:lscm}).}
 \inputminted[frame=single,linenos=true]{python}{listings/lscm.py}
 \label{listing:lscm}
 \end{listing}
 
 \begin{listing}[p]
-%\setminted{fontsize=\footnotesize}
+\setminted{fontsize=\footnotesize}
 \caption{As-rigid-as possible deformations (\S\ref{sec:arap}).}
 \inputminted[frame=single,linenos=true]{python}{listings/arap.py}
 \label{listing:arap}
 \end{listing}
+
+\newpage
 
 \begin{listing}[p]
 \setminted{fontsize=\scriptsize}

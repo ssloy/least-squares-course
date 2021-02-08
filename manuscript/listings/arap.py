@@ -5,7 +5,7 @@ from scipy.sparse.linalg import lsmr
 from scipy.linalg import svd
 
 m = Mesh("diablo.obj")
-eij = [np.matrix(m.V[m.dst(c)] - m.V[m.org(c)]).T for c in range(m.ncorners)] # reference geometry for each half-edge
+eij = [np.matrix(m.V[m.dst(c)] - m.V[m.org(c)]).T for c in range(m.ncorners)] # reference for each half-edge
 
 lock = [1175, 1765, 381, 2383, 1778] # id of the vertices to constrain
 disp = [[0,0,-0.5], [0,0,0.5], [0,0,-0.5], [0,0,0.5], [1.5,0,0]] # displacement for the constrained vertices

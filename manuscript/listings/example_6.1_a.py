@@ -1,13 +1,6 @@
 import numpy as np
-
-n = 30
-A = np.matrix(np.zeros((n, n)))
-b = np.matrix(np.zeros((n, 1)))
-
-for i in range(0,n): # x_i = 2.3
-    for j in range(0,i+1):
-        A[i, j] = 1
-    b[i, 0] = 2.3 - 0.5
-
+n,v0,vn = 30,0.5,2.3
+A = np.matrix(np.tril(np.ones((n,n))))
+b = np.matrix([[vn-v0]]*n)
 u = np.linalg.inv(A.T*A)*A.T*b
-v = [.5 + np.sum(u[:i]) for i in range(0,n+1)]
+v = [v0 + np.sum(u[:i]) for i in range(0,n+1)]
