@@ -41,9 +41,11 @@
 \definecolor{postit}{rgb}{.35, 0.80, 0.99}
 
 
-\author{Dmitry Sokolov}
+\author[Dmitry Sokolov]{\underline{Dmitry Sokolov}, Nicolas Ray, Étienne Corman}
+
 \title{Least squares for programmers}
 \subtitle{--- with color plates ---}
+
 
 \newcommand{\highlight}[1]{\colorbox{cyan!50}{$\displaystyle#1$}}
 \newcommand\unknown[1]{\textcolor{brickred}{#1}}
@@ -52,7 +54,7 @@
 
 \AtBeginSection[]
 {
-    \begin{frame}
+    \begin{frame}%[noframenumbering]
         \frametitle{Table of Contents}
         \tableofcontents[currentsection]
     \end{frame}
@@ -71,6 +73,7 @@
 %\begin{frame}{Table of contents}
 %    \tableofcontents[currentsection]
 %\end{frame}
+%\iffalse
 
 \begin{frame}{The goal}
 
@@ -87,6 +90,7 @@ We can describe what a good result looks like, and let numerical optimization al
 
 This course does not require an advanced mathematical background: basic calculus knowledge suffices. A solid programming basis would be of a great aid.
 \end{frame}
+
 
 
 \section{Maximum likelihood through examples}
@@ -288,25 +292,43 @@ Next we will try to build a geometric intuition on least squares, and see how ca
 
 \begin{frame}{The Jacobi iterative method}
 Given an ordinary system of linear equations:
+%$$
+%\left\{
+%\begin{array}{cccccccc}
+%a_{11}x_1 & + &  a_{12}x_2  &+      & \cdots & + & a_{1n}x_n &= b_1\\
+%a_{21}x_1 & + &  a_{22}x_2  &+      & \cdots & + & a_{2n}x_n &= b_2\\
+%          &   &             &\vdots &        &   &           &     \\
+%a_{n1}x_1 & + &  a_{n2}x_2  &+      & \cdots & + & a_{nn}x_n &= b_n\\
+%\end{array}
+%\right.
+%$$
 $$
 \left\{
 \begin{array}{cccccccc}
-a_{11}x_1 & + &  a_{12}x_2  &+      & \cdots & + & a_{1n}x_n &= b_1\\
-a_{21}x_1 & + &  a_{22}x_2  &+      & \cdots & + & a_{2n}x_n &= b_2\\
+\known{a_{11}}\unknown{x_1} & + &  \known{a_{12}}\unknown{x_2}  &+      & \cdots & + & \known{a_{1n}}\unknown{x_n} &= \known{b_1}\\
+\known{a_{21}}\unknown{x_1} & + &  \known{a_{22}}\unknown{x_2}  &+      & \cdots & + & \known{a_{2n}}\unknown{x_n} &= \known{b_2}\\
           &   &             &\vdots &        &   &           &     \\
-a_{n1}x_1 & + &  a_{n2}x_2  &+      & \cdots & + & a_{nn}x_n &= b_n\\
+\known{a_{n1}}\unknown{x_1} & + &  \known{a_{n2}}\unknown{x_2}  &+      & \cdots & + & \known{a_{nn}}\unknown{x_n}&= \known{b_n}\\
 \end{array}
 \right.
 $$
 
+
 \pause
 Let us rewrite it as follows:
 \begin{align*}
-x_1 &= \frac{1}{a_{11}}(b_1 - a_{12}x_2 - a_{13}x_3 - \cdots - a_{1n}x_n)\\
-x_2 &= \frac{1}{a_{22}}(b_2 - a_{21}x_1 - a_{23}x_3 - \cdots - a_{2n}x_n)\\
+\unknown{x_1} &= \frac{1}{\known{a_{11}}}(\known{b_1} - \known{a_{12}}\unknown{x_2} - \known{a_{13}}\unknown{x_3} - \cdots - \known{a_{1n}}\unknown{x_n})\\
+\unknown{x_2} &= \frac{1}{\known{a_{22}}}(\known{b_2} - \known{a_{21}}\unknown{x_1} - \known{a_{23}}\unknown{x_3} - \cdots - \known{a_{2n}}\unknown{x_n})\\
     & \qquad \vdots \\
-x_n &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots - a_{n,n-1}x_{n-1})
+\unknown{x_n} &= \frac{1}{\known{a_{nn}}}(\known{b_n} - \known{a_{n1}}\unknown{x_1} - \known{a_{n2}}\unknown{x_2} - \cdots - \known{a_{n,n-1}}\unknown{x_{n-1}})
 \end{align*}
+%Let us rewrite it as follows:
+%\begin{align*}
+%x_1 &= \frac{1}{a_{11}}(b_1 - a_{12}x_2 - a_{13}x_3 - \cdots - a_{1n}x_n)\\
+%x_2 &= \frac{1}{a_{22}}(b_2 - a_{21}x_1 - a_{23}x_3 - \cdots - a_{2n}x_n)\\
+%    & \qquad \vdots \\
+%x_n &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots - a_{n,n-1}x_{n-1})
+%\end{align*}
 \end{frame}
 
 \begin{frame}{The Jacobi iterative method}
@@ -314,11 +336,17 @@ Let us start with an arbitrary vector $\vec{x}^{(0)}=\left(x_1^{(0)}, x_2^{(0)},
 \pause
 we can define $\vec{x}^{(1)}$ as follows:
 \begin{align*}
-x_1^{(1)} &= \frac{1}{a_{11}}(b_1 - a_{12}x_2^{(0)} - a_{13}x_3^{(0)} - \cdots - a_{1n}x_n^{(0)})\\
-x_2^{(1)} &= \frac{1}{a_{22}}(b_2 - a_{21}x_1^{(0)} - a_{23}x_3^{(0)} - \cdots - a_{2n}x_n^{(0)})\\
+x_1^{(1)} &= \frac{1}{\known{a_{11}}}(\known{b_1} - \known{a_{12}}x_2^{(0)} - \known{a_{13}}x_3^{(0)} - \cdots - \known{a_{1n}}x_n^{(0)})\\
+x_2^{(1)} &= \frac{1}{\known{a_{22}}}(\known{b_2} - \known{a_{21}}x_1^{(0)} - \known{a_{23}}x_3^{(0)} - \cdots - \known{a_{2n}}x_n^{(0)})\\
     & \qquad \vdots \\
-x_n^{(1)} &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1^{(0)} - a_{n2}x_2^{(0)} - \cdots - a_{n,n-1}x_{n-1}^{(0)})
+x_n^{(1)} &= \frac{1}{\known{a_{nn}}}(\known{b_n} - \known{a_{n1}}x_1^{(0)} - \known{a_{n2}}x_2^{(0)} - \cdots - \known{a_{n,n-1}}x_{n-1}^{(0)})
 \end{align*}
+%\begin{align*}
+%x_1^{(1)} &= \frac{1}{a_{11}}(b_1 - a_{12}x_2^{(0)} - a_{13}x_3^{(0)} - \cdots - a_{1n}x_n^{(0)})\\
+%x_2^{(1)} &= \frac{1}{a_{22}}(b_2 - a_{21}x_1^{(0)} - a_{23}x_3^{(0)} - \cdots - a_{2n}x_n^{(0)})\\
+%    & \qquad \vdots \\
+%x_n^{(1)} &= \frac{1}{a_{nn}}(b_n - a_{n1}x_1^{(0)} - a_{n2}x_2^{(0)} - \cdots - a_{n,n-1}x_{n-1}^{(0)})
+%\end{align*}
 \pause
 Repeating the process $k$ times, the solution can be approximated by the vector $\vec{x}^{(k)}=\left(x_1^{(k)}, x_2^{(k)}, \dots, x_n^{(k)}\right)$.
 \end{frame}
@@ -352,7 +380,23 @@ $$
 \end{minipage}
 \end{frame}
 
-\begin{frame}{The Gauß-Seidel iterative method}
+\begin{frame}{Jacobi vs Gauß--Seidel}
+\vspace{-8mm}
+\begin{align*}
+x_1^{(1)} &= \frac{1}{\known{a_{11}}}(\known{b_1} - \known{a_{12}}x_2^{(0)} - \known{a_{13}}x_3^{(0)} - \cdots - \known{a_{1n}}x_n^{(0)})\\
+x_2^{(1)} &= \frac{1}{\known{a_{22}}}(\known{b_2} - \known{a_{21}}x_1^{(0)} - \known{a_{23}}x_3^{(0)} - \cdots - \known{a_{2n}}x_n^{(0)})\\
+    & \qquad \vdots \\
+\end{align*}
+\pause
+\begin{align*}
+\highlight{x_1^{(1)}} &= \frac{1}{\known{a_{11}}}(\known{b_1} - \known{a_{12}}x_2^{(0)} - \known{a_{13}}x_3^{(0)} - \cdots - \known{a_{1n}}x_n^{(0)})\\
+x_2^{(1)} &= \frac{1}{\known{a_{22}}}(\known{b_2} - \known{a_{21}}\highlight{x_1^{(1)}} - \known{a_{23}}x_3^{(0)} - \cdots - \known{a_{2n}}x_n^{(0)})\\
+    & \qquad \vdots \\
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Jacobi vs Gauß--Seidel}
 Jacobi:
 $$
 x_i^{(k)} = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=1,j\neq i}^n a_{ij}x_j^{(k-1)} \right), \quad \text{for } i=1,2,\dots,n
@@ -366,15 +410,15 @@ x_i^{(k)} = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=1}^{i-1} a_{ij}x_j^{(k)}
 $$
 \end{frame}
 
-\begin{frame}{The Gauß-Seidel iterative method}
+\begin{frame}{Jacobi vs Gauß--Seidel}
 Jacobi:
 \inputminted[frame=single]{python}{listings/example_3.1.py}
 
-Gauß-Seidel:
+Gauß--Seidel:
 \inputminted[frame=single]{python}{listings/example_3.2.py}
 \end{frame}
 
-\begin{frame}[fragile]{Smooth an array : Gauß-Seidel}
+\begin{frame}[fragile]{Smooth an array : Gauß--Seidel}
 \inputminted[frame=single]{python}{listings/example_3.2.py}
 \includegraphics[width=.32\linewidth]{../manuscript/img/example_3_2_0.png}
 \includegraphics[width=.32\linewidth]{../manuscript/img/example_3_2_1.png}
@@ -784,26 +828,31 @@ with (in general) a symmetric positive definite matrix $A'$. This can be done by
 \end{block}
 \end{frame}
 
+
+
+
+%\fi
+
 \section{Least squares through examples}
 
 \begin{frame}{Linear-quadratic regulator}
 Imagine a car going at $\known{v_0}=0.5$ m/s. The goal is to accelerate to $\known{v_n}=2.3$ m/s in $n=30$ s maximum.
 We can control the acceleration $\unknown{u_i}$ via the gas pedal:
 $$
-\unknown{v_{i+1}} = \unknown{v_i} + \unknown{u_i}
+\unknown{v_{i+1}} = \unknown{v_i} + \unknown{u_i} = \known{v_0} + \sum\limits_{j=0}^{i}\unknown{u_j} 
 $$
 
 \pause
 So, we need to find $\{\unknown{u_i}\}_{i=0}^{n-1}$ that optimizes some quality criterion $J(\unknown{\vec{v}}, \unknown{\vec{u}})$:
 $$
-\argmin J(\unknown{\vec{v}},\unknown{\vec{u}}) \quad s.t.\quad  \unknown{v_{i+1}} = \unknown{v_i} + \unknown{u_i} = \known{v_0} + \sum\limits_{j=0}^{i-1}\unknown{u_j} \quad \forall i \in 0..n-1
+\argmin J(\unknown{\vec{v}},\unknown{\vec{u}}) \quad s.t.\quad  \unknown{v_{i+1}} = \known{v_0} + \sum\limits_{j=0}^{i}\unknown{u_j} \quad \forall i \in 0..n-1
 $$
 
 \pause
 What happens if we ask for the car to reach the final speed as quickly as possible?\\
 It can be written as follows:
 $$
-J(\unknown{\vec{v}}, \unknown{\vec{u}}) := \sum\limits_{i=1}^n (\unknown{v_i}-\known{v_n})^2 = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}\unknown{u_j}-\known{v_n}+\known{v_0}\right)^2
+J(\unknown{\vec{v}}, \unknown{\vec{u}}) := \sum\limits_{i=1}^{n-1} (\unknown{v_i}-\known{v_n})^2 = \sum\limits_{i=1}^{n-1} \left(\sum\limits_{j=0}^{i-1}\unknown{u_j}+\known{v_0}-\known{v_n}\right)^2
 $$
 \end{frame}
 
@@ -811,7 +860,7 @@ $$
 \begin{frame}{Linear-quadratic regulator}
 \begin{minipage}{.4\linewidth}
 $$
-J(\unknown{\vec{v}}, \unknown{\vec{u}}) := \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}\unknown{u_j}-\known{v_n}+\known{v_0}\right)^2
+J(\unknown{\vec{v}}, \unknown{\vec{u}}) := \sum\limits_{i=1}^{n-1} \left(\sum\limits_{j=0}^{i-1}\unknown{u_j}-\known{v_n}+\known{v_0}\right)^2
 $$
 \end{minipage}
 \qquad
@@ -842,7 +891,7 @@ Ouch... Quite brutal accelerations: obvious solution $u_0 = v_n-v_0$, $u_i=0 ~\f
 ~\\
 Ok, no problem, let us penalize\\ large accelerations:\\
 $
-J(\unknown{\vec{v}}, \unknown{\vec{u}}) := \sum\limits_{i=0}^{n-1} \unknown{u_i}^2 + \left(\sum\limits_{i=0}^{n-1} \unknown{u_i} - \known{v_n} + \known{v_0}\right)^2 
+J(\unknown{\vec{v}}, \unknown{\vec{u}}) := \sum\limits_{i=0}^{n-1} \unknown{u_i}^2 + \left(\sum\limits_{i=0}^{n-1} \unknown{u_i} + \known{v_0} - \known{v_n}\right)^2 
 $
 \end{minipage}
 \qquad
@@ -869,7 +918,7 @@ Low acceleration, however the transient time becomes unacceptable.}
 \begin{minipage}{.4\linewidth}
 Optimize for competing goals:\\
 $
-J(\unknown{\vec{v}},\unknown{\vec{u}}) := \sum\limits_{i=1}^n (\unknown{v_i}-\known{v_n})^2 + \highlight{4}\sum\limits_{i=0}^{n-1} \unknown{u_i}^2 \pause = \sum\limits_{i=1}^n \left(\sum\limits_{j=0}^{i-1}\unknown{u_j}-\known{v_n}+\known{v_0}\right)^2 + \highlight{4}\sum\limits_{i=0}^{n-1} \unknown{u_i}^2
+J(\unknown{\vec{v}},\unknown{\vec{u}}) := \sum\limits_{i=1}^{n-1} (\unknown{v_i}-\known{v_n})^2 + \highlight{4}\sum\limits_{i=0}^{n-1} \unknown{u_i}^2 \pause = \sum\limits_{i=1}^{n-1} \left(\sum\limits_{j=0}^{i-1}\unknown{u_j}-\known{v_n}+\known{v_0}\right)^2 + \highlight{4}\sum\limits_{i=0}^{n-1} \unknown{u_i}^2
 $
 \textbf{N.B.} Note the tradeoff \highlight{\text{coefficients}}!
 \end{minipage}
@@ -1280,6 +1329,7 @@ Quick hack: pin two arbitrary vertices.
 \end{frame}
 
 
+%\iffalse
 
 \section{From least squares to neural networks}
 
@@ -1450,6 +1500,8 @@ Two parameters only, call Gauß–Newton:
 
 %\fi
 
+%\iffalse
+
 \begin{frame}{Cross-entropy loss function}
 As before, let two possible classes encoded as $y \in \{0,1\}$ and assume
 $$
@@ -1493,6 +1545,7 @@ where $\known{X}:=\begin{bmatrix}\known{x_1} & \dots & \known{x_n}\end{bmatrix}^
 
 \end{frame}
 
+%\fi
 
 \begin{frame}{Nonlinear decision boundary: logistic regression}
 \vspace{2ex}
@@ -1590,6 +1643,8 @@ It offers a different view on programming:
 \end{beamercolorbox}
 
 \end{frame}
+
+%\fi
 
 \end{document}
 
