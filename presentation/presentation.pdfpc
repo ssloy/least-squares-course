@@ -1,0 +1,27 @@
+[duration]
+0
+[notes]
+### 1
+In this course we present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using least squares methods; it is a very efficient tool that does not require too much mathematical background.
+
+### 2
+
+This course is intended for students/engineers/researchers who know how to program in the traditional way: by breaking down tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes). Here we present a different paradigm: we describe what is a good result, and let numerical optimization find it for us.
+
+Anyone able to program computer graphics algorithms can learn to use least squares with this course. Attendees already using it or having stronger mathematical background may discover some interesting relations with other domains.
+
+This course explains least squares optimization, nowadays a simple and well-mastered technology. We show how this simple method can solve a large number of problems that would be difficult to approach in any other way. This course provides a simple, understandable yet powerful tool that most coders can use, in the contrast with other algorithms sharing this paradigm (numerical simulation and deep learning) which are more complex to master.
+
+The importance of linear regression cannot be overstated. The most apparent usage of linear regression is in statistics / data analysis, but LR is much more than that. We propose to discover how the same method (least squares) applies to the manipulation of geometric objects. This first step into the numerical optimization world can be done without strong applied mathematics background; while being simple, this step suffices for many applications, and is a good starting point for learning more advanced algorithms. 
+
+We strive to communicate the underlying intuitions through numerous examples of classic problems, we show different choices of variables and the ways the energies are built. Over the last two decades, the geometry processing community have used it for computing 2D maps, deformations, geodesic paths, frame fields, etc. Our examples provide many examples of applications that can be directly solved by the least squares method.
+
+Note that linear regression is an efficient tool that has deep connections to other scientific domains; we show a few such links to broaden reader's horizons.
+### 3
+The course is decomposed in three parts: an introduction of least squares, numerous use cases to demonstrate its usefulness, and the presentation of its strong relations with to adjacent scientific domains:
+
+* It starts with a gentle introduction of the least squares method, providing some intuitions about linear systems.
+
+* Then we proceed to the main course: how do we instantiate least squares to solve some problems? What can be the choice of variables? The energy? How to deal with constraints? Are we bound by the linearity? This part is thoroughly illustrated with real examples and comes with simple source code that is meant to be experimented with.
+
+* The last part provides some insights about the strong connections between the fundamentals of least squares, probability theory, finite element methods and neuronal networks.
