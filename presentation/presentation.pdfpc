@@ -2,8 +2,11 @@
 0
 [notes]
 ### 1
+Hello guys, I have a pleasure to present you our course entitled "least squares for programmers" that was prepared by Nicolas Ray, Étienne Corman and me, Dmitry Sokolov. We work in in a research team named Pixel, and feel free to contact us if you have any question.
+
 In this course we present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using least squares methods; it is a very efficient tool that does not require too much mathematical background.
 
+The "for programmers" part is not a joke, please note that there we have prepared a github repository that contains source code for all our examples. In addition to that, the course notes contain few (optional for reading) chapters that I will not present here, but that can be helpful to master the technology.
 ### 2
 
 This course is intended for students/engineers/researchers who know how to program in the traditional way: by breaking down tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes). Here we present a different paradigm: we describe what is a good result, and let numerical optimization find it for us.
