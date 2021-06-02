@@ -1,5 +1,7 @@
 [duration]
 0
+[font_size]
+10
 [notes]
 ### 1
 Hello guys, I have a pleasure to present you our course entitled "least squares for programmers" that was prepared by Nicolas Ray, Étienne Corman and me, Dmitry Sokolov. We work in in a research team named Pixel, and feel free to contact us if you have any question.
@@ -28,3 +30,176 @@ The course is decomposed in three parts: an introduction of least squares, numer
 * Then we proceed to the main course: how do we instantiate least squares to solve some problems? What can be the choice of variables? The energy? How to deal with constraints? Are we bound by the linearity? This part is thoroughly illustrated with real examples and comes with simple source code that is meant to be experimented with.
 
 * The last part provides some insights about the strong connections between the fundamentals of least squares, probability theory, finite element methods and neuronal networks.
+### 4
+Let us consider a simple example of coin flipping, also known as Bernoulli’s scheme. We conduct n experi-
+ments, two events can happen in each one (“success” or “failure”): one happens with probability p, the other
+one with probability 1 − p. Our goal is to find the probability of getting exactly k successes in these n
+experiments.
+
+This probability is given by Bernoulli’s formula.
+
+Let us take an ordinary coin (p = 1/2), flip it ten times (n = 10), and count how many times we get the
+tails. Thus, if we have fixed the probability of “success” (1/2) and also fixed the number of experiments (10),
+then the possible number of “successes” can be any integer between 0 and 10, but these outcomes are not
+equiprobable. It is clear that five “successes” are much more likely to happen than none. For example, the
+probability encountering seven tails is about 12%.
+
+If we have a biased coin with probability p=1/7, the then probability of having 7 successes is about 27%.
+### 5
+Now let us look at the same problem from a different angle. Suppose we have a real coin, but we do
+not know its distribution of a priori probability of “success”/“failure”. However, we can toss it ten times and
+count the number of “successes”. For example, we have counted seven tails. Would it help us to evaluate p?
+
+We can try to fix n = 10 and k = 7 in Bernoulli’s formula, leaving p as a free parameter. Please note that to ease visual parsing of the formulas, throughout all the presentation I highlight known values in green and uknown values in red.
+
+Now Bernoulli’s formula can be interpreted as the plausibility of the parameter p being evaluated. I have even changed the function notation, now it is denoted as L (likelihood).  That is being said, the likelihood is the probability to generate the observation data (7 tails out of 10 experiments) for the given value of the parameter(s). For example, the likelihood of a balanced coin (p = 1/2) with seven tails out of ten tosses is approximately 12%. Here is a plot of the likelihood function for the observation data with 7 tails out of 10 experiments.
+### 6
+So, we are looking for the parameter value that maximizes the likelihood of producing the observations
+we have. In our particular case, we have a function of one variable, and we are looking for its maximum. In
+order to make things easier, I will not search for the maximum of L, but for the maximum of log L. The
+logarithm is a strictly increasing  function, so maximizing both is equivalent. The logarithm has a nice
+property of breaking down products into sums that are much more convenient to differentiate. 
+
+So, we are looking for the maximum of this function.
+
+That’s why we equate it’s derivative to zero. The derivative of log p = 1/p, so the equation is easy to solve.
+
+The maximum likelihood (about 27%) is reached at the point p = 7/10 (well duh) 
+
+Just in case, let us check the second derivative. In the point p = 7/10 it is negative, therefore this point is indeed a maximum of the function L.
+
+The point of this exercice is to gently introduce a method of maximum likelihood estimation.
+
+The idea is to estimate the parameters of a probability distribution by maximizing a likelihood function, so that under the assumed statistical model the observed data is most probable.
+
+If the likelihood function is differentiable, the derivative test for determining maxima can be applied. In some cases, like in one we just saw, the first-order conditions of the likelihood function can be solved explicitly.
+As we will see shortly, the ordinary least squares estimator maximizes the likelihood of the linear regression model.
+### 7
+Let us imagine that we have a constant physical quantity that we want to measure; for example, it can be a
+length to measure with a ruler or a voltage with a voltmeter. In the real world, any measurement gives only an
+approximation of this value, but not the value itself. The methods I am describing here were developed by
+Gauß at the end of the 18th century, when he measured the orbits of celestial bodies.
+
+For example, if we measure the battery voltage N times, we get N different measurements. Which of
+them should we take? All of them! So, let us say that we have N measurements Uj.
+
+Let us suppose that each measurement Uj is equal to the real value plus a Gaussian noise. The noise
+is characterized by two parameters — the center of the Gaussian bell and its “width”. In this case, the
+probability density can be expressed as an exponent function.
+### 8
+Having N measurements Uj , our goal is to find the parameters U and σ that maximize the likelihood. The likelihood (I have already applied the logarithm) can be written as follows, here we use our assumption that the measurements are independent and identically distributed.
+
+\[show the math\]
+
+We can conclude that under Gaussian noise maximization of the likelihood is equivalent to a least squares minimization.
+### 9
+And then everything is strictly as it used to be, we equate the partial derivatives to zero.
+
+It is easy to see that the most plausible estimation of the unknown value U is the simple average of all measurements.
+
+And the most plausible estimation of σ turns out to be the standard deviation.
+
+Such a convoluted way to obtain a simple average of all measurements. . . In my humble opinion, the result
+is worth the effort. By the way, averaging multiple measurements of a constant value in order to increase
+the accuracy of measurements is quite a standard practice. For example, ADC averaging. Note that the
+hypothesis of Gaussian noise is not necessary in this case, it is enough to have an unbiased noise.
+### 10
+As I have already said, maximizing the logarithm of the Gaussian likelihood is equivalent to minimizing the sum of squared estimation errors. Let us consider the last example, here we are talking about ordinary least squares. Say we want to calibrate a spring scale with a help of reference weights. Suppose we have N reference weights of mass xj ; we weigh them with the scale and measure the length of the spring. So, we have N spring lengths yj.
+
+Hooke’s law tells us that spring stretches linearly on the force applied; this force includes the reference
+weight and the weight of the spring itself. Let us denote the spring stiffness as a, and the spring length
+streched under under its own weight as b. Then we can express the plausibility of our measurements (still
+under the Gaussian measurement noise hypothesis) in this way:
+
+Maximizing the likelihood of L is equivalent to minimizing the sum of the squared estimation error.
+
+### 11
+Thus, we are looking for the minimum of the function S defined as follows:
+
+The image on the right illustrates the formula: we are looking for such a straight line that minimizes the sum of
+squared lengths of green segments. And then the derivation is quite straightforward. We equate the partial derivatives to zero.
+
+We obtain a system of two linear equations with two unknowns, and we can use any method to get the solution.
+
+
+### 12
+The least squares method is a particular case of maximizing likelihood in cases where the probability density
+is Gaussian. If the density is not Gaussian, the least squares approach can produce an estimate different
+from the MLE (maximum likelihood estimation). By the way, Gauß conjectured that the type of noise is of
+no importance, and the only thing that matters is the independence of trials.
+
+As you have already noticed, the more parameters we have, the more cumbersome the analytical solutions
+are. Fortunately, we are not living in XVIII century anymore, we have computers! 
+
+Next we will try to build a geometric intuition on least squares, and see how can least squares problems be efficiently implemented.
+### 13
+I have promised "for programmers" in the course title, and we have not seen a single line of code yet! It is time to change that. Before attacking least squares with an aid of a computer, we need to recall how to solve systems of linear equations, and to do so, we will write our first program.
+### 14
+Let us examine the following Python program.
+
+We start from a 16 elements array, and we iterate over and over a simple procedure: 
+we replace each element with an average of its neighbours; the first and the last elements are fixed.
+
+Here is a quick test. What should we get in the end? Does it converge or oscillate infinitely?
+
+Take few seconds.
+
+Intuitively, each peak in the array is cut out, and therefore the array will be smoothed over time.
+
+Here is the evolution of the data over time.
+
+Is there a way to predict the result without guessing it and without executing the program?
+The answer is yes; let us put the program aside for a moment and recall how to solve systems of linear equations.
+### 15
+Let us suppose that we have an ordinary system of linear equations.
+
+It can be rewritten by leaving the x_i at the left side of the equations.
+### 16
+Suppose that we have an arbitrary vector x0 approximating the solution, for example, a zero vector.
+Then, if we plug it into the right side of the equations, we can compue an updated approximation x1.
+
+Thus, we build a sequence of approximations, and under some assumptions on the system, this procedure converges to the true solution. This iteration is known as the Jacobi method. Of course, there are other much more powerful numerical methods, but this is the simplest one.
+### 17
+What is the connection to our python program?
+
+In fact, we replace each interior node x_i with the average of its values that can be rewritten as follows.
+
+It turns out that the program solves the following system with the Jacobi method.
+
+Since you can pause the video, do not take my word for it, grab a pencil and verify it! 
+
+So, if we consider the array as a sampled function, the linear system prescribes a constant derivative and fixes the extremities, therefore the result can only be a straight line.
+### 18
+There is a very interesting modification of the Jacobi method, named after Johann Carl Friedrich Gauß
+and Philipp Ludwig von Seidel. This modification is even easier to implement than the Jacobi method,
+and it often requires fewer iterations to produce the same degree of accuracy. With the Jacobi method, the
+values of obtained in the k-th approximation remain unchanged until the entire k-th approximation has been
+calculated. 
+
+With the Gauß-Seidel method, on the other hand, we use the new values of each as soon as they
+are known.
+### 19
+The recursive formulas can be written as follows
+
+It allows to perform all the computations in place. 
+### 23
+\[draw a 1-ring\]
+
+Interestingly, it is all the same for our 3D surface, the above code solves the Laplace’s equation ∆f = 0 with Dirichlet
+boundary conditions. Again, do not trust me, grab a pencil and write down the corresponding matrix
+for a mesh with one interior vertex. Actually, let us do it together.
+
+
+So, the result must be the minimal surface respecting the boundary conditions. In other words, make a loop from a rigid wire, soak it in a liqud soap, the soap film on this loop is the solution. 
+### 24
+\[Another quiz\]
+
+What is the result of this program? Well, it is easy to answer. We are looking for a function whose
+second derivative is a linear function, therefore the solution must be a cubic polynomial. Figure 3.4 shows
+the evolution of the array, the ground truth polynomial is shown in green.
+Congratulations, you have just solved a Poisson’s equation!
+### 26
+Recall that the main goal is to study least squares, therefore our main tool will be the minimization of
+quadratic functions; however, before we start using this power tool, we need to find where its on/off button
+is located. First of all, we need to recall what a matrix is; then we will revisit the definition of a positive
+numbers, and only then we will attack minimization of quadratic functions.

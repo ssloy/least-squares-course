@@ -1,37 +1,36 @@
 ﻿In this section we will consider few different problems that can be solved with least squares.
-The idea is to show main turning knobs to allow you to instantiate least squares in different settings.
+The idea is to show main turning knobs to allow you to instantiate least squares in different settings for your problems.
 
 Let us start with a tiny example from the optimal control theory.
 Optimal control deals with the problem of finding a control law for a given system such that a certain optimality criterion is achieved.
-This phrase is too unspecific, let us illustrate it. Imagine that we have a car that advances with some speed, say 0.5m/s. The goal is to accelerate and reach, say, 2.3m/s. I sample the signals every 1 second, and I leave a half a minute to reach the given speed.
+This phrase is way too unspecific, let us illustrate it. Imagine that we have a car that advances with some speed, say 0.5m/s. The goal is to accelerate and reach, say, 2.3m/s. Here I sample the signals every 1 second, and I leave a half a minute to reach the given speed.
 
-We can not control the speed directly, but we can act on the acceleration via the gas pedal. We can model the system with a very simple equation that tells us that the speed is equal to the initial speed plus the integral of the acceleration.
+We can not control the speed directly, but we can act on the acceleration via the gas pedal. We can model the system with a very simple equation that tells us that the speed is equal to the initial speed v_0 plus the integral of the acceleration.
 Recall that I highlight unknown values in red, and known values in green.
 
 So, our goal is to find a sequence of u that optimizes some quality criterion J that depends on the state of the system v and the control u.
 
-The case where the system dynamics are described by a set of linear differential equations and the cost J is described by a quadratic functional is called a linear quadratic problem.
+The case where the system dynamics is described by a set of linear differential equations and the cost J is described by a quadratic functional is called a linear quadratic problem.
 
-Let us test few different quality criteria.
+Let us test few different quality criteria for the same problem.
 
-For example, what happens if we ask for the car to reach the final speed as quickly as possible? It can be written as follows. We penalize the deviation of the velocity v_i from the goal, and here I have just expanded the expression v_i.
+For example, what happens if we ask for the car to reach the final speed as quickly as possible? It can be written as follows. We penalize the deviation of the velocity v_i from the goal v_n, and here I have just expanded the expression v_i.
 
-To minimize this criterion, we can solve the following system in the least squares sense. This particular system is not overdetermined, so it is easy to see that we have the solution u_0 = v_n - v_0, and the rest of u_i equal to zero.
+To minimize this criterion, we can solve the following system in the least squares sense. In this particular case the system is not overdetermined, so it is easy to see that we have the solution u_0 = v_n - v_0, and the rest of u_i is equal to zero.
 This obviously results in a quite brutal acceleration well beyond of physical capabilities of our car.
 
-Okay, no problem, let us penalize large accelerations. Here we say that at every moment we want the acceleration to be as low as possible,
-and I put a constraint to the system that forces the car to reach the goal speed after the half a minute.
+So, how to cope with the problem? Let us try another quality criterion that penalizes large accelerations. Here we say that at every moment we want the acceleration to be as low as possible by taking a sum of u_i squared, and in addition to that, I put a constraint to the system that forces the car to reach the goal speed after the half a minute.
 This sum is the final speed for the car, and I want it to be close to the v_n.
 
 Here is a piece of Python code that solves the system.
-It stacks an identity matrix with a last row filled by ones.
-Again, the right hand side is a stack of a zero vector with vn-v0 appended to the end.
-We obtain the control signal by solving the system, and we reconstruct the velocities from the control signal.
+So, we start by building a system matrix A and we stack an identity matrix with a last row filled by ones.
+The right hand side is a stack of a zero vector with vn-v0 appended to the end.
+We obtain the control signal u by solving the system A transposed times A times u equal A transposed b, and in the final line we reconstruct the velocities from the control signal that we have just computed.
 
-Here is a plot of the solution. Indeed, the acceleration is very low, but the transient time is unacceptable.
+Here is a plot of the solution. Indeed, the acceleration is very low, however, the transient time is unacceptable: we can not leave the car to take 30 seconds to accelerate to 2.3 m/s.
 
 Minimization of the transient time and low acceleration are competing goals, but we can find a trade-off by mixing both goals.
-This criterion asks to reach the goal as quickly as possible, while penalizing large accelerations.
+Let us try a third criterion asks to reach the goal as quickly as possible, while penalizing large accelerations.
 
 It can be minimized by solving the following system.
 Note the coefficient 2 (or 4 when squared) in the equations and recall that we solve the system in the least squares sense.
@@ -40,7 +39,7 @@ Following listing solves this system.
 Again, the system matrix A is build from a stack of a lower triangular matrix of ones, and a diagonal matrix with 2 at its main diagonal.
 The right hand side is a stack of two vectors prescribing the competing goals.
 
-And here is a plot of the sultuion, and it looks like a reasonable behaviour for a car.
+And here is a plot of the soltuion, and it looks like a reasonable behaviour for a car.
 In practice, just like we did in this section, engineers try different combinations of competing goals until they
 obtain a satisfactory transient time while not exceeding regulation capabilites.
 
