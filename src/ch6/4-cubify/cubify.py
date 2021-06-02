@@ -3,21 +3,8 @@ from mesh import Mesh
 from scipy.sparse        import lil_matrix
 from scipy.sparse.linalg import lsmr
 
-def normalize(v):
-    return v / np.linalg.norm(v)
-
-def cross(v1, v2):
-    return [v1[1]*v2[2] - v1[2]*v2[1], v1[2]*v2[0] - v1[0]*v2[2], v1[0]*v2[1] - v1[1]*v2[0]]
-
 def nearest_axis(n):
-    axes = [[1,0,0],[0,1,0],[0,0,1]]
-    nmin = -1
-    imin = -1
-    for i,a in enumerate(axes):
-        if np.abs(np.dot(n,a))>nmin:
-            nmin = np.abs(np.dot(n,a))
-            imin = i
-    return imin
+    return np.argmax([np.abs(np.dot(n, a)) for a in [[1,0,0],[0,1,0],[0,0,1]]])
 
 m = Mesh("input-face.obj") # load mesh
 
@@ -29,8 +16,7 @@ for dim in range(3): # the problem is separable in x,y,z
         A[c, m.dst(c)] =  1
 
         t = c//3 # triangle id from halfedge id
-        n = normalize(cross(m.V[m.T[t][1]]- m.V[m.T[t][0]], m.V[m.T[t][2]]- m.V[m.T[t][0]])) # normal
-        if nearest_axis(n)==dim:  # flatten the right dimension of each half-edge
+        if nearest_axis(m.normal(t))==dim:  # flatten the right dimension of each half-edge
             A[c+m.ncorners, m.org(c)] = -2
             A[c+m.ncorners, m.dst(c)] =  2
     A = A.tocsr() # sparse row matrix for fast matrix-vector multiplication

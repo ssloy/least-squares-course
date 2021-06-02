@@ -7,15 +7,13 @@ foot = mpimg.imread('football.png')
 w,h = len(foot[0]), len(foot)
 ox,oy = 100, 60 # glue the football here
 
-A = scipy.sparse.lil_matrix((2*(w-1)*(h-1)+2*w+2*h, w*h))
-for i in range(0,w): # top data fitting
-    A[i, i] = 1
-for i in range(0,w): # bottom data fitting
-    A[w+i, i+(h-1)*w] = 1
-for j in range(0,h): # left data fitting
-    A[2*w+j, j*w] = 1
-for j in range(0,h): # right data fitting
-    A[2*w+h+j, w-1+j*w] = 1
+A = scipy.sparse.lil_matrix((2*w+2*h + 2*(w-1)*(h-1), w*h))
+for i in range(0,w):
+    A[  i, i        ] = 1 #    top data fitting
+    A[w+i, i+(h-1)*w] = 1 # bottom data fitting
+for j in range(0,h):
+    A[2*w  +j,     j*w] = 1 #  left data fitting
+    A[2*w+h+j, w-1+j*w] = 1 # right data fitting
 cnt = 2*w+2*h
 for j in range(0,h-1): # gradient matrix
     for i in range(0,w-1):

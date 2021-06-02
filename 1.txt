@@ -39,9 +39,9 @@ Following listing solves this system.
 Again, the system matrix A is build from a stack of a lower triangular matrix of ones, and a diagonal matrix with 2 at its main diagonal.
 The right hand side is a stack of two vectors prescribing the competing goals.
 
-And here is a plot of the soltuion, and it looks like a reasonable behaviour for a car.
+And here is a plot of the solution, and it looks like a reasonable behaviour for a car.
 In practice, just like we did in this section, engineers try different combinations of competing goals until they
-obtain a satisfactory transient time while not exceeding regulation capabilites.
+obtain a satisfactory transient time while not exceeding regulation capabilities.
 
 So, the takeaway message is that for the same problem, the same choice of variables, tweaking the objective function produces very different results.
 Use it to your advantage!
@@ -257,7 +257,7 @@ The resulting deformation however does not look realistic at all: the surface is
 constraints and the our deformation model is unable to create the global rotation induced by the constraints.
 
 How to make the deformation look like the character is moving?
-Human(-oid) motions are constraints by a skeleton making any movement a composition of rotations around joints.
+Human(-oid) motions are constrained by a skeleton making any movement a composition of rotations around joints.
 To simulate this effect we can ask for a deformation that locally resembles to a rotation.
 This way the deformation will seem more rigid.
 
@@ -301,11 +301,9 @@ The takeaway message here is that many nonlinear problems can be solved as a ser
 
 For our final example I have chosen least squares conformal mapping, as it is one of the simplest problems that are not separable in dimensions.
 
-A parameterization of a surface consists in finding a way to store colors of a surface in a texture.
 A mapping of the points of the surface to the texture is defined by a mapping function from 3d space to a plane.
 By inverting this function we can colorize the surface using a flat image drawn by an artist.
 Parameterization of a surface is a problem equivalent to flattening this surface.
-This slide gives us a pretty intuitive idea of the purpose of parameterization.
 
 In our context, we are manipulating triangulated surfaces and we define a parametrization as a piecewise linear function where the pieces are the triangles.
 Such functions are stored in texture coordinates which are the 2D coordinates of the vertices of the triangulation.

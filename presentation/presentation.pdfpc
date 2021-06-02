@@ -4,18 +4,16 @@
 10
 [notes]
 ### 1
-Hello guys, I have a pleasure to present you our course entitled "least squares for programmers" that was prepared by Nicolas Ray, Étienne Corman and me, Dmitry Sokolov. We work in in a research team named Pixel, and feel free to contact us if you have any question.
+Hello guys, I have a pleasure to present you our course entitled "least squares for programmers" that was prepared by Nicolas Ray, Étienne Corman and me, Dmitry Sokolov. We work in a research team named Pixel, and feel free to contact us if you have any question.
 
-In this course we present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using least squares methods; it is a very efficient tool that does not require too much mathematical background.
+In this course we present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using least squares methods; it is a very efficient tool that does not require too much of a mathematical background.
 
-The "for programmers" part is not a joke, please note that there we have prepared a github repository that contains source code for all our examples. In addition to that, the course notes contain few (optional for reading) chapters that I will not present here, but that can be helpful to master the technology.
+The title of states "for programmers", so please note that we have prepared a github repository that contains source code for all our examples. In addition to that, the course notes contain few (optional for reading) chapters that I will not present here, but that can be helpful to master the technology.
 ### 2
 
 This course is intended for students/engineers/researchers who know how to program in the traditional way: by breaking down tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes). Here we present a different paradigm: we describe what is a good result, and let numerical optimization find it for us.
 
-Anyone able to program computer graphics algorithms can learn to use least squares with this course. Attendees already using it or having stronger mathematical background may discover some interesting relations with other domains.
-
-This course explains least squares optimization, nowadays a simple and well-mastered technology. We show how this simple method can solve a large number of problems that would be difficult to approach in any other way. This course provides a simple, understandable yet powerful tool that most coders can use, in the contrast with other algorithms sharing this paradigm (numerical simulation and deep learning) which are more complex to master.
+Anyone able to program computer graphics algorithms can learn to use least squares with this course. This course explains least squares optimization, nowadays a simple and well-mastered technology. We show how this simple method can solve a large number of problems that would be difficult to approach in any other way. This course provides a simple, understandable yet powerful tool that most coders can use, in the contrast with other algorithms sharing this paradigm (numerical simulation and deep learning) which are more complex to master.
 
 The importance of linear regression cannot be overstated. The most apparent usage of linear regression is in statistics / data analysis, but LR is much more than that. We propose to discover how the same method (least squares) applies to the manipulation of geometric objects. This first step into the numerical optimization world can be done without strong applied mathematics background; while being simple, this step suffices for many applications, and is a good starting point for learning more advanced algorithms. 
 
@@ -104,7 +102,9 @@ is worth the effort. By the way, averaging multiple measurements of a constant v
 the accuracy of measurements is quite a standard practice. For example, ADC averaging. Note that the
 hypothesis of Gaussian noise is not necessary in this case, it is enough to have an unbiased noise.
 ### 10
-As I have already said, maximizing the logarithm of the Gaussian likelihood is equivalent to minimizing the sum of squared estimation errors. Let us consider the last example, here we are talking about ordinary least squares. Say we want to calibrate a spring scale with a help of reference weights. Suppose we have N reference weights of mass xj ; we weigh them with the scale and measure the length of the spring. So, we have N spring lengths yj.
+While we have seen that for measuring a constant value it suffices to take a simple average to get the most plausible explanation, it is much harder for less trivial  cases.
+
+Let us consider the last example, here we are talking about ordinary least squares. Say we want to calibrate a spring scale with a help of reference weights. Suppose we have N reference weights of mass xj ; we weigh them with the scale and measure the length of the spring. So, we have N spring lengths yj.
 
 Hooke’s law tells us that spring stretches linearly on the force applied; this force includes the reference
 weight and the weight of the spring itself. Let us denote the spring stiffness as a, and the spring length
@@ -123,17 +123,22 @@ We obtain a system of two linear equations with two unknowns, and we can use any
 
 
 ### 12
+The idea of behind this section was to give some historical perspective.
+
 The least squares method is a particular case of maximizing likelihood in cases where the probability density
 is Gaussian. If the density is not Gaussian, the least squares approach can produce an estimate different
-from the MLE (maximum likelihood estimation). By the way, Gauß conjectured that the type of noise is of
-no importance, and the only thing that matters is the independence of trials.
+from the MLE (maximum likelihood estimation). 
+
+By the way, Gauß erroneously conjectured that the type of noise is of no importance, and the only thing that matters is the independence of trials.
 
 As you have already noticed, the more parameters we have, the more cumbersome the analytical solutions
 are. Fortunately, we are not living in XVIII century anymore, we have computers! 
 
 Next we will try to build a geometric intuition on least squares, and see how can least squares problems be efficiently implemented.
 ### 13
-I have promised "for programmers" in the course title, and we have not seen a single line of code yet! It is time to change that. Before attacking least squares with an aid of a computer, we need to recall how to solve systems of linear equations, and to do so, we will write our first program.
+I have promised "for programmers" in the course title, and we have not seen a single line of code yet! It is time to change that. 
+
+In the last example we had to solve a 2x2 linear system, so before attacking larger least squares with an aid of a computer, we need to recall how to solve systems of linear equations, and to do so, we will write our first program.
 ### 14
 Let us examine the following Python program.
 
@@ -195,7 +200,7 @@ So, the result must be the minimal surface respecting the boundary conditions. I
 \[Another quiz\]
 
 What is the result of this program? Well, it is easy to answer. We are looking for a function whose
-second derivative is a linear function, therefore the solution must be a cubic polynomial. Figure 3.4 shows
+second derivative is a linear function, therefore the solution must be a cubic polynomial. Here you can see
 the evolution of the array, the ground truth polynomial is shown in green.
 Congratulations, you have just solved a Poisson’s equation!
 ### 26
@@ -203,3 +208,337 @@ Recall that the main goal is to study least squares, therefore our main tool wil
 quadratic functions; however, before we start using this power tool, we need to find where its on/off button
 is located. First of all, we need to recall what a matrix is; then we will revisit the definition of a positive
 numbers, and only then we will attack minimization of quadratic functions.
+### 27
+In this sections, matrices will be omnipresent, so let’s remember what it is. Pause the video for a few seconds, and try to formulate what the matrix is.
+
+The answer is very simple. A matrix is just a locker that stores stuff. Each piece of stuff lies in its own cell,
+cells are grouped in rows and columns. In our particular case, we store real numbers; for a programmer the
+easiest way to imagine a matrix A is something like:
+float A\[m\]\[n\];
+
+Why would we need a storage like this? What does it describe? Maybe I will upset you, but the matrix
+by itself does not describe anything, it stores stuff. For example, you can store coefficients of a function in
+it. Let us put aside matrices for a second imagine that we have a number a. What does it mean? Who
+knows what it means. . . 
+
+For example, it can be a coefficient inside a function that takes one number as an
+input and gives another number as an output. One possible instance of such a function a mathematicion could write down as: f (x) = ax
+
+In the programmers’ world it would look something like this:
+
+On the other hand, why this function and not another one? Let’s take another one!
+
+f (x) = ax2
+
+A programmer would write it like this:
+
+One of these functions is linear and the other is quadratic. Which one is correct? Neither one. The
+number a does not define it, it just stores a value! Build the function you need.
+### 28
+The same thing happens to matrices, they give storage space when simple numbers (scalars) do not
+suffice, a matrix is a sort of an hyper-number. The addition and multiplication operations are defined over
+matrices just as over numbers.
+
+Let us suppose that we have a 2 × 2 matrix A:
+
+The matrix does not mean anything by itself, for example, it can be interpreted as a linear function:
+Here goes the programmer’s view on the function. This function maps a two-dimensional vector to a two-dimensional vector. Graphically, it is convenient to imagine it as an image transformation: we give an input image, and the output is the stretched and/or rotated (maybe even mirrored!) version. 
+
+On the other hand, nothing prevents to interpret the matrix A as a quadratic function that maps a vector to a
+scalar. Note that the square is not very well defined for the vectors, so I cannot write x^2 as I wrote in the case
+of ordinary numbers. For those who are not at ease with matrix multiplications, I highly recommend to
+revisit it right now and check that the expression x^tAx indeed produces a scalar value. To this end, we
+can explicitly put brackets x^tAx = (x^tA)x. Recall that in this particular example x is a two-dimensional
+vector (stored in a 2 × 1 matrix). Let us write all the matrix dimensions explicitly:
+
+Returning to the cozy world of programmers, we can write the same quadratic function as shown in the bottom of the slide.
+### 29
+Allow me to ask a very stupid question: what is a positive number? We have a great tool called the predicate
+“greater than” >. Do not be in a hurry to answer that the number a is positive if and only if a > 0, it would
+be too easy. Let us define the positivity as follows:
+
+The real number a is positive if and only if for all non-zero real x ∈ R, x != 0 the condition ax^2 > 0 is satisfied.
+
+This definition looks pretty awkward, but it applies perfectly to matrices:
+
+A square matrix A is called positive definite if for any non-zero x the condition x^t Ax > 0
+is met, i.e. the corresponding quadratic form is strictly positive everywhere except at the origin.
+
+What do we need the positivity for? As we have already mentioned, our main tool will be the minimization
+of quadratic functions. It would be nice to be sure that the minimum exists! For example, the function f (x) =
+−x^2 clearly has no minimum, because the number -1 is not positive, both branches of the parabola f (x)
+look down. Positive definite matrices guarantee that the corresponding quadratic forms form a paraboloid
+with a (unique) minimum. 
+### 30
+Here is an illustration.
+
+Thus, we will work with a generalization of positive numbers, namely, positive definite matrices. More-
+over, in our particular case, the matrices will be symmetric! Note that quite often, when people talk about
+positive definiteness, they also imply symmetry.
+### 42
+This section is the main part of the course. We will consider few different problems that can be solved with least squares. The idea is to show main turning knobs to allow you to instantiate least squares in different settings for your problems.
+### 43
+Let us start with a tiny example from the optimal control theory.
+Optimal control deals with the problem of finding a control law for a given system such that a certain optimality criterion is achieved.
+This phrase is way too unspecific, let us illustrate it. Imagine that we have a car that advances with some speed, say 0.5m/s. The goal is to accelerate and reach, say, 2.3m/s. Here I sample the signals every 1 second, and I leave a half a minute to reach the given speed.
+
+We can not control the speed directly, but we can act on the acceleration via the gas pedal. We can model the system with a very simple equation that tells us that the speed is equal to the initial speed v_0 plus the integral of the acceleration.
+Recall that I highlight unknown values in red, and known values in green.
+
+So, our goal is to find a sequence of u that optimizes some quality criterion J that depends on the state of the system v and the control u.
+
+The case where the system dynamics is described by a set of linear differential equations and the cost J is described by a quadratic functional is called a linear quadratic problem.
+
+Let us test few different quality criteria for the same problem.
+
+For example, what happens if we ask for the car to reach the final speed as quickly as possible? It can be written as follows. We penalize the deviation of the velocity v_i from the goal v_n, and here I have just expanded the expression v_i.
+### 44
+To minimize this criterion, we can solve the following system in the least squares sense. In this particular case the system is not overdetermined, so it is easy to see that we have the solution u_0 = v_n - v_0, and the rest of u_i is equal to zero.
+This obviously results in a quite brutal acceleration well beyond of physical capabilities of our car.
+### 45
+So, how to cope with the problem? Let us try another quality criterion that penalizes large accelerations. Here we say that at every moment we want the acceleration to be as low as possible by taking a sum of u_i squared, and in addition to that, I put a constraint to the system that forces the car to reach the goal speed after the half a minute.
+This sum is the final speed for the car, and I want it to be close to the v_n.
+
+Here is a piece of Python code that solves the system.
+So, we start by building a system matrix A and we stack an identity matrix with a last row filled by ones.
+The right hand side is a stack of a zero vector with vn-v0 appended to the end.
+We obtain the control signal u by solving the system A transposed times A times u equal A transposed b, and in the final line we reconstruct the velocities from the control signal that we have just computed.
+
+Here is a plot of the solution. Indeed, the acceleration is very low, however, the transient time is unacceptable: we can not leave the car to take 30 seconds to accelerate to 2.3 m/s.
+
+Minimization of the transient time and low acceleration are competing goals, but we can find a trade-off by mixing both goals.
+### 46
+Let us try a third criterion asks to reach the goal as quickly as possible, while penalizing large accelerations.
+
+It can be minimized by solving the following system.
+Note the coefficient 2 (or 4 when squared) in the equations and recall that we solve the system in the least squares sense.
+By changing this coefficient, we can attach more importance to one of the competing goals.
+Following listing solves this system.
+Again, the system matrix A is build from a stack of a lower triangular matrix of ones, and a diagonal matrix with 2 at its main diagonal.
+The right hand side is a stack of two vectors prescribing the competing goals.
+
+And here is a plot of the solution, and it looks like a reasonable behaviour for a car.
+In practice, just like we did in this section, engineers try different combinations of competing goals until they
+obtain a satisfactory transient time while not exceeding regulation capabilities.
+
+### 47
+So, the takeaway message is that for the same problem, the same choice of variables, tweaking the objective function produces very different results.
+Use it to your advantage!
+### 48
+Now let us move way closer to computer graphics. Poisson's equation is widely used for example, in image editing that we will see shortly.
+But first let us start with the 1D basics.
+So, the problem is to find an unknown function f(x) defined over some interval that ressembles an input function g subject to boundary constraints.
+Recall that I highlight unknown values in red, and known values in green.
+
+We can formulate the problem as find f whose second derivative is equal to the second derivative of g with boundary fixed.
+The easiest way to solve the problem is to use a neanderthal smoothing method that was very common a couple of decades ago.
+
+So I sample the function with 32 values, I precompute the samples for the function g,
+I initialize the function f as the boundary values plus the zero function for the interior, and I smooth the function just as we have made a number of times before.
+More specifically, I prescribe the second order finite difference over f to be equal to the second order difference over g by Gauss-Seidel iterations.
+
+This approach is very simple to implement, however quite hard to tweak.
+Let us consider the same thing from a different perspective, I want to reformulate the problem as a minimization.
+### 49
+Note that solving Laplace's equation \Delta f=0, subject to appropriate boundary conditions,
+is equivalent to solving the variational problem of finding a function f that satisfies the boundary conditions and has minimal Dirichlet energy.
+Indeed, application of Euler-Lagrange equations for the minimization problem results in the Laplace's equation.
+
+Same goes for Poisson's equation.
+Solving \Delta f = g is equivalent to minimizing the integral of the squared norm of gradient f minus gradient g.
+
+Turns out it is a quadratic energy to minimize and we know just a method to do this very efficiently!
+Thus, after a discretization, we need to solve the following system in the least squares sense.
+Here I simply want the first order finite differences of f and g coincide.
+
+Here is a short Python code that solves the system.
+As before, we have 33 samples, we precompute the function g,
+we fill the matrix A with two diagonals built from ones and minus ones, respectively, and we compute the right hand side vector b.
+
+Then we solve for A transposed times A times f equals A transposed times b and we get the solution.
+### 50
+Now we are ready for a simple image editing example.
+I want to replace the baseball from the left image with the football. A direct overlay leads to a unsatisfactory result as can be seen in the right image.
+How to swap the content seamlessly?
+Poisson’s equation can be of help here, we can do better.
+All color channels are solved independently one from another, so we can say that we manipulate grayscale images.
+
+Let us say that we have two real-valued functions (a) (sub-image of the baseball photo) and (b) (the football image) defined over \Omega.
+Here for the sake of simplicity we consider a rectangular domain \Omega.
+So, we are looking for the function f that takes its boundary conditions from a and the gradients from b.
+### 51
+We can discretize the problem exactly as in the previous example: we have w x h-pixels grayscale images a and b.
+To compute a w x h-pixels image f, we can solve the following system in the least squares sense.
+
+
+Note that if we solve for an image that is 1000 pixels wide and 1000 pixels tall, we have one million unknowns, and thus the matrix A transposed times A is one million by one million.
+Fortunately, it is sparse: it contains only few non-zero entries at each row, so the problem is still tractable.
+
+You can find the source code at the github repository, and here you can see the result.
+While it is not completely perfect, we can still trace the rectangle boundary, it is, however, much better than the direct overlay for a very  humble cost.
+### 52
+The takeaway message here is that thanks to their simplicity and their power, Laplace's and Poisson's problems are widely used tools in geometry and image processing, and it is very handy to know your friends.
+### 53
+Let us move on to the next example. I want to create goofy portraits.
+Caricature, a type of exaggerated artistic portrait, amplifies the characteristic traits of human faces.
+Typically, this task is left to artists, as it was proven difficult for automated methods.
+Here I show an extremely naive approach, starting with a 2D silhouette.
+This section is closely related to Poisson image editing described in the previous example.
+
+Let us consider the following Python program:
+It defines a 2D silhouette as a closed polyline represented by two same length arrays x and y.
+
+The idea is to increase the curvature of the polyline, thus exaggerating the traits.
+To this end, we compute the curvatures via finite differences and store it in the arrays cx and cy.
+Then we want to solve the Poisson's equation with the increased curvature as the right hand side of the equation.
+So, we perform a number of Gauß-Seidel iterations to solve the equation.
+At the bottom of the slide we can see the evolution of the polyline.
+After 10 iterations the drawing looks very good, exactly what we had in mind, but what happens next?
+Well, there is no surprise: in the end we obtain an inflated version of the input, because it corresponds exactly to what we have asked for.
+To scale finite differences is the same as to scale the input signal...
+How to fix it? Well, we can stop the process after 10 iterations,
+thus exploiting the fact that Gauß-Seidel has a slow convergence in low frequencies, but it is a unsatisfactory solution.
+It would much be better if the result was at the true minimum of our optimization routine.
+
+As before, let us rewrite the same problem as a minimization, it will allow us to tweak the energy.
+The listing we have just saw corresponds to the following optimization problem to be solved independently for x and y coordinates.
+Here x_i are the input coordinates and x'_i are the unknowns. Coefficient c corresponds to the scaling coefficient.
+The problem is separable in two coordinates, so we list here only the x part.
+### 54
+Having rewritten the problem as a minimization, we can fix it.
+The simplest way to prevent the "inflation" of the model is to add a data attachment term.
+First we start with the energy term we have already written, and then add a second term.
+So, basically we want to scale the gradient AND we want the deformation to be small.
+The coefficients c0 and c1 allow us to tune the optimization to achieve the desired trade-off between the curvature exaggeration and the data attachment.
+
+To minimize this energy, we can solve the following system in the least squares sense.
+As usual, you can find the source code in the github repo, and here is what the result looks like.
+The sweet part is that this formulation works out of the box for 3d surfaces as well!
+
+To recapitulate, we took a basic Poisson's equation and then just added a light data fitting term to the energy.
+The takeaway message here is that reformulating as a least squares problem allows for a much easier tweaking.
+### 55
+Three more examples to go.
+Let us compute another deformation of a 3D surface, I want to cubify it.
+The idea is to deform the surface by aligning triangles with one of the global coordinate planes, thus obtaining a moai statue effect.
+
+First of all for each triangle we compute the coordinate axis closest to its normal, and denote it as a_ijk.
+Given a triangle with the normal vector N_ijk, we test three coordinate vectors and take the one with the largest dot product.
+So we basically snap the normal to the closest coordinate axis.
+
+Three different colors (blue, white, pink) in the image correspond to the axes.
+And then we want to deform the surface according to this coloring. It is very easy to do.
+My variables are still the coordinates of the mesh vertices, and for the simplicity of notations,
+I call by e_ij the vector corresponding to the edge (i, j) in the input data,
+and e'ij be the modified geometry (recall that I highlight the unknowns in red).
+
+Here is a quick test: what would be the result of the following optimization?
+Without any doubt you have recognized the Poisson problem.
+We have asked for the output edges to be as close as possible to the input edges, and it is perfectly feasible,
+so our deformation is an identity.
+
+We will add few more terms to this energy to obtain the desired effect.
+
+To do so, we can define the projection operator that takes a plane defined by its normal a and projects a vector v to this plane.
+Then the desired geometry can be obtained by minimizing the following energy.
+
+For each triangle ijk we add a term pulls the triangle to be aligned with the chosen coordinate plane.
+More specifically, for each edge we penalize the deviation of the output geometry from coplanarity with the plane defined by the axis a_ijk.
+
+Note the coefficient c representing the trade-off between the flattening force and the attachment to the old data.
+As always, the source code is available.
+
+The takeaway message here is that despite the same choice of variables as in the caricature example,
+we have completely different results thanks to a different tweaking.
+We explain to the solver what we want to get, and it is up to the solver to find the result.
+### 56
+Two more examples to go.
+How to deform a character in a plausible manner?
+Usually this task is done by artists expertly rigging 3D models.
+However simple deformation models can still produce satisfying deformations.
+
+So, starting from an input mesh, we choose a subset of its vertices, we move them, we lock them, and we want the rest of the mesh to deform accordingly.
+Here both screenshots are taken with the same camera angle, but the constraints imposed on the mesh naturally rotate the model around the vertical axis,
+while the tail moves to the other side of the character.
+
+Formally, we have the same choice of variables, namely, coordinates of the mesh vertices, and
+our deformation will be controlled by a subset of vertices I on the surface which will forced to the position p_k.
+
+The first requirement one might have is that the deformation must be smooth.
+So the first idea is to best preserve the edges of the original surface as best as possible while satisfying the position constraints.
+The new vertex positions x' are obtained be solving the least squares problem.
+Once again, this is a simple Poisson problem.
+
+The resulting deformation however does not look realistic at all: the surface is badly stretched near the
+constraints and the our deformation model is unable to create the global rotation induced by the constraints.
+
+### 57
+How to make the deformation look like the character is moving?
+Human(-oid) motions are constrained by a skeleton making any movement a composition of rotations around joints.
+To simulate this effect we can ask for a deformation that locally resembles to a rotation.
+This way the deformation will seem more rigid.
+
+To do so, we assign rotation matrices Ri at each vertex i which will affect all incident edges.
+The least squares problem has now two sets of unknowns: the vertex positions and the rotations.
+And the energy tells us that for each edge ij the modified geometry e'_ij must be as close as possible to a rotation of the input edge e_ij.
+Here the cross denotes a multiplication of a 3x3 matrix R_i by a 3x1 matrix e_ij.
+
+Note that this problem is a nonlinear least squares problem but it can be solved efficiently by alternatively solving for the vertex position and solving for the rotations.
+Having fixed rotations, solving for the vertex positions is a linear problem that can be solved by 3 separate calls to a conjugate gradients algorithm or even by using Gauß-Seidel iterations.
+Finding the rotations is a so-called orthogonal Procrustes problem which has a closed form solution:
+Let U Σ V^T  be the singular value decomposition of the 3x3 matrix built from the original geometry and current approximation of the solution, then Ri = U V^T
+
+The resulting deformation is able to capture a global rotation of the model while the position constraints nicely spread out across the surface.
+As always, a Python listing is available.
+
+The takeaway message here is that many nonlinear problems can be solved as a series of linear ones.
+### 58
+For our final example I have chosen least squares conformal mapping, as it is one of the simplest problems that are not separable in dimensions.
+
+A mapping of the points of the surface to the texture is defined by a mapping function from 3d space to a plane.
+By inverting this function we can colorize the surface using a flat image drawn by an artist.
+Parameterization of a surface is a problem equivalent to flattening this surface.
+
+In our context, we are manipulating triangulated surfaces and we define a parametrization as a piecewise linear function where the pieces are the triangles.
+Such functions are stored in texture coordinates which are the 2D coordinates of the vertices of the triangulation.
+
+It is very difficult to define what a good parameterization is, there are many different ways to compare the quality of maps. The distortion of a mapping is defined by the Jacobian matrix. Ideally, it should be an isometric transformation, but this is an unreachable goal.
+In continuous settings, there only exist maps that preserve angles (conformal) and maps that preserve area (authalic).
+In this example, we manipulate discrete conformal (angle preserving) maps.
+### 59
+
+Conformal maps have a very interesting feature: their distortion is locally reduced to a scaling.
+The stretching of the map is the same in all directions (the map is called isotropic), which makes this type of parameterization relatively simple to manipulate. The conservation of angles implies that the texture (locally) is not elongated. On the other hand, the area is not conserved, implying eventual strong changes in stretching from one place to another on the surface.
+
+Computing such a mapping is a direct instantiation of the Cauchy-Riemann equations on a pair of
+real-valued functions of two real variables u(x, y) and v(x, y) representing the texture coordinates.
+
+In this form, the equations correspond structurally to the condition that the Jacobian matrix is antisymmetric. Geometrically, such a matrix is always the composition of a rotation with a scaling, and in particular preserves angles. The Jacobian of a vector function (u, v) takes infinitesimal line segments at the intersection of two curves in the parameter plane (x, y) and rotates them to the corresponding segments in u, v.
+Consequently, a function satisfying the Cauchy–Riemann equations, with a nonzero derivative,
+preserves the angle between curves in the plane.
+That is, the Cauchy–Riemann equations are the conditions for a function to be conformal.
+
+
+Of course, there will be no exact solution for a triangle mesh, therefore, as usual, we can sum failure of this relationship to hold over all triangles.
+
+We sample tex coord at vertices, and interpolate linearly inside triangles. It also means that the Jacobian matrix is constant per triangle.
+
+Note that there is a very handy formula to compute a gradient of a linear scalar function u sampled at three vertices of a triangle.
+
+With the help of this formula, we can write our objective function as follows:
+we want to compute a scalar function u and a scalar function v such that the gradient of u is equal to the gradient of v rotated by 90 degrees.
+
+Of course, we can not do better than u(x, y) = v(x, y) = 0, and such a map is unsatisfactory.
+### 60
+As a quick hack, we can "pin" two arbitrary vertices to some arbitrary points in the u, v plane. Pinning one vertex determines
+translation in the plane of the texture, whereas the other determines rotation and scale.
+This energy is very easy to minimize, just as before we need to solve a linear system.
+
+### 61
+This concludes our least squares through examples section.
+The main thing to recall here is that stating a problem as an optimization problem is a very powerful tool.
+
+Basically, we do not seek for an algorithm to compute a solution.
+We describe what a solution should look like, and then let the solver do all the job.
+Different variations of Laplace's and Poisson's problem are omnipresent, and you should learn to recognize them.
+Some problems are separable in dimensions, some are not. Some problems are linear, some are not, but a fair portion of non-linear problems can be linearized, as we will see very shortly.

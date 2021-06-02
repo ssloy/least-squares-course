@@ -27,6 +27,10 @@ class Mesh():
     def ncorners(self):
         return self.ntriangles*3;
 
+    def normal(self, t):
+        n = np.cross(self.V[self.T[t][1]]-self.V[self.T[t][0]], self.V[self.T[t][2]]-self.V[self.T[t][0]])
+        return n / np.linalg.norm(n)
+
     def org(self, c):
         return self.T[c//3][c%3]
 
