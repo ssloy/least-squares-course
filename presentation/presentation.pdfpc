@@ -542,3 +542,91 @@ Basically, we do not seek for an algorithm to compute a solution.
 We describe what a solution should look like, and then let the solver do all the job.
 Different variations of Laplace's and Poisson's problem are omnipresent, and you should learn to recognize them.
 Some problems are separable in dimensions, some are not. Some problems are linear, some are not, but a fair portion of non-linear problems can be linearized, as we will see very shortly.
+
+
+Here goes our last section entitled "From least squares to neural networks"
+
+Nowadays machine learning is a very trendy topic, almost everyone wants to use it somehow, whether it is
+reasonable or not. Machine learning seems to be the answer to all the business prayers. It is amazing how
+people are now diving into the abyss of neural networks without ever looking back. However, it is much
+more surprising to witness the existence of two irreconcilable camps: those for whom neural networks are
+the answer to the meaning of life, the universe, and everything, and those who despise neural networks and
+deny the right to use the tool. We do not advocate for either party; two main points of this chapters are:
+• neural networks are not the only machine learning tool;
+• there is no clear boundary between least squares methods and neural networks.
+### 62
+The most simple, standard and yet quite common machine learning problem is binary classification. Many
+very interesting and important problems can be reduced to it. For example, we are given a set of data where
+n vectors are each marked with a “red” or “green” label. This is the simplest example, but in practice the
+red/green dataset can be really useful: for example, “spam”/“not spam” email classification, where the input
+vectors encode various characteristics of the content (e.g. the number of mentions of a certain magic carpet
+cleaning solution).
+
+Our goal in binary classification is to build a function that takes a vector as an input and predicts its
+label. First we need to learn from the database: we need to build such a function whose predictions match
+the database labels. In the end, once the function is constructed, we can discard the database and use the
+function we have built as an oracle to predict labels for previously unseen vectors.
+Long story short, let us consider the simplest example: we have n real numbers and the corresponding
+colors that we encode as 0 (“red”) and 1 (“green”). In other words, we have a sequence {(xi, yi )}ni=1 as the
+input, where xi ∈ R and yi ∈ {0, 1}. How do we build the classifying function? Let us start with the basics:
+we can fit a straight line to the set of input points {(xi , yi )}ni=1 , thus performing an ordinary
+linear regression:
+
+Next we endow the straight line with the classification rule: if y(x) > 1/2 then x is green, otherwise it is red. The bottom image provides an example: the colored dots show the database; the straight line is the linear regression result, and the decision boundary is shown by the dashed line. All points on the right of the line are classified as green, and on the left as red. We can see that the database is perfectly learned, and there is no misclassification in the database (for the sake of simplicity, we do not make the distinction between the database we learn on and the database we use to assess the quality of the classifying function).
+
+\[show code\]
+
+It may sound stupid, but ordinary linear regression is not always a bad choice for a binary classification. Of course, it only works well if certain assumptions about the input data are satisfied (e.g. independent and normally distributed class samples). If, however, these assumptions are not met, we may face problems. In this example, we have added to the previous database few more “green” samples. This affects the linear regression, and we encounter misclassified database entries even if the database is perfectly separable. We can fix the situation by fitting a nonlinear model; to do so, first let us meet the logistic growth model before we return to the classification.
+### 63
+Logistic growth functions are useful as models accounting for constraints placed on the growth. An example
+is a bacteria culture allowed to grow under initially ideal conditions, followed by less favorable conditions
+that inhibit growth. Imagine a colony of the bacteria B. dendroides is growing in a Petri dish. The colony’s
+area a (in square centimeters) can be modeled as a function of t, the elapsed time in hours.
+
+Here c is the carrying capacity, w0 is the initial population size and w is the growth rate.
+
+Let us say that we want to recover the parameters of the model from an experiment: we have a series of
+n measurements (ai, ti ), as shown in the scatter plot.
+
+Under the assumption of independent and normally distributed errors, with 0 expectations and common
+variance, maximizing the likelyhood for the general nonlinear modelis equivalent to the minimization
+of the sum of squared errors:
+
+### 64
+There are multiple ways to deal with nonlinearities of the model, for example, we can try to apply some
+transformation to the model prior the fitting. Let us try it
+
+If we have an estimation for the parameter c, this model is well suited for an ordinary linear regression.
+We can find an estimation for the parameters w0 and w by solving the following system in the least squares sense:
+
+How can we estimate c(0)? Knowing that it corresponds to the carrying capacity, we can do a quick and
+dirty estimation c(0) := max ai + ε, where a small constant ε is added in order to avoid division by zero
+
+\[show code\]
+
+And here is the logistic curve fitted to our data. Of course, the fitting is far from being ideal: we have estimated the distance from the points ai to the curve a(ti ) in a very indirect and distoring way. Nevertheless, this fitting can be of use as a first guess for a further optimization. 
+### 65
+Let us denote by r the residual between the input label and the prediction. Then our problem can be rewritten as a minimization of the squared norm of the residual vector.
+
+We can solv it  by the Gauß–Newton algorithm. The idea is extremely simple: starting from the
+initial guess b, for example, 
+the one we have built by the ordinary least squares on the transformed model (or even just three random values), we build a sequence of approximations 
+To find the increment, we can linearize the function r at the point b^k:
+
+Here Jr is the n x 3 Jacobian matrix evaluated at point b^k.
+Then we are looking for such an increment vector ∆b(k) that the squared norm of the residual is minimized:
+
+This again is an ordinary least squares problem equivalent to solving a 3 × 3 system of linear equations.
+
+Here is the logistic curve fitted to our data by solving a series of least squares problems.
+\[show the code\]
+### 73
+As I have already said, it surprising to witness the existence of two fighting religions: neural networks is a gift of God versus "neural networks is a no-no".
+
+Obviously, we cannot fit all of the data with a straight line, or a plane, but with powerful feature
+extractors, we may be able to reduce our problem to a much simpler one. To put it into perspective, this is
+what neural networks do effectively, the only difference being that we use some nonlinearity as the activation
+function in the last layer. If we would remove this, we could look at the last layer of the neural network as
+a least squares problem, i.e. fitting a plane on the data (activations from previous layers).
+### 74
+This concludes my presentation. Obviously it is not possible to master even the few examples I have provided from the presentation alone. Even if you have paid a full attention, the presentation is way too rapid on most aspects. This is why we give you the source code to play with. Read the course notes, check the source code, modify the source code. Have fun!
