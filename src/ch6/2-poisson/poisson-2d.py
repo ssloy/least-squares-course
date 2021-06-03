@@ -22,7 +22,7 @@ for j in range(0,h-1): # gradient matrix
         A[cnt+1, i +  j   *w] = -1
         A[cnt+1, i + (j+1)*w] =  1
         cnt += 2
-A = A.tocsc()
+A = A.tocsc() # sparse row matrix for fast matrix-vector multiplication
 
 for channel in range(3):
     b = A.dot(foot[:,:,channel].flatten()) # fill the gradient part of the r.h.s.

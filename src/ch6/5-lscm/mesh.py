@@ -1,5 +1,16 @@
 import numpy as np
 
+def project_triangle(p0, p1, p2):
+    X = np.subtract(p1, p0) # construct an orthonormal 3d basis
+    X = X/np.linalg.norm(X)
+    Z = np.cross(X, np.subtract(p2, p0))
+    Z = Z/np.linalg.norm(Z)
+    Y = np.cross(Z, X)
+    z0 = np.array([0,0]) # project the triangle to the 2d basis (X,Y)
+    z1 = np.array([np.linalg.norm(np.subtract(p1, p0)), 0])
+    z2 = np.array([np.dot(np.subtract(p2, p0), X), np.dot(np.subtract(p2, p0), Y)])
+    return [z1-z0, z2-z1, z0-z2]
+
 class Mesh():
     def __init__(self, filename):
         # parse the .obj file

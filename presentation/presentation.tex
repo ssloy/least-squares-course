@@ -1064,6 +1064,7 @@ $$
 \unknown{f_{i,j}}            & = a_{i,j}            & \forall (i,j) \text{~s.t.~} i=0 \text{~or~} i=w-1 \text{~or~} j=0 \text{~or~} j=h-1
 \end{array} \right.
 $$
+
 \only<1>{\textbf{N.B: sparse system solver!}}
 \only<2>{
 \centerline{    \includegraphics[width=.36\linewidth]{../manuscript/img/pie_baseball.png}~\raisebox{6.5\height}{\LARGE{+}}~
@@ -1072,6 +1073,10 @@ $$
 \end{frame}
 
 
+\begin{frame}[plain,noframenumbering]
+\setminted{fontsize=\tiny}
+\inputminted[frame=single]{python}{listings/poisson-2d.py}
+\end{frame}
 
 \begin{frame}{Poisson's equation}
 \vspace{10ex}
@@ -1122,10 +1127,19 @@ c_1\cdot \unknown{x'_0} &                         &                       &     
 \end{array} \right.
 $$
 }
+
 \begin{center}
-\only<4>{\includegraphics[width=.33\linewidth]{../manuscript/img/example_6_3_e.png}}
-\only<5>{\includegraphics[width=.5\linewidth]{../manuscript/img/caricature.jpg} \\ And it works out of the box for 3d surfaces as well!}
+\only<4>{
+\setminted{fontsize=\tiny}
+\inputminted[frame=single]{python}{listings/silhouette-better.py}
+}
+\only<5>{\includegraphics[width=.33\linewidth]{../manuscript/img/example_6_3_e.png}}
 \only<6>{
+\setminted{fontsize=\tiny}
+\inputminted[frame=single]{python}{listings/caricature3d.py}
+}
+\only<7>{\includegraphics[width=.5\linewidth]{../manuscript/img/caricature.jpg} \\ And it works out of the box for 3d surfaces as well!}
+\only<8>{
 \vspace{3ex}
 \begin{block}{The takeaway message}
 Reformulating as a least squares problem allows for much easier tweaking.
@@ -1186,7 +1200,10 @@ $
 \pause
 \end{frame}
 
-
+\begin{frame}[plain,noframenumbering]
+\setminted{fontsize=\scriptsize}
+\inputminted[frame=single]{python}{listings/cubify.py}
+\end{frame}
 
 
 
@@ -1247,6 +1264,11 @@ Many nonlinear problems can be solved as a series of linear ones.
 \end{block}
 }
 }
+\end{frame}
+
+\begin{frame}[plain,noframenumbering]
+\setminted{fontsize=\tiny}
+\inputminted[frame=single]{python}{listings/arap.py}
 \end{frame}
 
 
@@ -1328,6 +1350,11 @@ Quick hack: pin two arbitrary vertices.
 }
 \end{frame}
 
+\begin{frame}[plain,noframenumbering]
+\setminted{fontsize=\tiny}
+\inputminted[frame=single]{python}{listings/lscm.py}
+\end{frame}
+
 
 %\iffalse
 
@@ -1345,12 +1372,16 @@ Learning database: $n$ real numbers and the corresponding colors (red and green)
 Encode red as 0 and green as 1, compute the regression line over $\{(x_i, y_i)\}_{i=1}^n$,
 $x_i\in\mathbb R$ and $y_i\in \{0,1\}$. The decision rule: if $y(x)>1/2$ then $x$ is green, otherwise it is red.
 %}
-\alt<3>{
+\only<3>{
 \centerline{\includegraphics[width=.5\linewidth]{../manuscript/img/linear-1d-a.png}}
 \pause
-}{
-\centerline{    \includegraphics[width=\linewidth]{../manuscript/img/linear-1d-b.png}}
 }
+\only<4>{
+\setminted{fontsize=\tiny}
+\inputminted[frame=single]{python}{listings/linear-1d.py}
+\pause
+}
+\only<5>{\centerline{    \includegraphics[width=\linewidth]{../manuscript/img/linear-1d-b.png}}}
 \end{frame}
 
 \begin{frame}{Logistic growth}
@@ -1382,7 +1413,7 @@ $$
 
 
 \begin{frame}{Solve a nonlinear problem}
-\begin{minipage}{.4\linewidth}
+\begin{minipage}{.35\linewidth}
 \includegraphics[width=10pt]{../manuscript/img/idea.png} \textbf{Transform the model!}
 
 \vspace{1ex}
@@ -1393,9 +1424,13 @@ a(t) &= \frac{c}{1+e^{-wt - w_0}} \\ \pause
 \end{aligned}
 $
 \end{minipage}
-\qquad
-\begin{minipage}{.5\linewidth}
-\only<6>{\centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/example_8_1_b.png}}}
+\quad
+\begin{minipage}{.6\linewidth}
+\only<6>{\setminted{fontsize=\scriptsize}
+\inputminted[frame=single]{python}{listings/logistic-growth.py}
+\pause
+}
+\only<7>{\centerline{\includegraphics[width=.8\linewidth]{../manuscript/img/example_8_1_b.png}}}
 \end{minipage}
 
 \pause
@@ -1462,6 +1497,11 @@ $\known{\Delta^{(k)}} \leftarrow \argmin\limits_{\unknown{\Delta^{(k)}}} \left\|
 \end{minipage}
 \end{frame}
 
+\begin{frame}[plain,noframenumbering]
+\setminted{fontsize=\scriptsize}
+\inputminted[frame=single]{python}{listings/logistic-1d.py}
+\end{frame}
+
 \begin{frame}{Back to the classification: quadratic loss function}
 \centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/linear-1d-b.png}}
 
@@ -1497,6 +1537,7 @@ Two parameters only, call Gauß–Newton:
 \centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/ls-classification-energy.jpg}}
 \end{minipage}
 \end{frame}
+
 
 %\fi
 
@@ -1546,6 +1587,11 @@ where $\known{X}:=\begin{bmatrix}\known{x_1} & \dots & \known{x_n}\end{bmatrix}^
 \end{frame}
 
 %\fi
+\begin{frame}[plain,noframenumbering]
+\setminted{fontsize=\scriptsize}
+\inputminted[frame=single]{python}{listings/logistic-regression-2d.py}
+\end{frame}
+
 
 \begin{frame}{Nonlinear decision boundary: logistic regression}
 \vspace{2ex}
@@ -1599,6 +1645,13 @@ $$
 where $x'_i :=  \begin{pmatrix} \sigma(\unknown{u}^\top x_i) &  \sigma(\unknown{v}^\top x_i) & 1\end{pmatrix}^\top$
 \end{minipage}
 \end{frame}
+
+
+\begin{frame}[plain,noframenumbering]
+\setminted{fontsize=\scriptsize}
+\inputminted[frame=single]{python}{listings/neural.py}
+\end{frame}
+
 
 \begin{frame}{Nonlinear decision boundary: 3 neurons}
 \centerline{\includegraphics[width=.9\linewidth]{../manuscript/img/3n.jpg}}
