@@ -620,6 +620,72 @@ This again is an ordinary least squares problem equivalent to solving a 3 × 3 s
 
 Here is the logistic curve fitted to our data by solving a series of least squares problems.
 \[show the code\]
+### 66
+Back to our classification example, fitting a sigmoid shows a clear advantage over ordinary linear regression classifier.
+
+
+In our example the training sets are linearly separable, and thus we did not have any misclassification
+in the training set. There is a caveat though. It might seem that linear separability is good news for binary
+classification: linear separability means that the problem is easy in some sense and that learning algorithms
+have a clear and achievable goal. Consider the fact that the decision boundary in a linear classifier is
+independent of the scale of the parameters. 
+
+For instance, in the above example, the decision boundary is given by t such that 1/2 = 1/(1+exp(-wt - w0)).
+Solving this simple equation for t we get t = w0/w . The decision boundary would not move a tiny bit if we multiply both w0 and w by a constant superior to 1. The boundary does not move, however, the scale does impact the likelihood in logistic regression by causing the logistic function to become more steep. If we have found such a decision boundary that all the samples from the learning database are correctly classified, we can infinitely scale the weights w and w0 , pushing the predictions closer and closer to their correct labels. The logistic function thus converges to the Heaviside step function. It is one of numerous possible instances of what is called overfitting: the model is becoming overconfident about the data and uses very large weights to describe it. There is a very simple solution to this problem: regularize the weights. The most basic regularization is to add a simple term that penalizes large weights.
+
+### 67
+It turns out that we have just built and trained a neural network made of a single neuron. 1-neuron perceptron with mean squared error loss function is equivalent to our nonlinear least squares problem.
+While the example we have shown here is unidimensional, it is straightforward to generalize it: we can
+fit the m-dimensional logistic function 1/(1+exp(-w^t x)),
+where w is a (m + 1)-parameter vector, the last element of x is the constant 1, and w^t x is the corresponding linear combination. 
+
+Note that the decision boundary is always linear: it is a point in 1D, a straight line in 2D, a plane in 3D and so forth. 
+
+Figure on the right shows the energy plot for the unidimensional example (note the regularization). While the function has a unique minimum, it is highly non-convex, making the numerical optimization a difficult problem.
+### 68
+Logistic regression is another technique borrowed by machine learning from the field of statistics. As before,
+the basic idea of logistic regression consists in that the space of initial values can be divided by a linear
+boundary (i.e. a straight line) into two areas corresponding to classes. Simply answering “red” or “green” is
+pretty crude — especially if there is no perfect rule. Something wich takes a noise into account, and does
+not just give a binary answer, will often be useful. In short, we want probabilities — which means we need
+to fit a stochastic model.
+Let two possible classes encoded as y ∈ {0, 1} and assume 
+
+
+where w is a (m + 1)-parameter vector and the last element of x is the constant 1. Here we interpret the
+sigmoid p(y = 1|x, w) as a conditional distribution of the response y, given the input variables. Follows that
+
+
+Up to this moment, there are absolutely no changes w.r.t the previous section: we use the same one-neuron perceptron. The crucial difference comes from the way we will train it. In previous section we have minimized the mean squared error loss function, implicitly assuming presence of zero-mean Gaussian noise in the labels of the dataset. Our data, however is not real-valued but binary-valued, and thus Bernoulli’s scheme is more suited for this situation. Exactly like we have made it in the first section, we can write the log-likelihood as
+
+
+To fit the sigmoid to the data, we need to maximize the log-likelyhood. 
+### 69
+All the hard decisions are made, it’s time for basic calculus. To maximize log L, we set its derivatives to 0 and obtain m + 1 nonlinear equations in w, refer to the course notes for the details of the derivation.
+
+We can solve the system iteratively using Newton-Raphson steps, and it turns out that the Hessian matrix is positive definite.
+
+### 70
+Okay, now we have mastered the art of binary classification with linear decision boundaries. What about
+nonlinear boundaries? Refer to the right image for an illustration. A straightforward way to do
+it is to plug something nonlinear (e.g. a polynomial) instead of −w^t x. It has been done, however the problem is that such a prior is hard to put on the data; moreover, the optimization scheme is different for every choice of function. Here neural networks come handy.
+
+### 71
+So, for a linear decision boundary we have trained the simplest possible network built from a single neuron.
+
+Our last example in this chapter is a regular perceptron made of 3 neurons: two neurons in the hidden layer
+and one output neuron. You can see the topology in the right image. The input is the same m as in all classification examples throughout this chapter: we have {(xi , yi)}ni=1 as the input, where xi ∈ R and yi ∈ {0, 1}. 
+
+The loss function E is parameterized by three (m + 1)-component vectors u, v and w. For the lack of better alternative, we can minimize E by a gradient descent. The gradient of the loss function with respect to each weight can be calculated by the chain rule, computing the gradient one layer at a time, iterating backward from the last layer to avoid redundant calculations of intermediate terms in the chain rule; this is an example of dynamic programming. 
+
+\[show code\]
+
+### 72
+Let us deconstruct the network to understand how the nonlinearity of the boundary is obtained, A perceptron with a hidden layer combines sigmoids from the hidden layer and applies a sigmoid over it. In our example the data is two-dimensional; for the sake of simplicity, imagine that the hidden layer neurons produce unit steps instead of sigmoids. 
+
+Let us suppose that all the weights are equal to 1, then the sum of these steps separates the data plane into four quadrants where the sum is equal to 0, 1 and 2. By applying a unit step over this result, we can isolate one particular quadrant, effectively creating a non-linear decision boundary. It is the last layer activation function that makes the difference. If we would remove this, the decision boundary would remain linear. 
+
+So, we can choose the type of the decision boundary by adapting the topology of the network, but be aware that you are entering the black magic realm! Generally speaking, there is no whatsoever guarantee of convergence; and even this simplest network has too much degrees of freedom for our training dataset. We can negate all the weights without affecting the decision boundary. . .
 ### 73
 As I have already said, it surprising to witness the existence of two fighting religions: neural networks is a gift of God versus "neural networks is a no-no".
 
