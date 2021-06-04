@@ -4,74 +4,65 @@
 10
 [notes]
 ### 1
-Hello guys, I have a pleasure to present you our course entitled "least squares for programmers" that was prepared by Nicolas Ray, Étienne Corman and me, Dmitry Sokolov. We work in a research team named Pixel, and feel free to contact us if you have any question.
+Hello guys, I have a pleasure to present you our course entitled "least squares for programmers" that was prepared by Nicolas Ray, Étienne Corman and me, Dmitry Sokolov. We work in a research team named Pixel, and please feel free to contact us if you have any questions.
 
 In this course we present how to manipulate geometric objects (curves, images, surfaces) by optimizing their characteristics using least squares methods; it is a very efficient tool that does not require too much of a mathematical background.
 
 The title of states "for programmers", so please note that we have prepared a github repository that contains source code for all our examples. In addition to that, the course notes contain few (optional for reading) chapters that I will not present here, but that can be helpful to master the technology.
 ### 2
 
-This course is intended for students/engineers/researchers who know how to program in the traditional way: by breaking down tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes). Here we present a different paradigm: we describe what is a good result, and let numerical optimization find it for us.
+This course is intended for students/engineers/researchers who know how to program in the traditional way: I mean by breaking down tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes). Here we present a different paradigm: we describe what is a good result, and let numerical optimization find it for us.
 
-Anyone able to program computer graphics algorithms can learn to use least squares with this course. This course explains least squares optimization, nowadays a simple and well-mastered technology. We show how this simple method can solve a large number of problems that would be difficult to approach in any other way. This course provides a simple, understandable yet powerful tool that most coders can use, in the contrast with other algorithms sharing this paradigm (numerical simulation and deep learning) which are more complex to master.
+Anyone able to program computer graphics algorithms can learn how to use least squares with this course. It explains least squares optimization, nowadays a simple and well-mastered technology. We show how this simple method can solve a large number of problems that would be difficult to approach in any other way. This course provides a simple, understandable yet powerful tool that most coders can use, and I cannot stress this enough, in the contrast with other algorithms sharing this paradigm (numerical simulation and deep learning) which are more complex to master.
 
-The importance of linear regression cannot be overstated. The most apparent usage of linear regression is in statistics / data analysis, but LR is much more than that. We propose to discover how the same method (least squares) applies to the manipulation of geometric objects. This first step into the numerical optimization world can be done without strong applied mathematics background; while being simple, this step suffices for many applications, and is a good starting point for learning more advanced algorithms. 
+The importance of linear regression cannot be overstated. The most apparent usage of linear regression is in statistics / data analysis, but linear regression is much more than that. We propose to discover how the same method (least squares) applies to the manipulation of geometric objects. This first step into the numerical optimization world can be done without strong applied mathematics background; while being simple, this step suffices for many applications, and is a good starting point for learning more advanced algorithms.
 
-We strive to communicate the underlying intuitions through numerous examples of classic problems, we show different choices of variables and the ways the energies are built. Over the last two decades, the geometry processing community have used it for computing 2D maps, deformations, geodesic paths, frame fields, etc. Our examples provide many examples of applications that can be directly solved by the least squares method.
+Here we strive to communicate the underlying intuitions through numerous examples of classic problems, we show different choices of variables and the ways the energies are built. Over the last two decades, the geometry processing community have used it for computing 2D maps, deformations, geodesic paths, frame fields, etc. Our examples provide many types of applications that can be directly solved by the least squares method.
 
-Note that linear regression is an efficient tool that has deep connections to other scientific domains; we show a few such links to broaden reader's horizons.
+Note that linear regression is an efficient tool that has deep connections to other scientific domains; we will show a few such links to broaden attendees horizons.
 ### 3
-The course is decomposed in three parts: an introduction of least squares, numerous use cases to demonstrate its usefulness, and the presentation of its strong relations with to adjacent scientific domains:
+The course is decomposed in three parts: an introduction of least squares, numerous use cases to demonstrate its usefulness, and the presentation of its strong relations to adjacent scientific domains:
 
-* It starts with a gentle introduction of the least squares method, providing some intuitions about linear systems.
+We will start with a gentle introduction of the least squares method, providing some intuitions about linear systems.
 
-* Then we proceed to the main course: how do we instantiate least squares to solve some problems? What can be the choice of variables? The energy? How to deal with constraints? Are we bound by the linearity? This part is thoroughly illustrated with real examples and comes with simple source code that is meant to be experimented with.
+then we proceed to the main course (this is about the section 4): how do we instantiate least squares to solve some problems? What can be the choice of variables? How to build the energy? How to deal with constraints? Are we bound by the linearity? This part is thoroughly illustrated with real examples and comes with simple source code that is meant to be experimented with.
 
-* The last part provides some insights about the strong connections between the fundamentals of least squares, probability theory, finite element methods and neuronal networks.
+* The last part provides some insights about the strong connections between the fundamentals of least squares, probability theory, finite element methods and neural networks.
 ### 4
-Let us consider a simple example of coin flipping, also known as Bernoulli’s scheme. We conduct n experi-
-ments, two events can happen in each one (“success” or “failure”): one happens with probability p, the other
-one with probability 1 − p. Our goal is to find the probability of getting exactly k successes in these n
-experiments.
+So, I'll start with the probability theory, this is a historical perspective, the orginis of least squares.
+Let us consider a simple example of coin flipping, also known as Bernoulli’s scheme. We conduct n experiments, two events can happen in each one (“success” or “failure”): one happens with probability p, the other
+one with probability 1 − p. Our goal is to find the probability of getting exactly k successes in these n experiments.
 
 This probability is given by Bernoulli’s formula.
 
-Let us take an ordinary coin (p = 1/2), flip it ten times (n = 10), and count how many times we get the
-tails. Thus, if we have fixed the probability of “success” (1/2) and also fixed the number of experiments (10),
-then the possible number of “successes” can be any integer between 0 and 10, but these outcomes are not
-equiprobable. It is clear that five “successes” are much more likely to happen than none. For example, the
-probability encountering seven tails is about 12%.
+Let us take an ordinary coin (p = 1/2), flip it ten times (n = 10), and count how many times we get the tails. Thus, if we have fixed the probability of “success” (1/2) and also fixed the number of experiments (10), then the possible number of “successes” can be any integer between 0 and 10, but these outcomes are not equiprobable. It is clear that five “successes” are much more likely to happen than none. For example, the probability encountering seven tails is about 12%.
 
-If we have a biased coin with probability p=1/7, the then probability of having 7 successes is about 27%.
+If we have a biased coin with probability p=0.7, the then probability of having 7 successes is about 27%.
 ### 5
-Now let us look at the same problem from a different angle. Suppose we have a real coin, but we do
-not know its distribution of a priori probability of “success”/“failure”. However, we can toss it ten times and
+Now let us look at the same problem from a different angle. Suppose we have a real coin, but we do not know its distribution of a priori probability of “success”/“failure”. However, we can toss it ten times and
 count the number of “successes”. For example, we have counted seven tails. Would it help us to evaluate p?
 
 We can try to fix n = 10 and k = 7 in Bernoulli’s formula, leaving p as a free parameter. Please note that to ease visual parsing of the formulas, throughout all the presentation I highlight known values in green and uknown values in red.
 
 Now Bernoulli’s formula can be interpreted as the plausibility of the parameter p being evaluated. I have even changed the function notation, now it is denoted as L (likelihood).  That is being said, the likelihood is the probability to generate the observation data (7 tails out of 10 experiments) for the given value of the parameter(s). For example, the likelihood of a balanced coin (p = 1/2) with seven tails out of ten tosses is approximately 12%. Here is a plot of the likelihood function for the observation data with 7 tails out of 10 experiments.
 ### 6
-So, we are looking for the parameter value that maximizes the likelihood of producing the observations
-we have. In our particular case, we have a function of one variable, and we are looking for its maximum. In
-order to make things easier, I will not search for the maximum of L, but for the maximum of log L. The
-logarithm is a strictly increasing  function, so maximizing both is equivalent. The logarithm has a nice
-property of breaking down products into sums that are much more convenient to differentiate. 
+Please note that this is a continuous graph.
+If we have 7 tails out of 10 experiments, the probability to have a balanced coin is about 12%, and the most probable explanation for this experiment is to have the probability p=0.7.
+So, having a model and an experiment, we are looking for the parameter value that maximizes the likelihood of producing the observations we have. In our particular case, we have a function of one variable, and we are looking for its maximum. In order to make things easier, I will not search for the maximum of L, but for the maximum of log L. The logarithm function is a strictly increasing function, so maximizing both is the same thing. The logarithm has a nice property of breaking down products into sums that are much more convenient to differentiate.
 
 So, we are looking for the maximum of this function.
 
-That’s why we equate it’s derivative to zero. The derivative of log p = 1/p, so the equation is easy to solve.
-
-The maximum likelihood (about 27%) is reached at the point p = 7/10 (well duh) 
+This is why we equate it’s derivative to zero. The derivative of log p = 1/p, so the equation is easy to solve.
+As we have saw from the plot, The maximum likelihood (about 27%) is reached at the point p = 7/10 (well duh) 
 
 Just in case, let us check the second derivative. In the point p = 7/10 it is negative, therefore this point is indeed a maximum of the function L.
 
 The point of this exercice is to gently introduce a method of maximum likelihood estimation.
 
-The idea is to estimate the parameters of a probability distribution by maximizing a likelihood function, so that under the assumed statistical model the observed data is most probable.
+The point of this exercise is to gently introduce a method of maximum likelyhood estimation.
+The idea is to estimate the parameters of a probability distribution by maximizing a likelihood function, so that under the assumed statistical model the observed data is the most probable.
 
-If the likelihood function is differentiable, the derivative test for determining maxima can be applied. In some cases, like in one we just saw, the first-order conditions of the likelihood function can be solved explicitly.
-As we will see shortly, the ordinary least squares estimator maximizes the likelihood of the linear regression model.
+If the likelihood function is differentiable, the derivative test for determining maxima can be applied. In some cases, like in one we have just saw, the first-order conditions of the likelihood function can be solved explicitly. As we will see shortly, the ordinary least squares estimator maximizes the likelihood of the linear regression model.
 ### 7
 Let us imagine that we have a constant physical quantity that we want to measure; for example, it can be a
 length to measure with a ruler or a voltage with a voltmeter. In the real world, any measurement gives only an
