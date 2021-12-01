@@ -1,7 +1,10 @@
 # Least squares for programmers
 ### with illustrations
 
-[Check the main document](https://github.com/ssloy/least-squares-course/blob/master/manuscript.pdf)
+This repository contains the [course notes](https://github.com/ssloy/least-squares-course/blob/master/manuscript.pdf) as well as the [source code](https://github.com/ssloy/least-squares-course/tree/master/src) for the long course I gave at SIGGRAPH 2021.
+
+You can find the full video of the course on youtube:
+[![](https://raw.githubusercontent.com/ssloy/least-squares-course/master/presentation/screenshot.jpg)](https://youtu.be/ZDh3v8OAEIA)
 
 This course explains least squares optimization, nowadays a simple and well-mastered technology.
 We show how this simple method can solve a large number of problems that would be difficult to approach in any other way.
