@@ -22,7 +22,7 @@ Note that linear regression is an efficient tool that has deep connections to ot
 we show a few such links to broaden reader's horizons.
 
 This course is intended for students/engineers/researchers who know how to program in the traditional way:
-by breaking down complex tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes\dots).
+by breaking down complex tasks into elementary operations that manipulate combinatorial structures (trees, graphs, meshes...).
 Here we present a different paradigm, in which we describe what a good result looks like, and let numerical optimization algorithms find it for us.
 
 ![](https://raw.githubusercontent.com/ssloy/least-squares-course/master/manuscript/img/caricature.jpg)
