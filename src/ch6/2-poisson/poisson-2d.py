@@ -34,5 +34,5 @@ for channel in range(3):
     x = lsmr(A, b)[0] # call the least squares solver
     x[x > 1] = 1
     x[x < 0] = 0
-    base[oy:oy+h,ox:ox+h, channel] = x.reshape((h, w)) # glue the football
+    base[oy:oy+h,ox:ox+w, channel] = x.reshape((h, w)) # glue the football
 mpimg.imsave('result.png', base)
